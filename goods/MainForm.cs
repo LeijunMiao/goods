@@ -1,0 +1,163 @@
+﻿using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
+using goods.Controller;
+using goods.Model;
+
+namespace goods
+{
+    public partial class MainForm : Form
+    {
+        public MainForm()
+        {
+            InitializeComponent();
+            dateLoad();
+        }
+        private void dateLoad()
+        {
+        }
+
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            this.statusTime.Text = "当前时间：" + DateTime.Now.ToString();
+        }
+
+        private void MainForm_Load(object sender, EventArgs e)
+        {
+            this.timer1.Start();
+            this.statusUser.Text = "系统操作员：" + PropertyClass.SendNameValue;
+
+            if (PropertyClass.SendPopedomValue == "超级管理员")
+            {
+                this.基础信息管理ToolStripMenuItem.Enabled = true;
+                this.入库管理ToolStripMenuItem.Enabled = true;
+                this.出库管理ToolStripMenuItem.Enabled = true;
+                this.盘点管理ToolStripMenuItem.Enabled = true;
+                this.数据查询ToolStripMenuItem.Enabled = true;
+                this.权限管理ToolStripMenuItem.Enabled = true;
+                return;
+            }
+            if (PropertyClass.SendPopedomValue.IndexOf("入库管理") > -1)
+            {
+                this.入库管理ToolStripMenuItem.Enabled = true;
+            }
+            if (PropertyClass.SendPopedomValue.IndexOf("出库管理") > -1)
+            {
+                this.出库管理ToolStripMenuItem.Enabled = true;
+            }
+            if (PropertyClass.SendPopedomValue.IndexOf("盘点管理") > -1)
+            {
+                this.盘点管理ToolStripMenuItem.Enabled = true;
+            }
+            if (PropertyClass.SendPopedomValue.IndexOf("数据查询") > -1)
+            {
+                this.数据查询ToolStripMenuItem.Enabled = true;
+            }
+            if (PropertyClass.SendPopedomValue.IndexOf("基础信息管理") > -1)
+            {
+                this.基础信息管理ToolStripMenuItem.Enabled = true;
+            }
+            if (PropertyClass.SendPopedomValue.IndexOf("设置权限") > -1)
+            {
+                this.设置权限ToolStripMenuItem.Enabled = true;
+            }
+        }
+
+        private void 设置权限ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //SetCompetence sc = new SetCompetence();
+            //sc.MdiParent = this;
+            //sc.Show();
+        }
+
+        private void 修改密码ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //UpdatePassword up = new UpdatePassword();
+            //up.MdiParent = this;
+            //up.Show();
+        }
+
+        private void 客户信息ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //CustomerData cd = new CustomerData();
+            //cd.MdiParent = this;
+            //cd.Show();
+        }
+
+        private void 产品信息ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //GoodsData vd = new GoodsData();
+            //vd.MdiParent = this;
+            //vd.Show();
+        }
+
+        private void 供应商ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //VendorData vd = new VendorData();
+            //vd.MdiParent = this;
+            //vd.Show();
+        }
+
+        private void 入库ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Storage sr = new Storage();
+            //sr.MdiParent = this;
+            //sr.Show();
+        }
+
+        private void 出库ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //TheLibrary tl = new TheLibrary();
+            //tl.MdiParent = this;
+            //tl.Show();
+        }
+
+        private void 盘点库存ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //Inventory it = new Inventory();
+            //it.MdiParent = this;
+            //it.Show();
+        }
+
+        private void 产品查询ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //DataQuery dq = new DataQuery();
+            //dq.MdiParent = this;
+            //dq.Show();
+        }
+
+        private void 出库查询ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //SellQuery sq = new SellQuery();
+            //sq.MdiParent = this;
+            //sq.Show();
+        }
+
+        private void 库存查询ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            //StockQuery sq = new StockQuery();
+            //sq.MdiParent = this;
+            //sq.Show();
+        }
+
+        private void departmentMenuItem_Click(object sender, EventArgs e)
+        {
+            Department dep = new Department();
+            dep.MdiParent = this;
+            dep.Show();
+        }
+
+        private void roleMenuItem_Click(object sender, EventArgs e)
+        {
+            RoleView rv = new RoleView();
+            rv.MdiParent = this;
+            rv.Show();
+        }
+    }
+}
