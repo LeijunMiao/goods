@@ -21,10 +21,44 @@ namespace goods.Controller
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
-        public DataTable getUserList()
+        public int getUserListCount(int role, string fullName)
         {
-            string sql = "SELECT u.id,u.fullName,u.userName,r.name FROM db_goodsmanage.user u , db_goodsmanage.role r where u.role = r.id ";
+            string sql = "SELECT  count(*) FROM db_goodsmanage.user ";
+            string select = "";
+            if (role != -1)
+            {
+                select += " where role =" + role;
+            }
+            if (fullName != "")
+            {
+                if (select == "") select += " where ";
+                else select += " and ";
+                select += " fullName like '%" + fullName + "%'";
+            }
+            sql += select;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            int count = Convert.ToInt32(dt.Rows[0][0]);
+            return count;
+        }
+        public DataTable getUserList(int pageIndex, int pageSize, int role, string fullName)
+        {
+            innerParmas parmas = new innerParmas(pageIndex, pageSize, role, fullName) ;
+            string sql = "SELECT u.id,u.fullName,u.userName,r.name FROM db_goodsmanage.user u , db_goodsmanage.role r " +
+                "where u.role = r.id  ";
+            if (parmas.role != -1)
+            {
+                sql += " and u.role = " + parmas.role;
+            }
+            if(parmas.fullName != "")
+            {
+                sql += " and u.fullName like '%" + parmas.fullName + "%'";
+            }
+            if (parmas.pageIndex < 1) parmas.pageIndex = 1;
+            sql +=" LIMIT " + (parmas.pageIndex-1) * parmas.pageSize + "," + parmas.pageSize;
+            //sql += ";SELECT FOUND_ROWS();";
+            
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            //DataSet ds = h.ExecutePagingQuery(sql, CommandType.Text);
             return dt;
             
         }
@@ -84,5 +118,24 @@ namespace goods.Controller
             return msg;
         }
         #endregion
+
+        /// <summary>
+        /// 内部类：搜索信息
+        /// </summary>
+        public class innerParmas
+        {
+            public int pageIndex;
+            public int pageSize;
+            public int role;
+            public string fullName;
+
+            public innerParmas(int pageIndex, int pageSize, int role, string fullName)
+            {
+                this.pageIndex = pageIndex;
+                this.pageSize = pageSize;
+                this.role = role;
+                this.fullName = fullName;
+            }
+        }
     }
 }

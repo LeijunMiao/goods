@@ -15,6 +15,7 @@ namespace goods
     {
         //总记录数
         userCtrl uctrl = new userCtrl();
+        private DataSet dsData = null;
         private DataTable dtData = null;
         private DataTable dt = null;
 
@@ -28,11 +29,11 @@ namespace goods
         }
         private void Form2_Load(object sender, EventArgs e)
         {
+            //this.pagingCom1.RecordCount = uctrl.getUserListCount(-1, "");
             BindDataWithPage(1);
         }
         private void pageIndexChanged(object sender, EventArgs e)
         {
-            MessageBox.Show(pagingCom1.PageIndex+"");
             BindDataWithPage(pagingCom1.PageIndex);
         }
         /// <summary>
@@ -43,7 +44,11 @@ namespace goods
         {
             pagingCom1.PageIndex = Index;
             pagingCom1.PageSize = 10;
-            dtData = uctrl.getUserList();
+            innerParmas parmas = new innerParmas(pagingCom1.PageIndex, pagingCom1.PageSize,-1, textBox1.Text);//textBox1.Text
+            dtData = uctrl.getUserList(parmas.pageIndex, parmas.pageSize, parmas.role, parmas.fullName);
+            //获取并设置总记录数
+            pagingCom1.RecordCount = uctrl.getUserListCount(-1, textBox1.Text);//Convert.ToInt32(dsData.Tables[1].Rows[0][0]);
+            //dtData = dsData.Tables[0];
             dt = new DataTable();
             DataColumn dcNO = new DataColumn("编号");
             DataColumn dcUName = new DataColumn("用户名");
@@ -65,15 +70,35 @@ namespace goods
             }
 
             dataGridView1.DataSource = dt;
-
-            //获取并设置总记录数
-            pagingCom1.RecordCount = RecordCount;
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
             UserPopup popup = new UserPopup(this);
             popup.Show();
+        }
+
+        /// <summary>
+        /// 内部类：搜索信息
+        /// </summary>
+        public class innerParmas
+        {
+            public int pageIndex;
+            public int pageSize;
+            public int role;
+            public string fullName;
+            public innerParmas(int pageIndex, int pageSize, int role, string fullName)
+            {
+                this.pageIndex = pageIndex;
+                this.pageSize = pageSize;
+                this.role = role;
+                this.fullName = fullName;
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            BindDataWithPage(1);
         }
     }
 }

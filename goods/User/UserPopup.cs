@@ -16,6 +16,7 @@ namespace goods
         userCtrl uctrl = new userCtrl();
         departmentCtrl ctrl = new departmentCtrl();//部门控制类
         roleCtrl rctrl = new roleCtrl();
+        DataTable depdt = null;
         public int depId;
 
         public UserView parentForm;
@@ -28,8 +29,8 @@ namespace goods
         #region 加载部门列表
         private void LoadData()
         {
-            DataTable dt = ctrl.get();
-            this.comboBox1.DataSource = dt;
+            depdt = ctrl.get();
+            this.comboBox1.DataSource = depdt;
             this.comboBox1.DisplayMember = "name";
             this.comboBox1.ValueMember = "id";
             this.comboBox1.SelectedIndex = 0;
@@ -59,7 +60,9 @@ namespace goods
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            DataTable dt = rctrl.getbyDepId(Convert.ToInt32(this.comboBox1.SelectedValue.ToString()));
+            string role = this.comboBox1.SelectedValue.ToString();
+            if (this.comboBox1.SelectedIndex == 0) role = depdt.Rows[0]["id"].ToString();
+            DataTable dt = rctrl.getbyDepId(Convert.ToInt32(role));
             this.comboBox2.DataSource = dt;
             this.comboBox2.DisplayMember = "name";
             this.comboBox2.ValueMember = "id";

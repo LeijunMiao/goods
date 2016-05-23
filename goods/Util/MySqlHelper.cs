@@ -141,6 +141,23 @@ namespace goods
             return dt;
         }
         #endregion
+        public DataSet ExecutePagingQuery(string sqlStr, CommandType ct = CommandType.Text)
+        {
+            DataSet ds = new DataSet();
+            MySqlCommand cmd = new MySqlCommand(sqlStr, GetConn(new MySqlConnection()));
+            cmd.CommandType = ct;
+            MySqlDataAdapter adapter = new MySqlDataAdapter();
+            using (adapter.SelectCommand = cmd)
+            {
+                adapter.Fill(ds);
+                if (cmd.Connection.State == ConnectionState.Open)
+                {
+                    cmd.Connection.Close();
+                    cmd.Connection.Dispose();
+                }
+            }
+            return ds;
+        }
 
         #region 6、执行带参数的查询SQL语句或存储过程
         /// <summary>

@@ -68,6 +68,7 @@
             this.button1.TabIndex = 2;
             this.button1.Text = "搜索";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // dataGridView1
             // 
@@ -138,7 +139,7 @@
             this.pagingCom1.DisplayStyle = goods.pagingCom.DisplayStyleEnum.文字;
             this.pagingCom1.Location = new System.Drawing.Point(0, 429);
             this.pagingCom1.Name = "pagingCom1";
-            this.pagingCom1.RecordCount = 0;
+            this.pagingCom1.RecordCount = 5;
             this.pagingCom1.Size = new System.Drawing.Size(981, 41);
             this.pagingCom1.TabIndex = 8;
             this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
