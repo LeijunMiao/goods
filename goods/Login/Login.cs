@@ -7,11 +7,12 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-
+using goods.Controller;
 namespace goods
 {
     public partial class Login : Form
     {
+        MySqlHelper h = new MySqlHelper();
         public Login()
         {
             InitializeComponent();
@@ -29,15 +30,16 @@ namespace goods
             }
             else
             {
-                string sql = "select * from sys_user where user_no='" + this.textBox1.Text + "' and user_password='" + this.textBox2.Text + "'";
-                DataTable dtuser = DBHelp.GetDataSet(sql);
+                userCtrl ctrl = new userCtrl();
+                string sql = "select * from user where userName='" + this.textBox1.Text + "' and hashed_password='" + ctrl.GetOf(this.textBox2.Text) + "'";
+                DataTable dtuser = h.ExecuteQuery(sql, CommandType.Text);//DBHelp.GetDataSet(sql);
 
                 if (dtuser.Rows.Count > 0)
                 {
-                    PropertyClass.SendNameValue = dtuser.Rows[0]["user_no"].ToString();
-                    PropertyClass.SendPopedomValue = dtuser.Rows[0]["user_competence"].ToString();
-                    PropertyClass.Password = dtuser.Rows[0]["user_password"].ToString();
-
+                    PropertyClass.SendNameValue = dtuser.Rows[0]["userName"].ToString();
+                    //PropertyClass.SendPopedomValue = dtuser.Rows[0]["user_competence"].ToString();
+                    //PropertyClass.Password = dtuser.Rows[0]["user_password"].ToString();
+                    PropertyClass.Role = Convert.ToInt32(dtuser.Rows[0]["role"].ToString());
                     MainForm mainform = new MainForm();
                     this.Hide();
                     mainform.ShowDialog();

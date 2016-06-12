@@ -18,13 +18,24 @@ namespace goods
     {
         departmentCtrl ctrl = new departmentCtrl();//部门控制类
         roleCtrl rc = new roleCtrl(); //角色控制类
+        policyCtrl pctrl = new policyCtrl();
         Dictionary<string, TreeNode> map_id_tn = new Dictionary<string, TreeNode>();//存树map
         private DataTable dtData = null;
         private DataTable dt = null;
+
+        int roleId = -1;
+        int loaded = -1; //判断窗体是否加载完成
+
         public RoleView()
         {
             InitializeComponent();
             this.LoadData();
+        }
+        private void Form1_Shown(Object sender, EventArgs e)
+        {
+            loaded = 1;
+            loadPolicy(sender, e);
+
         }
         public void LoadRoleDate(int depid){
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
@@ -55,7 +66,7 @@ namespace goods
             dataGridView1.DataSource = dt;
 
         }
-        #region 加载部门树
+        #region 加载部门树，功能列表
         private void LoadData()
         {
             map_id_tn = new Dictionary<string, TreeNode>();
@@ -81,8 +92,37 @@ namespace goods
 
             }
             this.treeView1.ExpandAll();
+
+            this.comboBox1.DataSource = pctrl.getFeature();
+            this.comboBox1.DisplayMember = "name";
+            this.comboBox1.ValueMember = "id";
+            this.comboBox1.SelectedIndex = 0;
         }
         #endregion
+
+        
+        public void loadPolicy(object sender, EventArgs e)
+        {
+            if (dataGridView1.SelectedRows.Count > 0 && loaded == 1)
+            {
+                roleId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
+                var dtPolicyData = pctrl.getFeatureByRole(roleId);
+                var dtPolicyView = new DataTable();
+                DataColumn dcName = new DataColumn("名称");
+                dtPolicyView.Columns.Add(dcName);
+
+
+                for (int i = 0; i < dtPolicyData.Rows.Count; i++)
+                {
+                    DataRow dr = dtPolicyView.NewRow();
+                    dr[0] = dtPolicyData.Rows[i]["name"].ToString();
+                    dtPolicyView.Rows.Add(dr);
+                }
+                dataGridView2.DataSource = dtPolicyView;
+            }
+
+        }
+
         #region 新建角色
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
@@ -150,6 +190,25 @@ namespace goods
             {
                 MessageBox.Show(msg.Msg);
             }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int feature = Convert.ToInt32(this.comboBox1.SelectedValue.ToString());
+            if (feature >0 && roleId > 0)
+            {
+                PolicyModel pm = new PolicyModel(roleId, feature);
+                MessageModel msg = pctrl.add(pm);
+                if (msg.Code == 0)
+                {
+                    loadPolicy(sender,e);
+                }
+                else
+                {
+                    MessageBox.Show(msg.Msg);
+                }
+            }
+
         }
     }
 }

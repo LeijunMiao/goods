@@ -51,15 +51,32 @@
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="zxing">
+      <HintPath>Component\zxing.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\department.cs" />
+    <Compile Include="Controller\materiel.cs" />
+    <Compile Include="Controller\metering.cs" />
+    <Compile Include="Controller\order.cs" />
+    <Compile Include="Controller\policy.cs" />
+    <Compile Include="Controller\position.cs" />
     <Compile Include="Controller\role.cs" />
+    <Compile Include="Controller\supplier.cs" />
     <Compile Include="Controller\user.cs" />
-    <Compile Include="Department\Department.cs">
+    <Compile Include="Controller\warehouse.cs" />
+    <Compile Include="Model\Materiel.cs" />
+    <Compile Include="Model\Metering.cs" />
+    <Compile Include="Model\Order.cs" />
+    <Compile Include="Model\Policy.cs" />
+    <Compile Include="Model\Position.cs" />
+    <Compile Include="Model\Supplier.cs" />
+    <Compile Include="Model\Warehouse.cs" />
+    <Compile Include="View\Department\Department.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Department\Department.Designer.cs">
+    <Compile Include="View\Department\Department.Designer.cs">
       <DependentUpon>Department.cs</DependentUpon>
     </Compile>
     <Compile Include="Interface\main.cs" />
@@ -93,29 +110,83 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Role\RolePopup.cs">
+    <Compile Include="View\Materiel\MaterielPopup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Role\RolePopup.Designer.cs">
+    <Compile Include="View\Materiel\MaterielPopup.Designer.cs">
+      <DependentUpon>MaterielPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Materiel\MaterielView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Materiel\MaterielView.Designer.cs">
+      <DependentUpon>MaterielView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Metering\MeteringPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Metering\MeteringPopup.Designer.cs">
+      <DependentUpon>MeteringPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Metering\MeteringView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Metering\MeteringView.Designer.cs">
+      <DependentUpon>MeteringView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Order\CreateOrderView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Order\CreateOrderView.Designer.cs">
+      <DependentUpon>CreateOrderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Order\OrderMaterielPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Order\OrderMaterielPopup.Designer.cs">
+      <DependentUpon>OrderMaterielPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Role\RolePopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Role\RolePopup.Designer.cs">
       <DependentUpon>RolePopup.cs</DependentUpon>
     </Compile>
-    <Compile Include="Role\RoleView.cs">
+    <Compile Include="View\Role\RoleView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Role\RoleView.Designer.cs">
+    <Compile Include="View\Role\RoleView.Designer.cs">
       <DependentUpon>RoleView.cs</DependentUpon>
     </Compile>
     <Compile Include="Service\ServerInfo.cs" />
-    <Compile Include="User\UserPopup.cs">
+    <Compile Include="View\supplier\SupplierPopup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="User\UserPopup.Designer.cs">
+    <Compile Include="View\supplier\SupplierPopup.Designer.cs">
+      <DependentUpon>SupplierPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\supplier\SupplierView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\supplier\SupplierView.Designer.cs">
+      <DependentUpon>SupplierView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\User\UserEditPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\User\UserEditPopup.Designer.cs">
+      <DependentUpon>UserEditPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\User\UserPopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\User\UserPopup.Designer.cs">
       <DependentUpon>UserPopup.cs</DependentUpon>
     </Compile>
-    <Compile Include="User\UserView.cs">
+    <Compile Include="View\User\UserView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="User\UserView.Designer.cs">
+    <Compile Include="View\User\UserView.Designer.cs">
       <DependentUpon>UserView.cs</DependentUpon>
     </Compile>
     <Compile Include="Util\DBHelp.cs" />
@@ -127,7 +198,25 @@
       <DependentUpon>pagingCom.cs</DependentUpon>
     </Compile>
     <Compile Include="Util\PropertyClass.cs" />
-    <EmbeddedResource Include="Department\Department.resx">
+    <Compile Include="View\Warehouse\WarehousePopup.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Warehouse\WarehousePopup.Designer.cs">
+      <DependentUpon>WarehousePopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Warehouse\WarehouseQRCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Warehouse\WarehouseQRCode.Designer.cs">
+      <DependentUpon>WarehouseQRCode.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Warehouse\WarehouseView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Warehouse\WarehouseView.Designer.cs">
+      <DependentUpon>WarehouseView.cs</DependentUpon>
+    </Compile>
+    <EmbeddedResource Include="View\Department\Department.resx">
       <DependentUpon>Department.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
@@ -140,17 +229,53 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Role\RolePopup.resx">
+    <EmbeddedResource Include="View\Materiel\MaterielPopup.resx">
+      <DependentUpon>MaterielPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Materiel\MaterielView.resx">
+      <DependentUpon>MaterielView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Metering\MeteringPopup.resx">
+      <DependentUpon>MeteringPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Metering\MeteringView.resx">
+      <DependentUpon>MeteringView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Order\CreateOrderView.resx">
+      <DependentUpon>CreateOrderView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Order\OrderMaterielPopup.resx">
+      <DependentUpon>OrderMaterielPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Role\RolePopup.resx">
       <DependentUpon>RolePopup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Role\RoleView.resx">
+    <EmbeddedResource Include="View\Role\RoleView.resx">
       <DependentUpon>RoleView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="User\UserPopup.resx">
+    <EmbeddedResource Include="View\supplier\SupplierPopup.resx">
+      <DependentUpon>SupplierPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\supplier\SupplierView.resx">
+      <DependentUpon>SupplierView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\User\UserEditPopup.resx">
+      <DependentUpon>UserEditPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\User\UserPopup.resx">
       <DependentUpon>UserPopup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="User\UserView.resx">
+    <EmbeddedResource Include="View\User\UserView.resx">
       <DependentUpon>UserView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Warehouse\WarehousePopup.resx">
+      <DependentUpon>WarehousePopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Warehouse\WarehouseQRCode.resx">
+      <DependentUpon>WarehouseQRCode.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Warehouse\WarehouseView.resx">
+      <DependentUpon>WarehouseView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -180,7 +305,9 @@
   <ItemGroup>
     <Content Include="Component\PagingControl.dll" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

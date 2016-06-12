@@ -10,6 +10,7 @@ namespace goods
     class PropertyClass
     {
         private static string sendnamevalue;
+        private static int role;
         /// <summary>
         /// 传递登录人员账号
         /// </summary>
@@ -56,7 +57,18 @@ namespace goods
                 return password;
             }
         }
+        public static int Role
+        {
+            set
+            {
+                role = value;
+            }
+            get
+            {
+                return role;
+            }
+        }
 
-       
+
     }
 }

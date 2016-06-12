@@ -42,25 +42,25 @@ namespace goods.Controller
         }
         public DataTable getUserList(int pageIndex, int pageSize, int role, string fullName)
         {
-            innerParmas parmas = new innerParmas(pageIndex, pageSize, role, fullName) ;
-            string sql = "SELECT u.id,u.fullName,u.userName,r.name FROM db_goodsmanage.user u , db_goodsmanage.role r " +
+            innerParmas parmas = new innerParmas(pageIndex, pageSize, role, fullName);
+            string sql = "SELECT u.id,u.fullName,u.userName,u.isActive,r.name FROM db_goodsmanage.user u , db_goodsmanage.role r " +
                 "where u.role = r.id  ";
             if (parmas.role != -1)
             {
                 sql += " and u.role = " + parmas.role;
             }
-            if(parmas.fullName != "")
+            if (parmas.fullName != "")
             {
                 sql += " and u.fullName like '%" + parmas.fullName + "%'";
             }
             if (parmas.pageIndex < 1) parmas.pageIndex = 1;
-            sql +=" LIMIT " + (parmas.pageIndex-1) * parmas.pageSize + "," + parmas.pageSize;
+            sql += " LIMIT " + (parmas.pageIndex - 1) * parmas.pageSize + "," + parmas.pageSize;
             //sql += ";SELECT FOUND_ROWS();";
-            
+
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             //DataSet ds = h.ExecutePagingQuery(sql, CommandType.Text);
             return dt;
-            
+
         }
 
         #region 筛选获取
@@ -72,11 +72,10 @@ namespace goods.Controller
         {
             User u = (User)obj;
             string sql = "";
-            MD5 md5 = new MD5CryptoServiceProvider();
             string hash = GetOf(u.Hashed_password);
 
             sql = "insert into user (userName,fullName,role,hashed_password,createdAt) values('"
-                + u.UserName + "','" + u.FullName + "','" + u.Role + "','" 
+                + u.UserName + "','" + u.FullName + "','" + u.Role + "','"
                 + hash + "','" + DateTime.Now + "');";
             int res = h.ExecuteNonQuery(sql, CommandType.Text);
 
@@ -111,6 +110,67 @@ namespace goods.Controller
             return msg;
         }
         #endregion
+
+        #region 更新密码
+        public MessageModel updatePwd(int id, string oldPwd, string newPws)
+        {
+            MessageModel msg;
+            string oldhash = GetOf(oldPwd);
+            string sql = "select * from user where id = " + id;
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            if (dt.Rows.Count == 0)
+            {
+                msg = new MessageModel(10005, "用户没找到，请重试！");
+            }
+            else if (oldhash != dt.Rows[0]["hashed_password"].ToString())
+            {
+                msg = new MessageModel(10005, "旧密码错误！");
+            }
+            else
+            {
+                string newhash = GetOf(newPws);
+                sql = "UPDATE user SET hashed_password = '" + newhash + "' WHERE id = '" + id + "' ";
+                //int res = DBHelp.GetSQL(sql);
+                //Dictionary<string, object> paras = new Dictionary < string, object> ();
+                //paras.Add("@isActive", isActive);
+                int res = h.ExecuteNonQuery(sql, CommandType.Text);
+                //int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
+
+                if (res > 0)
+                {
+                    msg = new MessageModel(0, "更新成功");
+                }
+                else msg = new MessageModel(10005, "更新失败");
+            }
+
+            return msg;
+        }
+        #endregion
+
+        #region 更新状态
+        public MessageModel updateStatus(int id, string status)
+        {
+            MessageModel msg;
+            int isActive = 0;
+            if (status == "注销")
+            {
+                isActive = 1;
+            }
+            string sql = "UPDATE user SET isActive = @isActive WHERE id = '" + id + "' ";
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@isActive", isActive);
+            int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
+
+            if (res > 0)
+            {
+                msg = new MessageModel(0, "更新成功");
+            }
+            else msg = new MessageModel(10005, "更新失败");
+
+            return msg;
+        }
+        #endregion
+
         #region 删除
         public MessageModel del(object obj)
         {

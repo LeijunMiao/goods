@@ -35,6 +35,7 @@
             this.客户信息ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.供应商ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.departmentItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.roleItem = new System.Windows.Forms.ToolStripMenuItem();
             this.入库管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.入库ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.出库管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -54,7 +55,14 @@
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
             this.statusTime = new System.Windows.Forms.ToolStripStatusLabel();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.roleItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.用户管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.客户管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.供应商管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.仓库管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.计量单位ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.物料管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.采购订单ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.新增ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -63,6 +71,7 @@
             // 
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.基础信息管理ToolStripMenuItem,
+            this.采购订单ToolStripMenuItem,
             this.入库管理ToolStripMenuItem,
             this.出库管理ToolStripMenuItem,
             this.盘点管理ToolStripMenuItem,
@@ -83,14 +92,20 @@
             this.客户信息ToolStripMenuItem,
             this.供应商ToolStripMenuItem,
             this.departmentItem,
-            this.roleItem});
-            this.基础信息管理ToolStripMenuItem.Enabled = false;
+            this.roleItem,
+            this.用户管理ToolStripMenuItem,
+            this.客户管理ToolStripMenuItem,
+            this.供应商管理ToolStripMenuItem,
+            this.仓库管理ToolStripMenuItem,
+            this.计量单位ToolStripMenuItem,
+            this.物料管理ToolStripMenuItem});
             this.基础信息管理ToolStripMenuItem.Name = "基础信息管理ToolStripMenuItem";
             this.基础信息管理ToolStripMenuItem.Size = new System.Drawing.Size(92, 21);
             this.基础信息管理ToolStripMenuItem.Text = "基础信息管理";
             // 
             // 产品信息ToolStripMenuItem
             // 
+            this.产品信息ToolStripMenuItem.Enabled = false;
             this.产品信息ToolStripMenuItem.Name = "产品信息ToolStripMenuItem";
             this.产品信息ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.产品信息ToolStripMenuItem.Text = "产品信息";
@@ -116,6 +131,13 @@
             this.departmentItem.Size = new System.Drawing.Size(152, 22);
             this.departmentItem.Text = "组织架构";
             this.departmentItem.Click += new System.EventHandler(this.departmentMenuItem_Click);
+            // 
+            // roleItem
+            // 
+            this.roleItem.Name = "roleItem";
+            this.roleItem.Size = new System.Drawing.Size(152, 22);
+            this.roleItem.Text = "角色管理";
+            this.roleItem.Click += new System.EventHandler(this.roleMenuItem_Click);
             // 
             // 入库管理ToolStripMenuItem
             // 
@@ -267,12 +289,62 @@
             // 
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // roleItem
+            // 用户管理ToolStripMenuItem
             // 
-            this.roleItem.Name = "roleItem";
-            this.roleItem.Size = new System.Drawing.Size(152, 22);
-            this.roleItem.Text = "角色管理";
-            this.roleItem.Click += new System.EventHandler(this.roleMenuItem_Click);
+            this.用户管理ToolStripMenuItem.Name = "用户管理ToolStripMenuItem";
+            this.用户管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.用户管理ToolStripMenuItem.Text = "用户管理";
+            this.用户管理ToolStripMenuItem.Click += new System.EventHandler(this.用户管理ToolStripMenuItem_Click);
+            // 
+            // 客户管理ToolStripMenuItem
+            // 
+            this.客户管理ToolStripMenuItem.Name = "客户管理ToolStripMenuItem";
+            this.客户管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.客户管理ToolStripMenuItem.Text = "客户管理";
+            this.客户管理ToolStripMenuItem.Click += new System.EventHandler(this.客户管理ToolStripMenuItem_Click);
+            // 
+            // 供应商管理ToolStripMenuItem
+            // 
+            this.供应商管理ToolStripMenuItem.Name = "供应商管理ToolStripMenuItem";
+            this.供应商管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.供应商管理ToolStripMenuItem.Text = "供应商管理";
+            this.供应商管理ToolStripMenuItem.Click += new System.EventHandler(this.供应商管理ToolStripMenuItem_Click);
+            // 
+            // 仓库管理ToolStripMenuItem
+            // 
+            this.仓库管理ToolStripMenuItem.Name = "仓库管理ToolStripMenuItem";
+            this.仓库管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.仓库管理ToolStripMenuItem.Text = "仓库管理";
+            this.仓库管理ToolStripMenuItem.Click += new System.EventHandler(this.仓库管理ToolStripMenuItem_Click);
+            // 
+            // 计量单位ToolStripMenuItem
+            // 
+            this.计量单位ToolStripMenuItem.Name = "计量单位ToolStripMenuItem";
+            this.计量单位ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.计量单位ToolStripMenuItem.Text = "计量单位";
+            this.计量单位ToolStripMenuItem.Click += new System.EventHandler(this.计量单位ToolStripMenuItem_Click);
+            // 
+            // 物料管理ToolStripMenuItem
+            // 
+            this.物料管理ToolStripMenuItem.Name = "物料管理ToolStripMenuItem";
+            this.物料管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.物料管理ToolStripMenuItem.Text = "物料管理";
+            this.物料管理ToolStripMenuItem.Click += new System.EventHandler(this.物料管理ToolStripMenuItem_Click);
+            // 
+            // 采购订单ToolStripMenuItem
+            // 
+            this.采购订单ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.新增ToolStripMenuItem});
+            this.采购订单ToolStripMenuItem.Name = "采购订单ToolStripMenuItem";
+            this.采购订单ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.采购订单ToolStripMenuItem.Text = "采购订单";
+            // 
+            // 新增ToolStripMenuItem
+            // 
+            this.新增ToolStripMenuItem.Name = "新增ToolStripMenuItem";
+            this.新增ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.新增ToolStripMenuItem.Text = "新增";
+            this.新增ToolStripMenuItem.Click += new System.EventHandler(this.新增ToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -330,6 +402,14 @@
         private System.Windows.Forms.ToolStripMenuItem 库存查询ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem departmentItem;
         private System.Windows.Forms.ToolStripMenuItem roleItem;
+        private System.Windows.Forms.ToolStripMenuItem 用户管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 客户管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 供应商管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 仓库管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 计量单位ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 物料管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 采购订单ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 新增ToolStripMenuItem;
     }
 }
 

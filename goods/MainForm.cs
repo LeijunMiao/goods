@@ -20,6 +20,26 @@ namespace goods
         }
         private void dateLoad()
         {
+            if(PropertyClass.Role > 1)
+            {
+                policyCtrl pctrl = new policyCtrl();
+                var dt = pctrl.getFeatureByRole(PropertyClass.Role);
+                for (int i = 0; i < dt.Rows.Count; i++)
+                {
+                    switch (dt.Rows[i]["key"].ToString())
+                    {
+                        case "department":
+                            this.departmentItem.Enabled = true;
+                            break;
+                        case "role":
+                            this.roleItem.Enabled = true;
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+            
         }
 
 
@@ -149,14 +169,61 @@ namespace goods
         private void departmentMenuItem_Click(object sender, EventArgs e)
         {
             Department dep = new Department();
-            dep.MdiParent = this;
+            //dep.MdiParent = this;
             dep.Show();
         }
 
         private void roleMenuItem_Click(object sender, EventArgs e)
         {
             RoleView rv = new RoleView();
-            rv.MdiParent = this;
+            //rv.MdiParent = this;
+            rv.Show();
+        }
+
+        private void 用户管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            UserView rv = new UserView();
+            //rv.MdiParent = this;
+            rv.Show();
+        }
+
+        private void 客户管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void 供应商管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SupplierView rv = new SupplierView();
+            //rv.MdiParent = this;
+            rv.Show();
+        }
+
+        private void 仓库管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            WarehouseView rv = new WarehouseView();
+            //rv.MdiParent = this;
+            rv.Show();
+        }
+
+        private void 计量单位ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MeteringView rv = new MeteringView();
+           // rv.MdiParent = this;
+            rv.Show();
+        }
+
+        private void 物料管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MaterielView rv = new MaterielView();
+            //rv.MdiParent = this;
+            rv.Show();
+        }
+
+        private void 新增ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateOrderView rv = new CreateOrderView();
+            //rv.MdiParent = this;
             rv.Show();
         }
     }

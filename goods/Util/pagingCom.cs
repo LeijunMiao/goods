@@ -266,10 +266,10 @@ namespace goods
             {
                 this.btnFirst.Enabled = false;
                 this.btnPrevious.Enabled = false;
-                this.btnNext.Enabled = true;
-                this.btnLast.Enabled = true;
-                //this.btnNext.Enabled = (this._PageCount <= 1) ? false : true;
-                //this.btnLast.Enabled = (this._PageCount <= 1) ? false : true;
+                //this.btnNext.Enabled = true;
+                //this.btnLast.Enabled = true;
+                this.btnNext.Enabled = (this._PageCount <= 1) ? false : true;
+                this.btnLast.Enabled = (this._PageCount <= 1) ? false : true;
             }
             else if ((this._PageIndex > 1) && (this._PageIndex < this._PageCount))
             {
@@ -356,9 +356,9 @@ namespace goods
             try
             {
                 int num2 = Convert.ToInt32(num) + 1;
-                if (num2 >= this._RecordCount)
+                if (num2 >= this._PageCount)
                 {
-                    num2 = this._RecordCount;
+                    num2 = this._PageCount;
                 }
                 this._PageIndex = num2;
                 this.SetPagerText();
@@ -410,7 +410,7 @@ namespace goods
 
         protected int GetPageCount(int RecordCounts, int PageSizes)
         {
-            int num = 0;
+            int num = 1;
             string str = (Convert.ToDouble(RecordCounts) / Convert.ToDouble(PageSizes)).ToString();
             if (str.IndexOf(".") < 0)
             {
@@ -431,6 +431,7 @@ namespace goods
         /// <param name="e"></param>
         private void WinFormPager_Load(object sender, EventArgs e)
         {
+            this._PageCount = this.GetPageCount(this._RecordCount, this._PageSize);
             this.SetBtnEnabled();
             this.btnToPageIndex.Text = this._JumpText;
         }
@@ -446,6 +447,14 @@ namespace goods
             this.SetDisplayStyle();
             this.SetLabelLocation();
 
+        }
+        public void reSet()
+        {
+            this._PageCount = this.GetPageCount(this._RecordCount, this._PageSize);
+            this.SetBtnEnabled();
+            this.SetPagerText();
+            this.SetDisplayStyle();
+            this.SetLabelLocation();
         }
     }
 }
