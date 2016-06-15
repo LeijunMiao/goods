@@ -8,15 +8,15 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Controller;
-using goods.Model;
 namespace goods
 {
     public partial class OrderMaterielPopup : Form
     {
         materielCtrl mctrl = new materielCtrl();
-
-        public OrderMaterielPopup()
+        CreateOrderView parentForm;
+        public OrderMaterielPopup(CreateOrderView form)
         {
+            parentForm = form;
             InitializeComponent();
             DataGridViewCheckBoxColumn newColumn = new DataGridViewCheckBoxColumn();
             newColumn.HeaderText = "选择";
@@ -27,7 +27,7 @@ namespace goods
         {
             pagingCom1.PageIndex = 1;
             pagingCom1.PageSize = 10;
-            var dtData = mctrl.getFilterList(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text);
+            var dtData = mctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, parentForm.allids);
             var dt = new DataTable();
             DataColumn dcId = new DataColumn("ID");
             DataColumn dcNO = new DataColumn("编号");
@@ -54,7 +54,10 @@ namespace goods
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            MessageBox.Show(e.RowIndex+"");
+            //MessageBox.Show(e.RowIndex+"");
+            this.Hide();
+            List<int> ids = new List<int>{ Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value) };
+            parentForm.renderMateriel(ids);
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -65,7 +68,24 @@ namespace goods
 
         private void button2_Click(object sender, EventArgs e)
         {
-
+            List<int> ids = new List<int>(); 
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                if (dataGridView1.Rows[i].Cells[0].EditedFormattedValue.ToString() == "True")
+                {
+                    ids.Add(Convert.ToInt32(dataGridView1.Rows[i].Cells["id"].Value));
+                }
+            }
+            if (ids.Count == 0)
+            {
+                MessageBox.Show("请至少选择一条数据！", "提示");
+                return;
+            }
+            else
+            {
+                this.Hide();
+                parentForm.renderMateriel(ids);
+            }
         }
     }
 }

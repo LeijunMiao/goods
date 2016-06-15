@@ -56,6 +56,7 @@
             // printDocument1
             // 
             this.printDocument1.OriginAtMargins = true;
+            
             // 
             // printDialog1
             // 

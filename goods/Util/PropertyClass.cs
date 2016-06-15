@@ -9,12 +9,25 @@ namespace goods
 {
     class PropertyClass
     {
+        private static int userId;
         private static string sendnamevalue;
         private static int role;
+        public static int UserId
+        {
+            set
+            {
+                userId = value;
+            }
+            get
+            {
+                return userId;
+            }
+        }
         /// <summary>
         /// 传递登录人员账号
         /// </summary>
         public static string SendNameValue
+
         {
             set
             {

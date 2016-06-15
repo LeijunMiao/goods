@@ -37,6 +37,7 @@ namespace goods
                 if (dtuser.Rows.Count > 0)
                 {
                     PropertyClass.SendNameValue = dtuser.Rows[0]["userName"].ToString();
+                    PropertyClass.UserId = Convert.ToInt32(dtuser.Rows[0]["id"]);
                     //PropertyClass.SendPopedomValue = dtuser.Rows[0]["user_competence"].ToString();
                     //PropertyClass.Password = dtuser.Rows[0]["user_password"].ToString();
                     PropertyClass.Role = Convert.ToInt32(dtuser.Rows[0]["role"].ToString());

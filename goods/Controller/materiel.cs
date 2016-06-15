@@ -32,7 +32,53 @@ namespace goods.Controller
             return dt;
 
         }
+        public DataTable getFilterListLimit(int pageIndex, int pageSize, string keyword, List<int> ids)
+        {
+            string sql = "SELECT * FROM materiel ";
+            string select = "";
+            string filter = " where ";
+            if (keyword != "")
+            {
+                select += " where (num like '%" + keyword + "%' or name like '%" + keyword + "%')";
+                filter = " and ";
+            }
+            sql += select;
+            if (ids.Count > 0)
+            {
+                filter += " id not in (";
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    if (i == 0) filter += ids[i];
+                    else filter += "," + ids[i];
+                }
+                filter += ")";
+                sql += filter;
+            }
+            if (pageIndex < 1) pageIndex = 1;
+            sql += " LIMIT " + (pageIndex - 1) * pageSize + "," + pageSize;
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            return dt;
+
+        }
+        
+        public DataTable getByids(List<int> ids)
+        {
+            string sql = "SELECT * FROM materiel ";
+            string select = " where id in (";
+            for (int i = 0; i < ids.Count; i++)
+            {
+                if(i == 0) select += ids[i];
+                else select += "," + ids[i];
+            }
+            select += ")";
+            sql += select;
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            return dt;
+
+        }
+        
         #endregion
+
         #region 新建
         public MessageModel add(object obj)
         {

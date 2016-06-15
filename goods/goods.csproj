@@ -33,6 +33,15 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="GrapeCity.ActiveReports.ArsClient.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.Chart.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.Diagnostics.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.Document.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.Export.Document.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.Export.Image.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.Extensibility.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
+    <Reference Include="GrapeCity.ActiveReports.Viewer.Win.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff, processorArchitecture=MSIL" />
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=10.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="MySql.Data, Version=7.0.2.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL" />
@@ -57,6 +66,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controller\department.cs" />
+    <Compile Include="Controller\list.cs" />
     <Compile Include="Controller\materiel.cs" />
     <Compile Include="Controller\metering.cs" />
     <Compile Include="Controller\order.cs" />
@@ -66,6 +76,9 @@
     <Compile Include="Controller\supplier.cs" />
     <Compile Include="Controller\user.cs" />
     <Compile Include="Controller\warehouse.cs" />
+    <Compile Include="Model\CallSlip.cs" />
+    <Compile Include="Model\GoDownEntry.cs" />
+    <Compile Include="Model\List.cs" />
     <Compile Include="Model\Materiel.cs" />
     <Compile Include="Model\Metering.cs" />
     <Compile Include="Model\Order.cs" />
@@ -146,6 +159,24 @@
     <Compile Include="View\Order\OrderMaterielPopup.Designer.cs">
       <DependentUpon>OrderMaterielPopup.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Order\OrderPrint.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Order\OrderPrint.Designer.cs">
+      <DependentUpon>OrderPrint.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Order\OrderSearch.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Order\OrderSearch.Designer.cs">
+      <DependentUpon>OrderSearch.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Order\OrderTrace.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Order\OrderTrace.Designer.cs">
+      <DependentUpon>OrderTrace.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Role\RolePopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -165,11 +196,29 @@
     <Compile Include="View\supplier\SupplierPopup.Designer.cs">
       <DependentUpon>SupplierPopup.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\supplier\SupplierSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\supplier\SupplierSelect.Designer.cs">
+      <DependentUpon>SupplierSelect.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\supplier\SupplierView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\supplier\SupplierView.Designer.cs">
       <DependentUpon>SupplierView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\GoDownEntryEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\GoDownEntryEdit.Designer.cs">
+      <DependentUpon>GoDownEntryEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\GoDownEntryList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\GoDownEntryList.Designer.cs">
+      <DependentUpon>GoDownEntryList.cs</DependentUpon>
     </Compile>
     <Compile Include="View\User\UserEditPopup.cs">
       <SubType>Form</SubType>
@@ -216,6 +265,7 @@
     <Compile Include="View\Warehouse\WarehouseView.Designer.cs">
       <DependentUpon>WarehouseView.cs</DependentUpon>
     </Compile>
+    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="View\Department\Department.resx">
       <DependentUpon>Department.cs</DependentUpon>
     </EmbeddedResource>
@@ -247,6 +297,15 @@
     <EmbeddedResource Include="View\Order\OrderMaterielPopup.resx">
       <DependentUpon>OrderMaterielPopup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Order\OrderPrint.resx">
+      <DependentUpon>OrderPrint.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Order\OrderSearch.resx">
+      <DependentUpon>OrderSearch.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Order\OrderTrace.resx">
+      <DependentUpon>OrderTrace.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Role\RolePopup.resx">
       <DependentUpon>RolePopup.cs</DependentUpon>
     </EmbeddedResource>
@@ -256,8 +315,17 @@
     <EmbeddedResource Include="View\supplier\SupplierPopup.resx">
       <DependentUpon>SupplierPopup.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\supplier\SupplierSelect.resx">
+      <DependentUpon>SupplierSelect.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\supplier\SupplierView.resx">
       <DependentUpon>SupplierView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\GoDownEntryEdit.resx">
+      <DependentUpon>GoDownEntryEdit.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\GoDownEntryList.resx">
+      <DependentUpon>GoDownEntryList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\User\UserEditPopup.resx">
       <DependentUpon>UserEditPopup.cs</DependentUpon>
@@ -307,6 +375,12 @@
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Observer\Observer.csproj">
+      <Project>{29caefa9-84e4-4ebb-8c3f-96ec25073ee0}</Project>
+      <Name>Observer</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

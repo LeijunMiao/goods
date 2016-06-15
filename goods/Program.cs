@@ -73,7 +73,7 @@ namespace goods
                     //ServerInfo.GetServerInfo();
                     Application.EnableVisualStyles();
                     Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new MainForm());//UserView Department RoleView SupplierView 
+                    Application.Run(new GoDownEntryList());//UserView Department RoleView SupplierView 
                 }
                 else
                 {

@@ -15,6 +15,11 @@ namespace goods.Model
         private DateTime lastModifiedAt; // 最后修改时间
 
         public SupplierModel() { }
+
+        public SupplierModel(int id,string name) {
+            this.id = id;
+            this.name = name;
+        }
         public SupplierModel(String num, String name) {
             this.num = num;
             this.name = name;

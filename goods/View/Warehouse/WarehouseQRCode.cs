@@ -18,9 +18,8 @@ namespace goods
             InitializeComponent();
             this.label1.Text = code;
             pictureBox1.Image = GenByZXingNet(code);
-            //this.printDocument1.OriginAtMargins = true;//启用页边距
-            //this.pageSetupDialog1.EnableMetric = true; //以毫米为单位
             printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage);
+            this.printDocument1.DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
         }
         /// <summary>
         /// 生成二维码
@@ -37,7 +36,7 @@ namespace goods
                ZXing.QrCode.Internal.ErrorCorrectionLevel.H
 
             );
-            const int codeSizeInPixels = 250;   //设置图片长宽
+            const int codeSizeInPixels = 80;   //设置图片长宽
             writer.Options.Height = writer.Options.Width = codeSizeInPixels;
             writer.Options.Margin = 0;//设置边框
             ZXing.Common.BitMatrix bm = writer.Encode(msg);
@@ -92,7 +91,7 @@ namespace goods
             {
                 if (pictureBox1.Image != null)
                 {
-                    e.Graphics.DrawImage(pictureBox1.Image, 20, 20);//e.Graphics.VisibleClipBounds);
+                    e.Graphics.DrawImage(pictureBox1.Image, 5, 5);//e.Graphics.VisibleClipBounds);
                     e.HasMorePages = false;
                 }
             }
@@ -106,12 +105,16 @@ namespace goods
             if (printPreviewDialog1.Controls.ContainsKey("toolStrip1"))
             {
                 ToolStrip ts = printPreviewDialog1.Controls["toolStrip1"] as ToolStrip;
-                ts.Items.Add("打印设置");
+                //ts.Items.Add("打印设置");
                 if (ts.Items.ContainsKey("printToolStripButton")) //打印按钮
                 {
                     ts.Items["printToolStripButton"].MouseDown += new MouseEventHandler(click);
                 }
             }
+        }
+        private void printSet(object sender, EventArgs e)
+        {
+            MessageBox.Show("Test");
         }
         void click(object sender, MouseEventArgs e)
         {
