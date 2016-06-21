@@ -43,7 +43,7 @@ namespace goods.Role
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -53,8 +53,8 @@ namespace goods.Role
             MessageModel msg = rctrl.add(rm);
             if (msg.Code == 0)
             {
-                this.Hide();
                 parentForm.LoadRoleDate(value);
+                this.Close();
             }
             else
             {

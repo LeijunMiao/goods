@@ -22,6 +22,7 @@ namespace goods
         Dictionary<string, TreeNode> map_id_tn = new Dictionary<string, TreeNode>();//存树map
         private DataTable dtData = null;
         private DataTable dt = null;
+        private DataTable dtPolicyView = null; 
 
         int roleId = -1;
         int loaded = -1; //判断窗体是否加载完成
@@ -39,6 +40,7 @@ namespace goods
         }
         public void LoadRoleDate(int depid){
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             if (depid == -1)
             {
                 innerTag it = (innerTag)treeView1.SelectedNode.Tag;
@@ -105,17 +107,26 @@ namespace goods
         {
             if (dataGridView1.SelectedRows.Count > 0 && loaded == 1)
             {
+                DataGridViewColumn colId = new DataGridViewTextBoxColumn();
+                colId.DataPropertyName = "id";
+                colId.Visible = false;
+                colId.Name = "id";
+                dataGridView2.Columns.Add(colId);
+
                 roleId = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
                 var dtPolicyData = pctrl.getFeatureByRole(roleId);
-                var dtPolicyView = new DataTable();
+                dtPolicyView = new DataTable();
                 DataColumn dcName = new DataColumn("名称");
+                DataColumn dcId = new DataColumn("id");
                 dtPolicyView.Columns.Add(dcName);
+                dtPolicyView.Columns.Add(dcId);
 
 
                 for (int i = 0; i < dtPolicyData.Rows.Count; i++)
                 {
                     DataRow dr = dtPolicyView.NewRow();
                     dr[0] = dtPolicyData.Rows[i]["name"].ToString();
+                    dr[1] = dtPolicyData.Rows[i]["pid"].ToString();
                     dtPolicyView.Rows.Add(dr);
                 }
                 dataGridView2.DataSource = dtPolicyView;
@@ -178,17 +189,20 @@ namespace goods
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
-            RoleModel rm = new RoleModel(Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value));
-            MessageModel msg = rc.del(rm);
-            if (msg.Code == 0)
+            if (MessageBox.Show("确定删除?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                DataRow[] dr = dt.Select("no='" + dataGridView1.SelectedRows[0].Cells[0].Value.ToString() + "'");
-                dt.Rows.Remove(dr[0]);
-                this.dataGridView1.DataSource = dt;
-            }
-            else
-            {
-                MessageBox.Show(msg.Msg);
+                RoleModel rm = new RoleModel(Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value));
+                MessageModel msg = rc.del(rm);
+                if (msg.Code == 0)
+                {
+                    DataRow[] dr = dt.Select("no='" + dataGridView1.SelectedRows[0].Cells[0].Value.ToString() + "'");
+                    dt.Rows.Remove(dr[0]);
+                    this.dataGridView1.DataSource = dt;
+                }
+                else
+                {
+                    MessageBox.Show(msg.Msg);
+                }
             }
         }
 
@@ -209,6 +223,31 @@ namespace goods
                 }
             }
 
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            if(dataGridView2.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("请选择一行！");
+                return;
+            }
+            else if (MessageBox.Show("确定删除?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            {
+                PolicyModel rm = new PolicyModel();
+                rm.Id = Convert.ToInt32(dataGridView2.SelectedRows[0].Cells["id"].Value);
+                MessageModel msg = pctrl.del(rm);
+                if (msg.Code == 0)
+                {
+                    DataRow[] dr = dtPolicyView.Select("id='" + dataGridView2.SelectedRows[0].Cells["id"].Value.ToString() + "'");
+                    dtPolicyView.Rows.Remove(dr[0]);
+                    this.dataGridView2.DataSource = dtPolicyView;
+                }
+                else
+                {
+                    MessageBox.Show(msg.Msg);
+                }
+            }
         }
     }
 }

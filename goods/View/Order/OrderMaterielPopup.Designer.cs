@@ -80,6 +80,11 @@
             this.dataGridView1.AllowUserToDeleteRows = false;
             this.dataGridView1.AllowUserToResizeColumns = false;
             this.dataGridView1.AllowUserToResizeRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dataGridView1.CellBorderStyle = System.Windows.Forms.DataGridViewCellBorderStyle.None;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(12, 76);
@@ -88,7 +93,7 @@
             this.dataGridView1.RowHeadersVisible = false;
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.FullRowSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(735, 323);
+            this.dataGridView1.Size = new System.Drawing.Size(815, 283);
             this.dataGridView1.TabIndex = 6;
             this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellContentClick);
             this.dataGridView1.CellDoubleClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellDoubleClick);
@@ -98,17 +103,19 @@
             this.pagingCom1.BtnTextNext = "下页";
             this.pagingCom1.BtnTextPrevious = "上页";
             this.pagingCom1.DisplayStyle = goods.pagingCom.DisplayStyleEnum.文字;
-            this.pagingCom1.Location = new System.Drawing.Point(-49, 405);
+            this.pagingCom1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pagingCom1.Location = new System.Drawing.Point(0, 365);
             this.pagingCom1.Name = "pagingCom1";
             this.pagingCom1.RecordCount = 0;
-            this.pagingCom1.Size = new System.Drawing.Size(808, 41);
+            this.pagingCom1.Size = new System.Drawing.Size(839, 41);
             this.pagingCom1.TabIndex = 3;
+            this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
             // 
             // OrderMaterielPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(759, 445);
+            this.ClientSize = new System.Drawing.Size(839, 406);
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.button3);
             this.Controls.Add(this.button2);
@@ -116,7 +123,7 @@
             this.Controls.Add(this.button1);
             this.Controls.Add(this.textBox1);
             this.Name = "OrderMaterielPopup";
-            this.Text = "OrderMaterielPopup";
+            this.Text = "物料";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

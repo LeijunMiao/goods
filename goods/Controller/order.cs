@@ -19,7 +19,7 @@ namespace goods.Controller
             return dt;
         }
         #endregion
-        public DataTable getFilterOrderMateriel(int pageIndex, int pageSize, int supplier,bool isDate ,DateTime date, string orderNum, string materielNum)
+        public DataTable getFilterOrderMateriel(int pageIndex, int pageSize, string supplier,bool isDate ,DateTime date, string orderNum, string materielNum)
         {
             string sql = " SELECT om.id,po.num ponum, m.num mnum,m.id mid,po.date date,s.name sname,m.name mname,m.specifications specifications, meter.name metering,om.price,om.quantity,om.amount,om.tax,om.deliveryDate, " +
                 "(SELECT SUM(quantity) FROM entrymateriel e, godownentry g WHERE e.entry = g.id and g.purchaseOrder = po.id) quantityAll" +
@@ -33,9 +33,9 @@ namespace goods.Controller
             {
                 select += " and m.num like '%" + materielNum + "%' ";
             }
-            if(supplier > -1)
+            if(supplier != "")
             {
-                select += " and po.supplier = '" + supplier + "' ";
+                select += " and s.name like '%" + supplier + "%' ";
             }
             if(isDate == true)
             {
@@ -48,6 +48,32 @@ namespace goods.Controller
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
 
+        }
+        public int getCount(string supplier, bool isDate, DateTime date, string orderNum, string materielNum)
+        {
+            string sql = " SELECT count(om.id) FROM ordermateriel om ,purchaseorder po,materiel m,supplier s" +
+            " where om.purchaseorder = po.id and om.materiel = m.id and po.supplier = s.id ";
+            string select = "";
+            if(orderNum != "")
+            {
+                select += " and po.num like '%" + orderNum + "%' ";
+            }
+            if (materielNum != "")
+            {
+                select += " and m.num like '%" + materielNum + "%' ";
+            }
+            if (supplier != "")
+            {
+                select += " and s.name like '%" + supplier + "%' ";
+            }
+            if (isDate == true)
+            {
+                select += " and po.date = '" + date + "' ";
+            }
+            sql += select;
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            int count = Convert.ToInt32(dt.Rows[0][0]);
+            return count;
         }
 
         public DataTable getSupplierOrder(int pageIndex, int pageSize, bool isStart,DateTime start,bool isEnd,DateTime end,string supplier)
@@ -83,8 +109,9 @@ namespace goods.Controller
 
         }
         
-        public bool updateBatch(List<parmas> ids)
+        public List<string> updateBatch(List<parmas> ids)
         {
+            Guid tempCartId = Guid.NewGuid();
             List<string> sqlList = new List<string>();
             //string sqlBatch = "insert into batchid (num,date) values " +
             //        " ('" + ids.Count + "',curdate() ) " +
@@ -94,16 +121,30 @@ namespace goods.Controller
             var dateStr = string.Format("{0:yyyyMMdd}", DateTime.Now);  //"" + DateTime.Now.Year + DateTime.Now.Month + DateTime.Now.Date;
             
             string sqlbatch = " ";
+            List<string> uuids = new List<string>();
             for (int i = 0; i < ids.Count; i++)
             {
-                sqlbatch = "insert into batchmateriel (date,ordermateriel,materiel,num) values (now(), '" + ids[i].id + "','" + ids[i].mid + "', concat('" + dateStr + "','" + ids[i].num + "',LPAD(" + num + ",9,'0'))); ";
+                var uuid = tempCartId.ToString() + i;
+                sqlbatch = "insert into batchmateriel (date,ordermateriel,materiel,num,uuid) values (now(), '" + ids[i].id + "','" + ids[i].mid + "', concat('" + dateStr + "','" + ids[i].num + "',LPAD(" + num + ",9,'0')),'" + uuid + "'); ";
                 sqlList.Add(sqlbatch);
+                uuids.Add(uuid);
             }
             
             bool result = h.ExcuteTransaction(sqlList);
-            return result;
+            return uuids;
         }
-        
+        public DataTable getqrcode(List<string> ids)
+        {
+            var sql = " SELECT num FROM batchmateriel where uuid in ( ";
+            for (int i = 0; i < ids.Count; i++)
+            {
+                if (i == 0) sql += "'" + ids[i] + "'";
+                else sql += ",'" + ids[i] + "'";
+            }
+            sql += ")";
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            return dt;
+        }
         #region 新建
         public MessageModel add(orderParmas gm)
         {

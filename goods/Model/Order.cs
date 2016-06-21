@@ -22,7 +22,7 @@ namespace goods.Model
         {
             get
             {
-                return id ;
+                return id;
             }
             set
             {
@@ -108,7 +108,7 @@ namespace goods.Model
         public DateTime deliveryDate { get; set; }
         public List<ListModel> listM { get; set; }
 
-        public orderParmas(int supplier, int user, string summary, DateTime date, DateTime deliveryDate )
+        public orderParmas(int supplier, int user, string summary, DateTime date, DateTime deliveryDate)
         {
             this.supplier = supplier;
             this.user = user;
@@ -131,7 +131,7 @@ namespace goods.Model
         public double amount { get; set; }
         public string summary { get; set; }
         public DateTime deliveryDate { get; set; }
-            
+
         public ListModel() { }
 
 
@@ -148,6 +148,99 @@ namespace goods.Model
             this.id = id;
             this.mid = mid;
             this.num = num;
+        }
+    }
+    public class printModel
+    {
+        public string num { get; set; }
+        public string name { get; set; }
+        public string specifications { get; set; }
+        public string metering { get; set; }
+        public string subMetering { get; set; }
+        public string type { get; set; }
+        public string price { get; set; }
+        public string tax { get; set; }
+        public string taxprice { get; set; }
+        public string quantity { get; set; }
+        public string conversion { get; set; }
+        public string subquantity { get; set; }
+        public string amount { get; set; }
+        public string taxamount { get; set; }
+        public string allamount { get; set; }
+        public string deliveryDate { get; set; }
+        public string summary { get; set; }
+
+        public printModel() { }
+        public printModel(System.Windows.Forms.DataGridViewRow dr)
+        {
+            this.num = dr.Cells["num"].Value.ToString();
+            this.name = dr.Cells["name"].Value.ToString();
+            this.specifications = dr.Cells["specifications"].Value.ToString();
+            this.metering = dr.Cells["metering"].Value.ToString();
+            this.subMetering = dr.Cells["subMetering"].Value.ToString();
+            this.type = dr.Cells["type"].Value.ToString();
+            this.taxamount = dr.Cells["taxamount"].Value.ToString();
+            this.allamount = dr.Cells["allamount"].Value.ToString();
+            this.price = dr.Cells["price"].Value.ToString();
+            this.taxprice = dr.Cells["taxprice"].Value.ToString();
+            this.amount = dr.Cells["amount"].Value.ToString();
+            this.tax = dr.Cells["tax"].Value.ToString();
+            this.deliveryDate = (DateTime.Parse(dr.Cells["deliveryDate"].Value.ToString())).ToString("yyyy-MM-dd");
+            this.quantity = dr.Cells["quantity"].Value.ToString();
+            this.subquantity = dr.Cells["subquantity"].Value.ToString();
+            this.conversion = dr.Cells["conversion"].Value.ToString();
+            if (dr.Cells["summary"].Value != null) this.summary = dr.Cells["summary"].Value.ToString();
+            else this.summary = "";
+        }
+        public printModel(string num, string name, string specifications, string metering, string subMetering, string type, string taxamount, string allamount
+            , string price, string taxprice, string amount, string tax, string deliveryDate, string quantity, string subquantity, string conversion, string summary)
+        {
+            this.num = num;
+            this.name = name;
+            this.specifications = specifications;
+            this.metering = metering;
+            this.subMetering = subMetering;
+            this.type = type;
+            this.taxamount = taxamount;
+            this.allamount = allamount;
+            this.price = price;
+            this.taxprice = taxprice;
+            this.amount = amount;
+            this.tax = tax;
+            this.deliveryDate = deliveryDate;
+            this.quantity = quantity;
+            this.subquantity = subquantity;
+            this.conversion = conversion;
+            this.summary = summary;
+        }
+    }
+
+    public class printListModel
+    {
+        public string num { get; set; }
+        public string name { get; set; }
+        public string specifications { get; set; }
+        public string metering { get; set; }
+        public string subMetering { get; set; }
+        public string price { get; set; }
+        public string quantity { get; set; }
+        public string conversion { get; set; }
+        public string subquantity { get; set; }
+        public string amount { get; set; }
+
+        public printListModel() { }
+        public printListModel(System.Windows.Forms.DataGridViewRow dr)
+        {
+            this.num = dr.Cells["num"].Value.ToString();
+            this.name = dr.Cells["name"].Value.ToString();
+            this.specifications = dr.Cells["specifications"].Value.ToString();
+            this.metering = dr.Cells["metering"].Value.ToString();
+            this.subMetering = dr.Cells["subMetering"].Value.ToString();
+            this.price = dr.Cells["price"].Value.ToString();
+            this.amount = dr.Cells["amount"].Value.ToString();
+            this.quantity = dr.Cells["quantity"].Value.ToString();
+            this.subquantity = dr.Cells["subquantity"].Value.ToString();
+            this.conversion = dr.Cells["conversion"].Value.ToString();
         }
     }
 }

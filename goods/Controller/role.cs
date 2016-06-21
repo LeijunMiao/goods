@@ -72,16 +72,26 @@ namespace goods.Controller
         #region 删除
         public MessageModel del(object obj)
         {
-            RoleModel rm = (RoleModel)obj;
-            string sql = "DELETE FROM role WHERE id = '" + rm.Id + "' ";
-            int res = h.ExecuteNonQuery(sql, CommandType.Text);
             MessageModel msg;
-            if (res > 0)
+            RoleModel rm = (RoleModel)obj;
+            string sql = "SELECT count(id) FROM user where role = '" + rm.Id + "' ";
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            if (Convert.ToInt32(dt.Rows[0][0]) > 0)
             {
-                msg = new MessageModel(0, "删除成功");
+                return msg = new MessageModel(20003, "该角色已被关联，不允许删除!");
             }
-            else msg = new MessageModel(10005, "删除失败");
-            return msg;
+            else
+            {
+                sql = "DELETE FROM role WHERE id = '" + rm.Id + "' ";
+                int res = h.ExecuteNonQuery(sql, CommandType.Text);
+                if (res > 0)
+                {
+                    msg = new MessageModel(0, "删除成功");
+                }
+                else msg = new MessageModel(10005, "删除失败");
+                return msg;
+            }
+            
         }
         #endregion
     }

@@ -11,27 +11,23 @@ using goods.Controller;
 using goods.Model;
 namespace goods
 {
-    public partial class MeteringPopup : Form
+    public partial class CustomerPopup : Form
     {
-        MeteringView pForm;
-        meteringCtrl ctrl = new meteringCtrl();
-        public MeteringPopup(MeteringView form)
+        customerCtrl ctrl = new customerCtrl();
+        public CustomerView parentForm;
+        public CustomerPopup(CustomerView form)
         {
-            pForm = form;
             InitializeComponent();
+            parentForm = form;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (textBox1.Text == "" || textBox2.Text == "")
-            {
-                MessageBox.Show("字段必填！");
-            }
-            MeteringModel m = new MeteringModel(textBox1.Text, textBox2.Text);
-            MessageModel msg = ctrl.add(m);
+            CustomerModel model = new CustomerModel(textBox1.Text, textBox2.Text);
+            MessageModel msg = ctrl.add(model);
             if (msg.Code == 0)
             {
-                pForm.loadData();
+                parentForm.loadData();
                 this.Close();
             }
             else

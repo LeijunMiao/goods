@@ -26,7 +26,13 @@ namespace goods
         {
             InitializeComponent();
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.textBox1.KeyDown += button1_KeyDown;
         }
+        private void button1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) { BindDataWithPage(1); }
+        }
+
         public void loadData() {
             BindDataWithPage(1);
         }

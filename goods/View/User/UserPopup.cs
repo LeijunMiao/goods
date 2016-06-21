@@ -44,8 +44,8 @@ namespace goods
             MessageModel msg = uctrl.add(u);
             if (msg.Code == 0)
             {
-                this.Hide();
                 parentForm.loadData();
+                this.Close();
             }
             else
             {
@@ -55,7 +55,7 @@ namespace goods
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)

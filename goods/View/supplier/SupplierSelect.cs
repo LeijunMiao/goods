@@ -18,26 +18,24 @@ namespace goods
         public SupplierSelect()
         {
             InitializeComponent();
-            searchSupplier();
+            initTable();
+            searchSupplier(1);
+
         }
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             SupplierModel sm = new SupplierModel(Convert.ToInt32(this.dataGridView1[0, e.RowIndex].Value) , this.dataGridView1[2, e.RowIndex].Value.ToString());
             MidModule.SendMessage(this, sm);//发送参数值
-            this.Hide();
+            this.Close();
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            searchSupplier();
+            searchSupplier(1);
         }
-        private void searchSupplier()
+        private void initTable()
         {
-            pagingCom1.PageIndex = 1;
-            pagingCom1.PageSize = 10;
-            var dtData = sctrl.getFilterList(pagingCom1.PageIndex, pagingCom1.PageSize, "", textBox1.Text);
-
             DataGridViewColumn colId = new DataGridViewLinkColumn();
             colId.DataPropertyName = "id";//字段
             colId.Visible = false;
@@ -52,6 +50,16 @@ namespace goods
             colName.DataPropertyName = "name";//字段
             colName.HeaderText = "名称";
             dataGridView1.Columns.Add(colName);
+        }
+        private void searchSupplier(int index)
+        {
+            pagingCom1.PageIndex = index;
+            pagingCom1.PageSize = 10;
+            var dtData = sctrl.getFilterList(pagingCom1.PageIndex, pagingCom1.PageSize, "", textBox1.Text);
+
+            //获取并设置总记录数
+            pagingCom1.RecordCount = sctrl.getCount("",textBox1.Text);//Convert.ToInt32(dsData.Tables[1].Rows[0][0]);
+
             //var dt = new DataTable();
             //DataColumn dcId = new DataColumn("ID");
             //DataColumn dcNO = new DataColumn("编号");
@@ -67,10 +75,18 @@ namespace goods
                 dr[2] = dtData.Rows[i]["name"].ToString();
                 dt.Rows.Add(dr);
             }*/
-
-
             dataGridView1.DataSource = dtData;
             dataGridView1.ClearSelection();
+            pagingCom1.reSet();
+        }
+
+        private void button1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) { searchSupplier(1); }
+        }
+        private void pageIndexChanged(object sender, EventArgs e)
+        {
+            searchSupplier(pagingCom1.PageIndex);
         }
     }
 }

@@ -31,7 +31,7 @@ namespace goods.Controller
         #region 获取功能
         public DataTable getFeatureByRole(int roleId)
         {
-            string sql = "select f.name,f.id,f.key from policy p, feature f where p.feature = f.id and  role =" + roleId;
+            string sql = "select f.name,f.id,f.key,p.id pid from policy p, feature f where p.feature = f.id and  role =" + roleId;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
@@ -74,7 +74,15 @@ namespace goods.Controller
         #region 删除
         public MessageModel del(object obj)
         {
-            MessageModel msg = new MessageModel();
+            MessageModel msg;
+            PolicyModel pm = (PolicyModel)obj;
+            string sql = "DELETE FROM policy WHERE id = '" + pm.Id + "' ";
+            int res = h.ExecuteNonQuery(sql, CommandType.Text);
+            if (res > 0)
+            {
+                msg = new MessageModel(0, "删除成功");
+            }
+            else msg = new MessageModel(10005, "删除失败");
             return msg;
         }
         #endregion

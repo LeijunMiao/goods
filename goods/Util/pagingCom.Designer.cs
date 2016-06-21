@@ -28,8 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(pagingCom));
             this.lblPager = new System.Windows.Forms.Label();
             this.btnFirst = new System.Windows.Forms.Button();
             this.btnPrevious = new System.Windows.Forms.Button();
@@ -39,14 +37,12 @@
             this.lbPre = new System.Windows.Forms.Label();
             this.lbEnd = new System.Windows.Forms.Label();
             this.txtToPageIndex = new System.Windows.Forms.TextBox();
-            //this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            //this.imglstPager = new System.Windows.Forms.ImageList(this.components);
             this.SuspendLayout();
             // 
             // lblPager
             // 
             this.lblPager.AutoSize = true;
-            this.lblPager.Location = new System.Drawing.Point(56, 14);
+            this.lblPager.Location = new System.Drawing.Point(25, 11);
             this.lblPager.Name = "lblPager";
             this.lblPager.Size = new System.Drawing.Size(287, 12);
             this.lblPager.TabIndex = 0;
@@ -54,7 +50,7 @@
             // 
             // btnFirst
             // 
-            this.btnFirst.Location = new System.Drawing.Point(371, 9);
+            this.btnFirst.Location = new System.Drawing.Point(318, 6);
             this.btnFirst.Name = "btnFirst";
             this.btnFirst.Size = new System.Drawing.Size(75, 23);
             this.btnFirst.TabIndex = 1;
@@ -64,7 +60,7 @@
             // 
             // btnPrevious
             // 
-            this.btnPrevious.Location = new System.Drawing.Point(452, 9);
+            this.btnPrevious.Location = new System.Drawing.Point(399, 6);
             this.btnPrevious.Name = "btnPrevious";
             this.btnPrevious.Size = new System.Drawing.Size(75, 23);
             this.btnPrevious.TabIndex = 2;
@@ -74,7 +70,7 @@
             // 
             // btnNext
             // 
-            this.btnNext.Location = new System.Drawing.Point(533, 9);
+            this.btnNext.Location = new System.Drawing.Point(480, 6);
             this.btnNext.Name = "btnNext";
             this.btnNext.Size = new System.Drawing.Size(75, 23);
             this.btnNext.TabIndex = 3;
@@ -84,7 +80,7 @@
             // 
             // btnLast
             // 
-            this.btnLast.Location = new System.Drawing.Point(614, 9);
+            this.btnLast.Location = new System.Drawing.Point(561, 6);
             this.btnLast.Name = "btnLast";
             this.btnLast.Size = new System.Drawing.Size(75, 23);
             this.btnLast.TabIndex = 4;
@@ -94,7 +90,7 @@
             // 
             // btnToPageIndex
             // 
-            this.btnToPageIndex.Location = new System.Drawing.Point(853, 9);
+            this.btnToPageIndex.Location = new System.Drawing.Point(758, 6);
             this.btnToPageIndex.Name = "btnToPageIndex";
             this.btnToPageIndex.Size = new System.Drawing.Size(75, 23);
             this.btnToPageIndex.TabIndex = 5;
@@ -105,7 +101,7 @@
             // lbPre
             // 
             this.lbPre.AutoSize = true;
-            this.lbPre.Location = new System.Drawing.Point(717, 14);
+            this.lbPre.Location = new System.Drawing.Point(642, 11);
             this.lbPre.Name = "lbPre";
             this.lbPre.Size = new System.Drawing.Size(17, 12);
             this.lbPre.TabIndex = 6;
@@ -114,7 +110,7 @@
             // lbEnd
             // 
             this.lbEnd.AutoSize = true;
-            this.lbEnd.Location = new System.Drawing.Point(810, 14);
+            this.lbEnd.Location = new System.Drawing.Point(735, 11);
             this.lbEnd.Name = "lbEnd";
             this.lbEnd.Size = new System.Drawing.Size(17, 12);
             this.lbEnd.TabIndex = 7;
@@ -122,26 +118,12 @@
             // 
             // txtToPageIndex
             // 
-            this.txtToPageIndex.Location = new System.Drawing.Point(740, 11);
+            this.txtToPageIndex.Location = new System.Drawing.Point(665, 8);
             this.txtToPageIndex.Name = "txtToPageIndex";
             this.txtToPageIndex.Size = new System.Drawing.Size(64, 21);
             this.txtToPageIndex.TabIndex = 8;
             // 
-            // contextMenuStrip1
-            // 
-            //this.contextMenuStrip1.Name = "contextMenuStrip1";
-            //this.contextMenuStrip1.Size = new System.Drawing.Size(61, 4);
-            // 
-            // imglstPager
-            // 
-            //this.imglstPager.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imglstPager.ImageStream")));
-            //this.imglstPager.TransparentColor = System.Drawing.Color.Transparent;
-            //this.imglstPager.Images.SetKeyName(0, "first.gif");
-            //this.imglstPager.Images.SetKeyName(1, "prev.gif");
-            //this.imglstPager.Images.SetKeyName(2, "next.gif");
-            //this.imglstPager.Images.SetKeyName(3, "last.gif");
-            // 
-            // paging
+            // pagingCom
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -154,12 +136,13 @@
             this.Controls.Add(this.btnPrevious);
             this.Controls.Add(this.btnFirst);
             this.Controls.Add(this.lblPager);
-            this.Name = "paging";
-            this.Size = new System.Drawing.Size(981, 41);
+            this.Name = "pagingCom";
+            this.Size = new System.Drawing.Size(860, 49);
             this.Load += new System.EventHandler(this.WinFormPager_Load);
             this.Paint += new System.Windows.Forms.PaintEventHandler(this.WinFormPager_Paint);
             this.ResumeLayout(false);
             this.PerformLayout();
+
         }
 
         #endregion

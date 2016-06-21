@@ -40,8 +40,8 @@ namespace goods
                 MessageModel msg = ctrl.add(s);
                 if (msg.Code == 0)
                 {
-                    this.Hide();
                     parentForm.loadData();
+                    this.Close();
                 }
                 else
                 {
@@ -54,8 +54,8 @@ namespace goods
                 MessageModel msg = pctrl.add(p);
                 if (msg.Code == 0)
                 {
-                    this.Hide();
                     parentForm.loadData();
+                    this.Close();
                 }
                 else
                 {
@@ -66,7 +66,7 @@ namespace goods
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
     }
 }

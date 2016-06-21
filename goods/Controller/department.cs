@@ -79,17 +79,36 @@ namespace goods.Controller
 
         public MessageModel del(object obj)
         {
-            DepartmentModel dep = (DepartmentModel)obj;
-            string sql = "DELETE FROM department WHERE id = '" + dep.Id + "' ";
-            //int res = DBHelp.GetSQL(sql);
-            int res = h.ExecuteNonQuery(sql, CommandType.Text);
             MessageModel msg;
-            if (res > 0)
+            DepartmentModel dep = (DepartmentModel)obj;
+            string sql = "SELECT count(id) FROM role where departmentId = '" + dep.Id + "' ";
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            if(Convert.ToInt32(dt.Rows[0][0]) >0)
             {
-                msg = new MessageModel(0, "删除成功");
+                return msg = new MessageModel(20003, "该组织已被关联，不允许删除!");
             }
-            else msg = new MessageModel(10005, "删除失败");
-            return msg;
+            else
+            {
+                sql = "SELECT count(id) FROM department where parentId = '" + dep.Id + "' ";
+                dt = h.ExecuteQuery(sql, CommandType.Text);
+                if (Convert.ToInt32(dt.Rows[0][0]) > 0)
+                {
+                    return msg = new MessageModel(20003, "该组织有子分类，请先删除!");
+                }
+                else
+                {
+                    sql = "DELETE FROM department WHERE id = '" + dep.Id + "' ";
+                    int res = h.ExecuteNonQuery(sql, CommandType.Text);
+
+                    if (res > 0)
+                    {
+                        msg = new MessageModel(0, "删除成功");
+                    }
+                    else msg = new MessageModel(10005, "删除失败");
+                    return msg;
+                }
+            }
+            
         }
     }
 }

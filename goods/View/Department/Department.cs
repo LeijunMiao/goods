@@ -64,6 +64,11 @@ namespace goods
             if (treeView1.SelectedNode != null)
             {
                 innerTag it = (innerTag)treeView1.SelectedNode.Tag;
+                if(it.parent == "0")
+                {
+                    MessageBox.Show("禁止创建同级最高级别组织！");
+                    return;
+                }
                 this.createDepartment(it.parent);//, treeView1.SelectedNode.Parent
             }
             else
@@ -149,11 +154,12 @@ namespace goods
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
             innerTag it = (innerTag)treeView1.SelectedNode.Tag;
-            if(it.id == "0")
+            if (it.parent == "0")
             {
-                MessageBox.Show("禁止删除");
+                MessageBox.Show("禁止删除最高级别组织！");
+                return;
             }
-            else
+            if (MessageBox.Show("确定删除?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 DepartmentModel dep = new DepartmentModel(Convert.ToInt32(it.id));
                 MessageModel msg = ctrl.del(dep);
@@ -168,7 +174,6 @@ namespace goods
                     MessageBox.Show(msg.Msg);
                 }
             }
-
         }
 
         /// <summary>

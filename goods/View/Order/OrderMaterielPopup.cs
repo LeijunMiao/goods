@@ -18,52 +18,84 @@ namespace goods
         {
             parentForm = form;
             InitializeComponent();
-            DataGridViewCheckBoxColumn newColumn = new DataGridViewCheckBoxColumn();
-            newColumn.HeaderText = "选择";
-            dataGridView1.Columns.Add(newColumn);
+            loadTabel();
+            loadData(1);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void loadTabel()
         {
-            pagingCom1.PageIndex = 1;
+            this.dataGridView1.AutoGenerateColumns = false;
+            DataGridViewCheckBoxColumn newColumn = new DataGridViewCheckBoxColumn();
+            newColumn.HeaderText = "选择";
+            newColumn.FillWeight = 20;
+            dataGridView1.Columns.Add(newColumn);
+
+            DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
+            numColumn.HeaderText = "编号";
+            numColumn.DataPropertyName = "num";
+            dataGridView1.Columns.Add(numColumn);
+
+            DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
+            idColumn.DataPropertyName = "id";
+            idColumn.Visible = false;
+            idColumn.Name = "id";
+            dataGridView1.Columns.Add(idColumn);
+
+            DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
+            nameColumn.DataPropertyName = "name";
+            nameColumn.HeaderText = "名称";
+            dataGridView1.Columns.Add(nameColumn);
+            
+        }
+        private void loadData(int index)
+        {
+            pagingCom1.PageIndex = index;
             pagingCom1.PageSize = 10;
             var dtData = mctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, parentForm.allids);
-            var dt = new DataTable();
-            DataColumn dcId = new DataColumn("ID");
-            DataColumn dcNO = new DataColumn("编号");
-            DataColumn dcUName = new DataColumn("名称");
-            DataColumn[] list_dc = { dcId, dcNO, dcUName};
-            dt.Columns.AddRange(list_dc);
-            for (int i = 0; i < dtData.Rows.Count; i++)
-            {
-                DataRow dr = dt.NewRow();
-                dr[0] = dtData.Rows[i]["id"].ToString();
-                dr[1] = dtData.Rows[i]["num"].ToString();
-                dr[2] = dtData.Rows[i]["name"].ToString();
-                dt.Rows.Add(dr);
-            }
+            //var dt = new DataTable();
+            //DataColumn dcId = new DataColumn("ID");
+            //DataColumn dcNO = new DataColumn("编号");
+            //DataColumn dcUName = new DataColumn("名称");
+            //DataColumn[] list_dc = { dcId, dcNO, dcUName };
+            //dt.Columns.AddRange(list_dc);
+            //for (int i = 0; i < dtData.Rows.Count; i++)
+            //{
+            //    DataRow dr = dt.NewRow();
+            //    dr[0] = dtData.Rows[i]["id"].ToString();
+            //    dr[1] = dtData.Rows[i]["num"].ToString();
+            //    dr[2] = dtData.Rows[i]["name"].ToString();
+            //    dt.Rows.Add(dr);
+            //}
 
+            dataGridView1.DataSource = dtData;
+            pagingCom1.RecordCount = mctrl.getCount(textBox1.Text, parentForm.allids);
+            pagingCom1.reSet();
 
-            dataGridView1.DataSource = dt;
+        }
+        private void button1_Click(object sender, EventArgs e)
+        {
+            loadData(1);
         }
 
         private void button3_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            //MessageBox.Show(e.RowIndex+"");
-            this.Hide();
-            List<int> ids = new List<int>{ Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value) };
-            parentForm.renderMateriel(ids);
+            if (e.RowIndex > -1)
+            {
+                List<int> ids = new List<int> { Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value) };
+                parentForm.renderMateriel(ids);
+                this.Close();
+            }
+
         }
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            //MessageBox.Show(e.RowIndex + "");
-            this.dataGridView1[0, e.RowIndex].Value = !Convert.ToBoolean(this.dataGridView1[0, e.RowIndex].Value) ;
+            if(e.RowIndex > -1) this.dataGridView1[0, e.RowIndex].Value = !Convert.ToBoolean(this.dataGridView1[0, e.RowIndex].Value) ;
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -83,9 +115,19 @@ namespace goods
             }
             else
             {
-                this.Hide();
                 parentForm.renderMateriel(ids);
+                this.Close();
             }
         }
+        private void button1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) { loadData(1); }   
+        }
+        private void pageIndexChanged(object sender, EventArgs e)
+        {
+            loadData(pagingCom1.PageIndex);
+        }
+
+
     }
 }

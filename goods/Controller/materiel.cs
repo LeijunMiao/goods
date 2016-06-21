@@ -17,6 +17,32 @@ namespace goods.Controller
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
+        public int getCount(string key, List<int> ids)
+        {
+            string sql = "SELECT Count(*) FROM materiel ";
+            string select = "";
+            string filter = " where ";
+            if (key != "")
+            {
+                select += " where num like '%" + key + "%' or name like '%" + key + "%'";
+                filter = " and ";
+            }
+            if (ids.Count > 0)
+            {
+                filter += " id not in (";
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    if (i == 0) filter += ids[i];
+                    else filter += "," + ids[i];
+                }
+                filter += ")";
+                sql += filter;
+            }
+            sql += select;
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            int count = Convert.ToInt32(dt.Rows[0][0]);
+            return count;
+        }
         public DataTable getFilterList(int pageIndex, int pageSize, string keyword)
         {
             string sql = "SELECT * FROM materiel ";
@@ -63,8 +89,9 @@ namespace goods.Controller
         
         public DataTable getByids(List<int> ids)
         {
-            string sql = "SELECT * FROM materiel ";
-            string select = " where id in (";
+            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,meter.name metering,meter2.name subMetering " +
+                "FROM materiel m,metering meter,metering meter2  where m.metering = meter.id and m.subMetering = meter2.id";
+            string select = " and m.id in (";
             for (int i = 0; i < ids.Count; i++)
             {
                 if(i == 0) select += ids[i];

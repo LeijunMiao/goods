@@ -39,7 +39,7 @@ namespace goods
                     }
                 }
             }
-            
+            this.入库管理ToolStripMenuItem.Enabled = true;
         }
 
 
@@ -53,40 +53,40 @@ namespace goods
             this.timer1.Start();
             this.statusUser.Text = "系统操作员：" + PropertyClass.SendNameValue;
 
-            if (PropertyClass.SendPopedomValue == "超级管理员")
-            {
-                this.基础信息管理ToolStripMenuItem.Enabled = true;
-                this.入库管理ToolStripMenuItem.Enabled = true;
-                this.出库管理ToolStripMenuItem.Enabled = true;
-                this.盘点管理ToolStripMenuItem.Enabled = true;
-                this.数据查询ToolStripMenuItem.Enabled = true;
-                this.权限管理ToolStripMenuItem.Enabled = true;
-                return;
-            }
-            if (PropertyClass.SendPopedomValue.IndexOf("入库管理") > -1)
-            {
-                this.入库管理ToolStripMenuItem.Enabled = true;
-            }
-            if (PropertyClass.SendPopedomValue.IndexOf("出库管理") > -1)
-            {
-                this.出库管理ToolStripMenuItem.Enabled = true;
-            }
-            if (PropertyClass.SendPopedomValue.IndexOf("盘点管理") > -1)
-            {
-                this.盘点管理ToolStripMenuItem.Enabled = true;
-            }
-            if (PropertyClass.SendPopedomValue.IndexOf("数据查询") > -1)
-            {
-                this.数据查询ToolStripMenuItem.Enabled = true;
-            }
-            if (PropertyClass.SendPopedomValue.IndexOf("基础信息管理") > -1)
-            {
-                this.基础信息管理ToolStripMenuItem.Enabled = true;
-            }
-            if (PropertyClass.SendPopedomValue.IndexOf("设置权限") > -1)
-            {
-                this.设置权限ToolStripMenuItem.Enabled = true;
-            }
+            //if (PropertyClass.SendPopedomValue == "超级管理员")
+            //{
+            //    this.基础信息管理ToolStripMenuItem.Enabled = true;
+            //    this.入库管理ToolStripMenuItem.Enabled = true;
+            //    this.出库管理ToolStripMenuItem.Enabled = true;
+            //    this.盘点管理ToolStripMenuItem.Enabled = true;
+            //    this.数据查询ToolStripMenuItem.Enabled = true;
+            //    this.权限管理ToolStripMenuItem.Enabled = true;
+            //    return;
+            //}
+            //if (PropertyClass.SendPopedomValue.IndexOf("入库管理") > -1)
+            //{
+            //    this.入库管理ToolStripMenuItem.Enabled = true;
+            //}
+            //if (PropertyClass.SendPopedomValue.IndexOf("出库管理") > -1)
+            //{
+            //    this.出库管理ToolStripMenuItem.Enabled = true;
+            //}
+            //if (PropertyClass.SendPopedomValue.IndexOf("盘点管理") > -1)
+            //{
+            //    this.盘点管理ToolStripMenuItem.Enabled = true;
+            //}
+            //if (PropertyClass.SendPopedomValue.IndexOf("数据查询") > -1)
+            //{
+            //    this.数据查询ToolStripMenuItem.Enabled = true;
+            //}
+            //if (PropertyClass.SendPopedomValue.IndexOf("基础信息管理") > -1)
+            //{
+            //    this.基础信息管理ToolStripMenuItem.Enabled = true;
+            //}
+            //if (PropertyClass.SendPopedomValue.IndexOf("设置权限") > -1)
+            //{
+            //    this.设置权限ToolStripMenuItem.Enabled = true;
+            //}
         }
 
         private void 设置权限ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -103,26 +103,6 @@ namespace goods
             //up.Show();
         }
 
-        private void 客户信息ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //CustomerData cd = new CustomerData();
-            //cd.MdiParent = this;
-            //cd.Show();
-        }
-
-        private void 产品信息ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //GoodsData vd = new GoodsData();
-            //vd.MdiParent = this;
-            //vd.Show();
-        }
-
-        private void 供应商ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //VendorData vd = new VendorData();
-            //vd.MdiParent = this;
-            //vd.Show();
-        }
 
         private void 入库ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -189,7 +169,8 @@ namespace goods
 
         private void 客户管理ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            CustomerView view = new CustomerView();
+            view.Show();
         }
 
         private void 供应商管理ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -225,6 +206,18 @@ namespace goods
             CreateOrderView rv = new CreateOrderView();
             //rv.MdiParent = this;
             rv.Show();
+        }
+
+        private void 查询ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OrderSearch view = new OrderSearch();
+            view.Show();
+        }
+
+        private void 查询ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            GoDownEntryList view = new GoDownEntryList();
+            view.Show();
         }
     }
 }

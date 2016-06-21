@@ -15,15 +15,32 @@ namespace goods
     public partial class OrderSearch : Form
     {
         orderCtrl ctrl = new orderCtrl();
-        int supplier = -1;
+        string supplier = "";
         private DataTable dtData = null;
         private DataTable dt = null;
         public OrderSearch()
         {
             InitializeComponent();
             MidModule.EventSend += new MsgDlg(MidModule_EventSend);
+            initPage();
+        }
+        private void initPage()
+        {
+            this.textBox1.KeyDown += button1_KeyDown;
+            this.textBox2.KeyDown += button1_KeyDown;
+            this.textBox3.KeyDown += button1_KeyDown;
+            this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
+            this.dataGridView1.ReadOnly = true;
+        }
+        private void pageIndexChanged(object sender, EventArgs e)
+        {
+            BindDataWithPage(pagingCom1.PageIndex);
         }
 
+        private void button1_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter) { BindDataWithPage(1); }
+        }
         private void button1_Click(object sender, EventArgs e)
         {
             SupplierSelect ss = new SupplierSelect();
@@ -35,8 +52,8 @@ namespace goods
             if (sender != null)
             {
                 SupplierModel sm = (SupplierModel)msg;
-                this.label5.Text = sm.Name;
-                this.supplier = sm.Id;
+                this.textBox3.Text = sm.Name;
+                this.supplier = sm.Name;
             }
         }
 
@@ -49,7 +66,7 @@ namespace goods
         {
             pagingCom1.PageIndex = Index;
             pagingCom1.PageSize = 10;
-            dtData = ctrl.getFilterOrderMateriel(pagingCom1.PageIndex, pagingCom1.PageSize,this.supplier, this.dateTimePicker1.Checked,dateTimePicker1.Value.Date, textBox1.Text, textBox2.Text);
+            dtData = ctrl.getFilterOrderMateriel(pagingCom1.PageIndex, pagingCom1.PageSize, this.textBox3.Text, this.dateTimePicker1.Checked,dateTimePicker1.Value.Date, textBox1.Text, textBox2.Text);
             dt = new DataTable();
             DataColumn dcNum = new DataColumn("单据编码");
             DataColumn dcDate = new DataColumn("日期");
@@ -79,7 +96,7 @@ namespace goods
             {
                 DataRow dr = dt.NewRow();
                 dr[0] = dtData.Rows[i]["ponum"].ToString();
-                dr[1] = dtData.Rows[i]["date"].ToString();
+                dr[1] = DateTime.Parse(dtData.Rows[i]["date"].ToString()).ToString("yyyy/M/d"); 
                 dr[2] = dtData.Rows[i]["sname"].ToString();
                 dr[3] = dtData.Rows[i]["mnum"].ToString();
                 dr[4] = dtData.Rows[i]["mname"].ToString();
@@ -92,7 +109,8 @@ namespace goods
                 dr[11] = dtData.Rows[i]["tax"].ToString();
                 dr[12] = Convert.ToDouble(dtData.Rows[i]["amount"])* Convert.ToDouble(dtData.Rows[i]["tax"]);
                 dr[13] = Convert.ToDouble(dtData.Rows[i]["amount"]) * (1 + Convert.ToDouble(dtData.Rows[i]["tax"]));
-                dr[14] = dtData.Rows[i]["deliveryDate"].ToString();
+                dr[14] = DateTime.Parse( dtData.Rows[i]["deliveryDate"].ToString()).ToString("yyyy/M/d");
+                if (dtData.Rows[i]["quantityAll"] == DBNull.Value) dtData.Rows[i]["quantityAll"] = 0;
                 var diff = Convert.ToDouble(dtData.Rows[i]["quantity"]) - Convert.ToDouble(dtData.Rows[i]["quantityAll"]);
                 if (diff <= 0) dr[15] = "关闭";
                 else dr[15] = "激活";
@@ -108,23 +126,32 @@ namespace goods
             dataGridView1.DataSource = dt;
             dataGridView1.Columns[16].Visible = false;
             dataGridView1.Columns[17].Visible = false;
+
+            pagingCom1.RecordCount = ctrl.getCount(this.textBox3.Text, this.dateTimePicker1.Checked, dateTimePicker1.Value.Date, textBox1.Text, textBox2.Text);
+            pagingCom1.reSet();
+
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            List<parmas> ids = new List<parmas>();
+
+            List<parmas> list_p = new List<parmas>();
+            List<string> uuids = new List<string>();
             if(this.dataGridView1.SelectedRows.Count > 0)
             {
                 for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
                 {
-                    ids.Add(new parmas(Convert.ToInt32( dataGridView1.SelectedRows[i].Cells["id"].Value),
+                    list_p.Add(new parmas(Convert.ToInt32( dataGridView1.SelectedRows[i].Cells["id"].Value),
                         Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["mid"].Value),
                         dataGridView1.SelectedRows[i].Cells["物料代码"].Value.ToString()));
                 }
-                ctrl.updateBatch(ids);
+                uuids = ctrl.updateBatch(list_p);
 
             }
-            
+            QRCodeList pop = new QRCodeList(uuids);
+            pop.Show();
+
+
         }
     }
 }

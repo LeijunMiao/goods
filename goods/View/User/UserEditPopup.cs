@@ -39,8 +39,8 @@ namespace goods
                 MessageModel msg = uctrl.updatePwd(_id,textBox1.Text, textBox2.Text);
                 if (msg.Code == 0)
                 {
-                    this.Hide();
                     parentForm.loadData();
+                    this.Close();
                 }
                 else
                 {
@@ -52,7 +52,7 @@ namespace goods
 
         private void button2_Click(object sender, EventArgs e)
         {
-            this.Hide();
+            this.Close();
         }
     }
 }
