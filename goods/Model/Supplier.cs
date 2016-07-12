@@ -11,6 +11,7 @@ namespace goods.Model
         private int id;
         private String num;
         private String name;
+        private int? isActive;
         private DateTime createdAt; //创建时间
         private DateTime lastModifiedAt; // 最后修改时间
 
@@ -24,7 +25,12 @@ namespace goods.Model
             this.num = num;
             this.name = name;
         }
-
+        public SupplierModel(int id, String num, string name)
+        {
+            this.id = id;
+            this.num = num;
+            this.name = name;
+        }
         public int Id
         {
             set
@@ -81,6 +87,18 @@ namespace goods.Model
                 return lastModifiedAt;
             }
         }
+        public int? IsActive
+        {
+            set
+            {
+                isActive = value;
+            }
+            get
+            {
+                return isActive;
+            }
+        }
+        
 
     }
 }

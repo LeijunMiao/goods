@@ -9,15 +9,14 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Controller;
 using goods.Model;
-using System.Drawing;
 using System.Drawing.Printing;
 namespace goods
 {
     public partial class GoDownEntryEdit : Form
     {
         listCtrl ctrl = new listCtrl();
-        string listNum;
-
+        GoDownEntryModel gm = new GoDownEntryModel();
+        DataTable dt = new DataTable();
         CommonPrintTools<object> cp;
         PrintDataModel<object> m;
         List<string> list_tableTitle = new List<string> { "编号", "名称", "规格参数", "单位", "辅助单位",  "实收数量", "转换率", "辅助数量", "单价", "金额"};
@@ -26,7 +25,6 @@ namespace goods
             InitializeComponent();
             loadTable();
             initDate(num);
-            listNum = num;
             initPrintData();
         }
         private void loadTable()
@@ -121,7 +119,7 @@ namespace goods
         }
         private void initDate(string num)
         {
-            DataTable dt = ctrl.getbyNum(num);
+            dt = ctrl.getbyNum(num);
             if (dt.Rows.Count == 0)
             {
                 this.Hide();
@@ -134,12 +132,36 @@ namespace goods
             this.label13.Text = dt.Rows[0]["warehouseName"].ToString();
             this.label15.Text = dt.Rows[0]["positionName"].ToString();
 
+            gm.warehouse = Convert.ToInt32(dt.Rows[0]["warehouse"]) ;
+            if (dt.Rows[0]["position"] == DBNull.Value) gm.position = null;
+            else gm.position = Convert.ToInt32(dt.Rows[0]["position"]);
+            gm.isDeficit = Convert.ToBoolean(dt.Rows[0]["isDeficit"]);
+
+            gm.id = Convert.ToInt32(dt.Rows[0]["gid"]);
+
             dt.Columns.Add("amount");
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 dt.Rows[i]["amount"] = Convert.ToDouble(dt.Rows[i]["quantity"]) * Convert.ToDouble(dt.Rows[i]["price"]);
             }
             dataGridView1.DataSource = dt;
+
+            if (Convert.ToUInt32(dt.Rows[0]["user"]) != PropertyClass.UserId)
+            {
+                toolStripButton1.Enabled = false;
+                toolStripButton2.Enabled = false;
+                dataGridView1.ReadOnly = true;
+            }
+            else
+            {
+                int can = ctrl.stockChanged(gm.id);
+                if (can != 0)
+                {
+                    toolStripButton1.Enabled = false;
+                    toolStripButton2.Enabled = false;
+                    dataGridView1.ReadOnly = true;
+                }
+            }
         }
 
 
@@ -167,7 +189,7 @@ namespace goods
                 listM.Add(lm);
             }
 
-            var msg = ctrl.setList(listM);
+            var msg = ctrl.setList(gm,listM);
             if (msg.Code == 0)
             {
                 //this.Hide();
@@ -183,7 +205,17 @@ namespace goods
         {
             if (MessageBox.Show("确定删除?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
-                var msg = ctrl.del(listNum);
+                var listM = new List<ListModel>();
+                for (int i = this.dt.Rows.Count; i > 0; i--)
+                {
+                    ListModel lm = new ListModel();
+                    lm.materiel = Convert.ToInt32(dt.Rows[i - 1]["materiel"]);
+                    lm.quantity = Convert.ToDouble(dt.Rows[i - 1]["quantity"]);
+                    lm.isBatch = Convert.ToBoolean(dt.Rows[i - 1]["isBatch"]);
+                    listM.Add(lm);
+                }
+
+                var msg = ctrl.delorder(gm, listM);
                 if (msg.Code == 0)
                 {
                     MessageBox.Show(msg.Msg);
@@ -235,6 +267,7 @@ namespace goods
             {
                 //cp = new CommonPrintTools<object>(list);
                 cp.PrintPriview();
+                //cp.Print();
             }
             catch (Exception)
             {

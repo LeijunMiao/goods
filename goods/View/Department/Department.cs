@@ -35,10 +35,10 @@ namespace goods
             treeView1.Nodes.Clear();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (dt.Rows[i]["parentId"].ToString() == "0")
+                if (dt.Rows[i]["parentId"] == DBNull.Value)
                 {
                     TreeNode node = treeView1.Nodes.Add(dt.Rows[i]["name"].ToString());
-                    node.Tag = new innerTag(dt.Rows[i]["id"].ToString(), dt.Rows[i]["name"].ToString(), dt.Rows[i]["parentId"].ToString());
+                    node.Tag = new innerTag(dt.Rows[i]["id"].ToString(), dt.Rows[i]["name"].ToString(), "");
                     map_id_tn.Add(dt.Rows[i]["id"].ToString(), node);
                 }
                 else
@@ -61,20 +61,21 @@ namespace goods
         /// <param name="e"></param>
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            if (treeView1.SelectedNode != null)
-            {
-                innerTag it = (innerTag)treeView1.SelectedNode.Tag;
-                if(it.parent == "0")
-                {
-                    MessageBox.Show("禁止创建同级最高级别组织！");
-                    return;
-                }
-                this.createDepartment(it.parent);//, treeView1.SelectedNode.Parent
-            }
-            else
-            {
-                this.createDepartment("0");
-            }
+            this.createDepartment("");
+            //if (treeView1.SelectedNode != null)
+            //{
+            //    innerTag it = (innerTag)treeView1.SelectedNode.Tag;
+            //    if(it.parent == "")
+            //    {
+            //        MessageBox.Show("禁止创建同级最高级别组织！");
+            //        return;
+            //    }
+            //    this.createDepartment(it.parent);//, treeView1.SelectedNode.Parent
+            //}
+            //else
+            //{
+            //    this.createDepartment("");
+            //}
         }
         /// <summary>
         /// 新建下一级部门
@@ -90,7 +91,7 @@ namespace goods
             }
             else
             {
-                this.createDepartment("0");
+                this.createDepartment("");
             }
                 
         }
@@ -106,7 +107,9 @@ namespace goods
             string str = Interaction.InputBox("请输入名称", "输入名称", "");
             if (str.Count() != 0)
             {
-                DepartmentModel dep = new DepartmentModel(str, Convert.ToInt32(parent));
+                DepartmentModel dep;
+                if(parent == "") dep = new DepartmentModel(str, null);
+                else dep = new DepartmentModel(str, Convert.ToInt32(parent));
                 MessageModel msg = ctrl.add(dep);
                 if (msg.Code == 0)
                 {
@@ -154,7 +157,7 @@ namespace goods
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
             innerTag it = (innerTag)treeView1.SelectedNode.Tag;
-            if (it.parent == "0")
+            if (it.parent == "")
             {
                 MessageBox.Show("禁止删除最高级别组织！");
                 return;

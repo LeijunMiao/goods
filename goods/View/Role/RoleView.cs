@@ -38,7 +38,7 @@ namespace goods
             loadPolicy(sender, e);
 
         }
-        public void LoadRoleDate(int depid){
+        public void LoadRoleData(int depid){
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView2.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             if (depid == -1)
@@ -76,7 +76,7 @@ namespace goods
             treeView1.Nodes.Clear();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
-                if (dt.Rows[i]["parentId"].ToString() == "0")
+                if (dt.Rows[i]["parentId"] == DBNull.Value)
                 {
                     TreeNode node = treeView1.Nodes.Add(dt.Rows[i]["name"].ToString());
                     node.Tag = new innerTag(dt.Rows[i]["id"].ToString(), dt.Rows[i]["name"].ToString(), dt.Rows[i]["parentId"].ToString());
@@ -147,7 +147,7 @@ namespace goods
 
         private void treeView1_AfterSelect(object sender, TreeViewEventArgs e)
         {
-            LoadRoleDate(-1);
+            LoadRoleData(-1);
         }
         /// <summary>
         /// 内部类：节点信息

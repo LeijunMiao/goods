@@ -8,7 +8,6 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Controller;
-using System.Data;
 using System.Drawing.Printing;
 using System.Text.RegularExpressions;
 
@@ -20,6 +19,7 @@ namespace goods
         utilCls util = new utilCls();
 
         private PrintDocument picToPrint = new System.Drawing.Printing.PrintDocument();
+        private PrintPreviewDialog printPriview = new System.Windows.Forms.PrintPreviewDialog();
         private int count = 0;
         private List<Bitmap> _printBmps = new List<Bitmap>();
 
@@ -30,6 +30,7 @@ namespace goods
             InitializeComponent();
             loadData(list_uuids);
             this.picToPrint.PrintPage += new PrintPageEventHandler(picToPrint_PrintPage);
+            this.printPriview.Load += new System.EventHandler(this.printPreviewDialog1_Load);
         }
         private void loadData(List<string> list_uuids)
         {
@@ -61,13 +62,14 @@ namespace goods
         {
             try
             {
+                count = 0;
                 short num = Convert.ToInt16(textBox1.Text);
                 picToPrint.PrinterSettings.Copies = num;
 
-                PrintPreviewDialog PrintPriview = new PrintPreviewDialog();
-                PrintPriview.Document = picToPrint;
-                PrintPriview.WindowState = FormWindowState.Maximized;
-                PrintPriview.ShowDialog();
+                //PrintPreviewDialog PrintPriview = new PrintPreviewDialog();
+                printPriview.Document = picToPrint;
+                printPriview.WindowState = FormWindowState.Maximized;
+                printPriview.ShowDialog();
             }
             catch (Exception ex)
             {
@@ -92,15 +94,22 @@ namespace goods
                 e.HasMorePages = false;
 
         }
-        private void getPic()
+        private void printPreviewDialog1_Load(object sender, EventArgs e)
         {
-            if (_printBmps.Count < 2)
+            if (printPriview.Controls.ContainsKey("toolStrip1"))
             {
-                //Bitmap t = GenByZXingNet("123");
-                //Bitmap t1 = GenByZXingNet("1234");
-               // _printBmps.Add(t);
-                //_printBmps.Add(t1);
+                ToolStrip ts = printPriview.Controls["toolStrip1"] as ToolStrip;
+                //ts.Items.Add("打印设置");
+                if (ts.Items.ContainsKey("printToolStripButton")) //打印按钮
+                {
+                    ts.Items["printToolStripButton"].MouseDown += new MouseEventHandler(click);
+                }
             }
+        }
+
+        void click(object sender, MouseEventArgs e)
+        {
+            count = 0;
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

@@ -3,21 +3,23 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
 namespace goods.Model
 {
-    class MaterielModel
+    public class MaterielModel
     {
         private int id;
         private String num; 
         private String name;
         private String specifications;
         private int metering;
+        private string meteringName;
         private int? subMetering;
-        private double conversion;
+        private double? conversion;
         private String type;
         private double tax;
         private bool isBatch;
+        public double safetystock;
+        public double maxstock;
 
         public MaterielModel() { }
         public MaterielModel(String num, String name, String specifications, int metering, bool isBatch)
@@ -28,6 +30,20 @@ namespace goods.Model
             this.isBatch = isBatch;
             this.specifications = specifications;
             this.subMetering = null;
+        }
+        public MaterielModel(int id,String num, String name, string meteringName)
+        {
+            this.id = id;
+            this.num = num;
+            this.name = name;
+            this.meteringName = meteringName;
+        }
+
+        public MaterielModel(int id, double safetystock, double maxstock)
+        {
+            this.id = id;
+            this.safetystock = safetystock;
+            this.maxstock = maxstock;
         }
 
         public int Id
@@ -50,6 +66,17 @@ namespace goods.Model
             get
             {
                 return metering;
+            }
+        }
+        public string MeteringName
+        {
+            set
+            {
+                meteringName = value;
+            }
+            get
+            {
+                return meteringName;
             }
         }
         public int? SubMetering
@@ -108,7 +135,7 @@ namespace goods.Model
                 return type;
             }
         }
-        public double Conversion
+        public double? Conversion
         {
             set
             {

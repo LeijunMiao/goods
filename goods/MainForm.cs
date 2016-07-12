@@ -20,7 +20,7 @@ namespace goods
         }
         private void dateLoad()
         {
-            if(PropertyClass.Role > 1)
+            if(PropertyClass.Role > 0)
             {
                 policyCtrl pctrl = new policyCtrl();
                 var dt = pctrl.getFeatureByRole(PropertyClass.Role);
@@ -29,17 +29,49 @@ namespace goods
                     switch (dt.Rows[i]["key"].ToString())
                     {
                         case "department":
-                            this.departmentItem.Enabled = true;
+                            this.departmentItem.Visible = true;
                             break;
                         case "role":
-                            this.roleItem.Enabled = true;
+                            this.roleItem.Visible = true;
+                            break;
+                        case "user":
+                            this.用户管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "customer":
+                            this.客户管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "supplier":
+                            this.供应商管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "warehouse":
+                            this.仓库管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "metering":
+                            this.计量单位ToolStripMenuItem.Visible = true;
+                            break;
+                        case "materiel":
+                            this.物料管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "order":
+                            this.采购订单ToolStripMenuItem.Visible = true;
+                            break;
+                        case "inorder":
+                            this.入库管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "outorder":
+                            this.出库管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "checkorder":
+                            this.盘点管理ToolStripMenuItem.Visible = true;
+                            break;
+                        case "message":
+                            this.消息管理ToolStripMenuItem.Visible = true;
                             break;
                         default:
                             break;
                     }
                 }
             }
-            this.入库管理ToolStripMenuItem.Enabled = true;
         }
 
 
@@ -83,18 +115,8 @@ namespace goods
             //{
             //    this.基础信息管理ToolStripMenuItem.Enabled = true;
             //}
-            //if (PropertyClass.SendPopedomValue.IndexOf("设置权限") > -1)
-            //{
-            //    this.设置权限ToolStripMenuItem.Enabled = true;
-            //}
         }
 
-        private void 设置权限ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //SetCompetence sc = new SetCompetence();
-            //sc.MdiParent = this;
-            //sc.Show();
-        }
 
         private void 修改密码ToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -103,26 +125,10 @@ namespace goods
             //up.Show();
         }
 
-
-        private void 入库ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //Storage sr = new Storage();
-            //sr.MdiParent = this;
-            //sr.Show();
-        }
-
-        private void 出库ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //TheLibrary tl = new TheLibrary();
-            //tl.MdiParent = this;
-            //tl.Show();
-        }
-
         private void 盘点库存ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            //Inventory it = new Inventory();
-            //it.MdiParent = this;
-            //it.Show();
+            CheckList view = new CheckList();
+            view.Show();
         }
 
         private void 产品查询ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -139,12 +145,6 @@ namespace goods
             //sq.Show();
         }
 
-        private void 库存查询ToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            //StockQuery sq = new StockQuery();
-            //sq.MdiParent = this;
-            //sq.Show();
-        }
 
         private void departmentMenuItem_Click(object sender, EventArgs e)
         {
@@ -217,6 +217,50 @@ namespace goods
         private void 查询ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             GoDownEntryList view = new GoDownEntryList();
+            view.Show();
+        }
+
+
+        private void 交货分析ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OrderTrace view = new OrderTrace();
+            view.Show();
+        }
+
+        private void 查询ToolStripMenuItem2_Click(object sender, EventArgs e)
+        {
+            CallSlipList view = new CallSlipList();
+            view.Show();
+        }
+
+        private void 移出查询ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            OutOrderList view = new OutOrderList();
+            view.Show();
+        }
+
+        private void 移入查询ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            InOrderList view = new InOrderList();
+            view.Show();
+        }
+
+
+        private void 消息管理ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            MsgBox view = new MsgBox();
+            view.Show();
+        }
+
+        private void 即时库存ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            StockList view = new StockList();
+            view.Show();
+        }
+
+        private void 安全库存预警ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            SafetyStockList view = new SafetyStockList();
             view.Show();
         }
     }

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace goods.Models
+namespace goods.Model
 {
     public class CallSlipModel
     {
+        public int id { get; set; }
         public DateTime date { get; set; }
         public int warehouse { get; set; }
-        public int position { get; set; }
+        public int? position { get; set; }
         public int user { get; set; }
         public bool isDeficit { get; set; }
         public CallSlipModel() { }

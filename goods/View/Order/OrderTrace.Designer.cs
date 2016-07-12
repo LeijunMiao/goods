@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(OrderTrace));
             this.label1 = new System.Windows.Forms.Label();
             this.dateTimePicker1 = new System.Windows.Forms.DateTimePicker();
             this.dateTimePicker2 = new System.Windows.Forms.DateTimePicker();
@@ -108,9 +109,17 @@
             // 
             // dataGridView1
             // 
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
+            this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.Location = new System.Drawing.Point(12, 73);
             this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 23;
             this.dataGridView1.Size = new System.Drawing.Size(1016, 432);
             this.dataGridView1.TabIndex = 8;
@@ -120,10 +129,11 @@
             this.pagingCom1.BtnTextNext = "下页";
             this.pagingCom1.BtnTextPrevious = "上页";
             this.pagingCom1.DisplayStyle = goods.pagingCom.DisplayStyleEnum.文字;
-            this.pagingCom1.Location = new System.Drawing.Point(13, 512);
+            this.pagingCom1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pagingCom1.Location = new System.Drawing.Point(0, 518);
             this.pagingCom1.Name = "pagingCom1";
             this.pagingCom1.RecordCount = 0;
-            this.pagingCom1.Size = new System.Drawing.Size(995, 41);
+            this.pagingCom1.Size = new System.Drawing.Size(1040, 41);
             this.pagingCom1.TabIndex = 9;
             // 
             // textBox1
@@ -148,8 +158,10 @@
             this.Controls.Add(this.dateTimePicker2);
             this.Controls.Add(this.dateTimePicker1);
             this.Controls.Add(this.label1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "OrderTrace";
-            this.Text = "OrderTrace";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "供应商准时交货分析表";
             this.Load += new System.EventHandler(this.OrderTrace_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);

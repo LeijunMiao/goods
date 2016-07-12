@@ -105,6 +105,7 @@
             this.ClientSize = new System.Drawing.Size(598, 396);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.treeView1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Department";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "部门";

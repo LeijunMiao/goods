@@ -14,11 +14,21 @@ namespace goods
     public partial class WarehouseQRCode : Form
     {
         utilCls util = new utilCls();
-        public WarehouseQRCode(string type,string code)
+        public WarehouseQRCode(string type,string warCode,string posCode)
         {
             InitializeComponent();
-            this.label1.Text = code;
-            pictureBox1.Image = util.GenByZXingNet(code);
+            this.label1.Text = warCode;
+            if(posCode == "")
+            {
+                pictureBox1.Image = util.GenByZXingNet(warCode);
+                this.label3.Visible = false;
+                this.label4.Visible = false;
+            }
+            else
+            {
+                pictureBox1.Image = util.GenByZXingNet(posCode);
+                this.label4.Text = posCode;
+            }
             printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage);
             this.printDocument1.DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
         }
@@ -93,6 +103,10 @@ namespace goods
                 if (pictureBox1.Image != null)
                 {
                     e.Graphics.DrawImage(pictureBox1.Image, 5, 5);//e.Graphics.VisibleClipBounds);
+                    Font font = new Font("宋体", 12);
+                    Brush bru = Brushes.Black;
+                    e.Graphics.DrawString(this.label2.Text + this.label1.Text, font, bru, 100,  20);
+                    if(this.label4.Text != "") e.Graphics.DrawString(this.label3.Text + this.label4.Text, font, bru, 100, 50);
                     e.HasMorePages = false;
                 }
             }
@@ -101,18 +115,18 @@ namespace goods
                 MessageBox.Show("出错！");
             }
         }
-        private void printPreviewDialog1_Load(object sender, EventArgs e)
-        {
-            if (printPreviewDialog1.Controls.ContainsKey("toolStrip1"))
-            {
-                ToolStrip ts = printPreviewDialog1.Controls["toolStrip1"] as ToolStrip;
-                //ts.Items.Add("打印设置");
-                if (ts.Items.ContainsKey("printToolStripButton")) //打印按钮
-                {
-                    ts.Items["printToolStripButton"].MouseDown += new MouseEventHandler(click);
-                }
-            }
-        }
+        //private void printPreviewDialog1_Load(object sender, EventArgs e)
+        //{
+        //    if (printPreviewDialog1.Controls.ContainsKey("toolStrip1"))
+        //    {
+        //        ToolStrip ts = printPreviewDialog1.Controls["toolStrip1"] as ToolStrip;
+        //        ts.Items.Add("打印设置");
+        //        if (ts.Items.ContainsKey("printToolStripButton")) //打印按钮
+        //        {
+        //            ts.Items["printToolStripButton"].MouseDown += new MouseEventHandler(click);
+        //        }
+        //    }
+        //}
         private void printSet(object sender, EventArgs e)
         {
             MessageBox.Show("Test");

@@ -8,15 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Controller;
+using Observer;
 namespace goods
 {
     public partial class OrderMaterielPopup : Form
     {
         materielCtrl mctrl = new materielCtrl();
-        CreateOrderView parentForm;
-        public OrderMaterielPopup(CreateOrderView form)
+        //CreateOrderView parentForm;
+        List<int> parentIds;
+        List<int> list_selected = new List<int>();
+        public OrderMaterielPopup(List<int> ids)
         {
-            parentForm = form;
+            parentIds = ids;
             InitializeComponent();
             loadTabel();
             loadData(1);
@@ -51,7 +54,7 @@ namespace goods
         {
             pagingCom1.PageIndex = index;
             pagingCom1.PageSize = 10;
-            var dtData = mctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, parentForm.allids);
+            var dtData = mctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, parentIds);
             //var dt = new DataTable();
             //DataColumn dcId = new DataColumn("ID");
             //DataColumn dcNO = new DataColumn("编号");
@@ -68,7 +71,7 @@ namespace goods
             //}
 
             dataGridView1.DataSource = dtData;
-            pagingCom1.RecordCount = mctrl.getCount(textBox1.Text, parentForm.allids);
+            pagingCom1.RecordCount = mctrl.getCount(textBox1.Text, parentIds);
             pagingCom1.reSet();
 
         }
@@ -86,8 +89,10 @@ namespace goods
         {
             if (e.RowIndex > -1)
             {
-                List<int> ids = new List<int> { Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value) };
-                parentForm.renderMateriel(ids);
+                //List<int> ids = new List<int> { Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value) };
+                //parentForm.renderMateriel(ids);
+                list_selected.Add(Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value));
+                MidModule.SendIds(this, list_selected);//发送参数值
                 this.Close();
             }
 
@@ -95,27 +100,41 @@ namespace goods
 
         private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
-            if(e.RowIndex > -1) this.dataGridView1[0, e.RowIndex].Value = !Convert.ToBoolean(this.dataGridView1[0, e.RowIndex].Value) ;
+            if (e.RowIndex > -1)
+            {
+                var ischeck = !Convert.ToBoolean(this.dataGridView1[0, e.RowIndex].Value);
+                this.dataGridView1[0, e.RowIndex].Value = ischeck;
+                if(ischeck == true)
+                {
+                    list_selected.Add(Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value));
+                }
+                else
+                {
+                    list_selected.Remove(list_selected.Where(p => p == Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value)).FirstOrDefault());
+                }
+                //MessageBox.Show(e.RowIndex+"" + this.dataGridView1[0, e.RowIndex].Value.ToString());
+            }
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-            List<int> ids = new List<int>(); 
-            for (int i = 0; i < dataGridView1.RowCount; i++)
-            {
-                if (dataGridView1.Rows[i].Cells[0].EditedFormattedValue.ToString() == "True")
-                {
-                    ids.Add(Convert.ToInt32(dataGridView1.Rows[i].Cells["id"].Value));
-                }
-            }
-            if (ids.Count == 0)
+            //List<int> ids = new List<int>(); 
+            //for (int i = 0; i < dataGridView1.RowCount; i++)
+            //{
+            //    if (dataGridView1.Rows[i].Cells[0].EditedFormattedValue.ToString() == "True")
+            //    {
+            //        ids.Add(Convert.ToInt32(dataGridView1.Rows[i].Cells["id"].Value));
+            //    }
+            //}
+            if (list_selected.Count == 0)
             {
                 MessageBox.Show("请至少选择一条数据！", "提示");
                 return;
             }
             else
             {
-                parentForm.renderMateriel(ids);
+                //parentForm.renderMateriel(ids);
+                MidModule.SendIds(this, list_selected);//发送参数值
                 this.Close();
             }
         }

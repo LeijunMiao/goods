@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data;
-namespace goods.Models
+namespace goods.Model
 {
     public class GoDownEntryModel
     {
@@ -56,20 +56,20 @@ namespace goods.Models
 
 
     }
-    public class MaterielModel
-    {
-        public int id { get; set; }
-        public string num { get; set; }
-        public string name { get; set; }
-        public string specifications { get; set; }
-        public int metering { get; set; }
-        public int subMetering { get; set; }
-        public double conversion { get; set; }
-        public string type { get; set; }
-        public double tax { get; set; }
-        public MaterielModel() { }
+    //public class MaterielModel
+    //{
+    //    public int id { get; set; }
+    //    public string num { get; set; }
+    //    public string name { get; set; }
+    //    public string specifications { get; set; }
+    //    public int metering { get; set; }
+    //    public int subMetering { get; set; }
+    //    public double conversion { get; set; }
+    //    public string type { get; set; }
+    //    public double tax { get; set; }
+    //    public MaterielModel() { }
 
-    }
+    //}
 
     public class goDownEntryParmas
     {
@@ -102,8 +102,9 @@ namespace goods.Models
 
     public class listParmas
     {
+        public int id { get; set; }
         public int warehouse { get; set; }
-        public int position { get; set; }
+        public int? position { get; set; }
         public int user { get; set; }
         public DateTime date { get; set; }
         public List<ListModel> listM { get; set; }

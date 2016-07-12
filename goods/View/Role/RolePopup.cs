@@ -53,7 +53,7 @@ namespace goods.Role
             MessageModel msg = rctrl.add(rm);
             if (msg.Code == 0)
             {
-                parentForm.LoadRoleDate(value);
+                parentForm.LoadRoleData(value);
                 this.Close();
             }
             else

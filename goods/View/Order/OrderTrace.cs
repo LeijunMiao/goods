@@ -22,6 +22,11 @@ namespace goods
         {
             InitializeComponent();
             MidModule.EventSend += new MsgDlg(MidModule_EventSend);
+            this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
+        }
+        private void pageIndexChanged(object sender, EventArgs e)
+        {
+            BindDataWithPage(pagingCom1.PageIndex);
         }
 
         private void MidModule_EventSend(object sender, object msg)
@@ -91,6 +96,9 @@ namespace goods
                 dt.Rows.Add(dr);
             }
             dataGridView1.DataSource = dt;
+
+            pagingCom1.RecordCount = ctrl.getSupplierOrderCount(this.textBox1.Text);
+            pagingCom1.reSet();
         }
     }
 }

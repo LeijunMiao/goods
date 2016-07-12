@@ -25,7 +25,11 @@ namespace goods.Model
         private  DateTime lastModifiedAt; // 最后修改时间
         private  DateTime lastLoginAt; // 最后登录时间
 
-        public User() { } 
+        public User() { }
+        public User(int id, String userName) {
+            this.userName = userName;
+            this.id = id;
+        }
         public User(String userName,string fullName, String mobile, String email, String hashed_password, int role)
         {
             this.userName = userName;
@@ -40,6 +44,13 @@ namespace goods.Model
             this.userName = userName;
             this.fullName = fullName;
             this.hashed_password = hashed_password;
+            this.role = role;
+        }
+        public User(int id, String userName, string fullName, int role)
+        {
+            this.id = id;
+            this.userName = userName;
+            this.fullName = fullName;
             this.role = role;
         }
 

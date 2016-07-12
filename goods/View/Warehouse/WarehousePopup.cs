@@ -18,14 +18,31 @@ namespace goods
         WarehouseView parentForm;
         string type;
         int wid;
-        public WarehousePopup(WarehouseView form,string type,int wid)
+        WarehouseModel oldwm;
+        PositionModel oldpm;
+        public WarehousePopup(WarehouseView form,string type,int wid, object obj)
         {
             parentForm = form;
             this.type = type;
             this.wid = wid;
-            
             InitializeComponent();
-            if (type == "cw") this.Text = "新建仓位";
+            if (type == "cw")  this.Text = "仓位";
+            if (obj != null)
+            {
+                if (type == "cw") {
+                    oldpm = (PositionModel)obj;
+                    textBox1.Text = oldpm.Num;
+                    textBox2.Text = oldpm.Name;
+                }
+                else
+                {
+                    oldwm = (WarehouseModel)obj;
+                    textBox1.Text = oldwm.Num;
+                    textBox2.Text = oldwm.Name;
+                }
+                
+            }
+
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -36,7 +53,9 @@ namespace goods
             }
             else if(type == "ck")
             {
-                WarehouseModel s = new WarehouseModel(textBox1.Text, textBox2.Text);
+                WarehouseModel s;
+                if (oldwm != null && oldwm.Id > 0) s = new WarehouseModel(oldwm.Id, textBox1.Text, textBox2.Text);
+                else s = new WarehouseModel(textBox1.Text, textBox2.Text);
                 MessageModel msg = ctrl.add(s);
                 if (msg.Code == 0)
                 {
@@ -50,7 +69,9 @@ namespace goods
             }
             else
             {
-                PositionModel p = new PositionModel(textBox1.Text, textBox2.Text, wid);
+                PositionModel p;
+                if (oldpm != null && oldpm.Id > 0) p = new PositionModel(oldpm.Id, textBox1.Text, textBox2.Text);
+                else p = new PositionModel(textBox1.Text, textBox2.Text, wid);
                 MessageModel msg = pctrl.add(p);
                 if (msg.Code == 0)
                 {

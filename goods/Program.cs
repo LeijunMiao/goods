@@ -19,75 +19,78 @@ namespace goods
         [STAThread]
         static void Main()
         {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new Login());
 
-            
-            string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().ManifestModule.FullyQualifiedName) + "//Menu.ini";
-            if (File.Exists(path))
-            {
-                string s = "", mac = "";
-                // 
-                //name
-                //
-                string hostInfo = Dns.GetHostName();
-                //MessageBox.Show(hostInfo);
-                //
-                //IP
-                IPAddress[] addressList = Dns.GetHostByName(Dns.GetHostName()).AddressList;
-                for (int i = 0; i < addressList.Length; i++)
-                {
-                    s += addressList[i].ToString();
-                }
-                // MessageBox.Show(s);
+            //string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().ManifestModule.FullyQualifiedName) + "//Menu.ini";
+            //if (File.Exists(path))
+            //{
+            //    string s = "", mac = "";
+            //    // 
+            //    //name
+            //    //
+            //    string hostInfo = Dns.GetHostName();
+            //    //MessageBox.Show(hostInfo);
+            //    //
+            //    //IP
+            //    IPAddress[] addressList = Dns.GetHostByName(Dns.GetHostName()).AddressList;
+            //    for (int i = 0; i < addressList.Length; i++)
+            //    {
+            //        s += addressList[i].ToString();
+            //    }
+            //    // MessageBox.Show(s);
 
-                ManagementClass mc;
-                mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
-                ManagementObjectCollection moc = mc.GetInstances();
-                foreach (ManagementObject mo in moc)
-                {
-                    if (mo["IPEnabled"].ToString() == "True")
-                        mac = mo["MacAddress"].ToString();
-                }
+            //    ManagementClass mc;
+            //    mc = new ManagementClass("Win32_NetworkAdapterConfiguration");
+            //    ManagementObjectCollection moc = mc.GetInstances();
+            //    foreach (ManagementObject mo in moc)
+            //    {
+            //        if (mo["IPEnabled"].ToString() == "True")
+            //            mac = mo["MacAddress"].ToString();
+            //    }
                 
-                string code = mac.ToString();
-                //MessageBox.Show(code);
-                FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
-                StreamReader sr = new StreamReader(fs, Encoding.GetEncoding("gb2312"));
-                List<string> key = new List<string>();
-                string line;
-                while ((line = sr.ReadLine()) != null)
-                {
-                    key.Add(line);
-                }
-                sr.Close();
-                fs.Close();
-                License lc = new License();
-                string password = lc.EnText(code, "KDSoft");
-                int j = 0;
-                bool flag = false;
-                while (j<key.Count) {
-                    if (key[j] == lc.transform(password, "KDSoft")) flag = true;
-                    j++;
-                }
-                if (flag)
-                {
-                    //ServerInfo.GetServerInfo();
-                    Application.EnableVisualStyles();
-                    Application.SetCompatibleTextRenderingDefault(false);
-                    Application.Run(new MainForm());//UserView Department RoleView SupplierView 
-                }
-                else
-                {
-                    MessageBox.Show("机器异常");
-                    //GetKey gk = new GetKey();
-                    //if (gk.ShowDialog() == DialogResult.OK)
-                    //{
-                    //    Application.EnableVisualStyles();
-                    //    Application.SetCompatibleTextRenderingDefault(false);
-                    //    Application.Run(new Login());
-                    //}
-                }
+            //    string code = mac.ToString();
+            //    FileStream fs = new FileStream(path, FileMode.Open, FileAccess.Read);
+            //    StreamReader sr = new StreamReader(fs, Encoding.GetEncoding("gb2312"));
+            //    List<string> key = new List<string>();
+            //    string line;
+            //    while ((line = sr.ReadLine()) != null)
+            //    {
+            //        key.Add(line);
+            //    }
+            //    sr.Close();
+            //    fs.Close();
+            //    License lc = new License();
+            //    //code = "28:B2:BD:B6:DC:F3";
+            //    string password = lc.EnText(code, "KDSoft");
+            //    int j = 0;
+            //    bool flag = false;
+            //    while (j<key.Count) {
+            //        //if (key[j] == lc.transform(password, "KDSoft")) flag = true;
+            //        if (key[j] == code) flag = true;
+            //        j++;
+            //    }
+            //    if (flag)
+            //    {
+            //        //ServerInfo.GetServerInfo();
+            //        Application.EnableVisualStyles();
+            //        Application.SetCompatibleTextRenderingDefault(false);
+            //        Application.Run(new Login());//UserView Department RoleView SupplierView 
+            //    }
+            //    else
+            //    {
+            //        MessageBox.Show("机器异常");
+            //        //GetKey gk = new GetKey();
+            //        //if (gk.ShowDialog() == DialogResult.OK)
+            //        //{
+            //        //    Application.EnableVisualStyles();
+            //        //    Application.SetCompatibleTextRenderingDefault(false);
+            //        //    Application.Run(new Login());
+            //        //}
+            //    }
 
-            }
+            //}
         }
     }
 }

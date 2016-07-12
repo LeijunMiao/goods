@@ -15,10 +15,17 @@ namespace goods
     {
         MeteringView pForm;
         meteringCtrl ctrl = new meteringCtrl();
-        public MeteringPopup(MeteringView form)
+        MeteringModel olds;
+        public MeteringPopup(MeteringView form, object obj)
         {
             pForm = form;
             InitializeComponent();
+            if (obj != null)
+            {
+                olds = (MeteringModel)obj;
+                textBox1.Text = olds.Num;
+                textBox2.Text = olds.Name;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -27,7 +34,9 @@ namespace goods
             {
                 MessageBox.Show("字段必填！");
             }
-            MeteringModel m = new MeteringModel(textBox1.Text, textBox2.Text);
+            MeteringModel m;
+            if (olds != null && olds.Id > 0) m = new MeteringModel(olds.Id, textBox1.Text, textBox2.Text);
+            else m = new MeteringModel(textBox1.Text, textBox2.Text);
             MessageModel msg = ctrl.add(m);
             if (msg.Code == 0)
             {

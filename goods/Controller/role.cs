@@ -20,15 +20,25 @@ namespace goods.Controller
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
+        #endregion
         #region 按部门获取
         public DataTable getbyDepId(int depId)
         {
-            string sql = "select * from role where departmentId =" + depId;
+            string sql = "select * from role where departmentId = '"+ depId + "' order by id desc";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
         #endregion
+
+        #region 查询同部门职位
+        public DataTable getSimilarRole(int id)
+        {
+            string sql = "SELECT * FROM role where departmentId = (select departmentId from role where id = '"+ id + "'); ";
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            return dt;
+        }
         #endregion
+        
         #region 新建
         public MessageModel add(object obj)
         {

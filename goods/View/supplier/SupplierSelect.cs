@@ -36,6 +36,7 @@ namespace goods
         }
         private void initTable()
         {
+            dataGridView1.AutoGenerateColumns = false;
             DataGridViewColumn colId = new DataGridViewLinkColumn();
             colId.DataPropertyName = "id";//字段
             colId.Visible = false;
@@ -55,10 +56,13 @@ namespace goods
         {
             pagingCom1.PageIndex = index;
             pagingCom1.PageSize = 10;
-            var dtData = sctrl.getFilterList(pagingCom1.PageIndex, pagingCom1.PageSize, "", textBox1.Text);
+            SupplierModel s = new SupplierModel();
+            s.Name = textBox1.Text;
+            s.IsActive = 1;
+            var dtData = sctrl.getFilterList(pagingCom1.PageIndex, pagingCom1.PageSize, s);
 
             //获取并设置总记录数
-            pagingCom1.RecordCount = sctrl.getCount("",textBox1.Text);//Convert.ToInt32(dsData.Tables[1].Rows[0][0]);
+            pagingCom1.RecordCount = sctrl.getCount(s);//Convert.ToInt32(dsData.Tables[1].Rows[0][0]);
 
             //var dt = new DataTable();
             //DataColumn dcId = new DataColumn("ID");

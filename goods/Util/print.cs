@@ -249,15 +249,29 @@ namespace goods
                     //表头数据
                     if (topData != null && topData.Count > 0)
                     {
+                        int n = 0;//分左右
                         foreach (string tdTitle in topData)
                         {
-                            currentMarginTop += Chinese_OneHeight / 2;
+                            
                             List<string> drawValues = GetMultiLineString(tdTitle, pageWidth, gItem, f);
+                            
                             foreach (string dv in drawValues)
                             {
-                                gItem.DrawString(dv, f, Brushes.Black, 0, (float)currentMarginTop);
-                                currentMarginTop += Chinese_OneHeight;
+                                //gItem.DrawString(dv, f, Brushes.Black, 0, (float)currentMarginTop);
+                                //gItem.DrawString(dv, f, Brushes.Black, (float)(pageWidth - (decimal)gItem.MeasureString(dv, f).Width - Chinese_OneWidth), (float)currentMarginTop);
+                                if (n % 2 != 0)
+                                {
+                                    gItem.DrawString(dv, f, Brushes.Black, (float)(pageWidth - (decimal)gItem.MeasureString(dv, f).Width - Chinese_OneWidth), (float)currentMarginTop);
+                                    currentMarginTop += Chinese_OneHeight;
+                                }
+                                else
+                                {
+                                    currentMarginTop += Chinese_OneHeight / 2;
+                                    gItem.DrawString(dv, f, Brushes.Black, 0, (float)currentMarginTop);
+                                    if(n == topData.Count -1) currentMarginTop += Chinese_OneHeight;
+                                }
                             }
+                            n++;
                         }
                     }
                     /********************************end表头部分end********************************/
@@ -437,6 +451,15 @@ namespace goods
                 docToPrint.PrinterSettings.PrinterName = printname; //_366KF.Manage.Common.PickOrderPrinter; //设置打印机，填写计算机上已安装的打印机的名称
                 docToPrint.Print();//开始打印
             }
+
+        public void Print()
+        {
+            System.Windows.Forms.PrintDialog PrintDialog1 = new PrintDialog();//创建一个PrintDialog的实例。
+            PrintDialog1.AllowSomePages = true;
+            PrintDialog1.ShowHelp = true;
+            PrintDialog1.Document = docToPrint;//把PrintDialog的Document属性设为上面配置好的PrintDocument的实例
+            docToPrint.Print();//开始打印
+        }
         /// <summary>
         /// 打印预览
         /// </summary>
@@ -459,6 +482,7 @@ namespace goods
                 PrintPriview.Document = docToPrint;
                 PrintPriview.WindowState = FormWindowState.Maximized;
                 PrintPriview.ShowDialog();
+                this.reset();
             }
             catch (Exception ex)
             {
@@ -466,10 +490,14 @@ namespace goods
 
             }
         }
+        public void setCopies(short num)
+        {
+            docToPrint.PrinterSettings.Copies = num;
+        }
         private void click(object sender, MouseEventArgs e)
         {
             this.reset();
-            docToPrint.Print();
+            //docToPrint.Print();
         }
         public void PrintSetup()
         {

@@ -21,7 +21,7 @@ namespace goods.Controller
 
         public DataTable getFilterList(int pageIndex, int pageSize, string keyword)
         {
-            string sql = "SELECT id,num,name FROM warehouse ";
+            string sql = "SELECT id,num,name,isActive FROM warehouse ";
             string select = "";
             if (keyword != "")
             {
@@ -29,6 +29,7 @@ namespace goods.Controller
             }
             sql += select;
             if (pageIndex < 1) pageIndex = 1;
+            sql += " order by id desc ";
             sql += " LIMIT " + (pageIndex - 1) * pageSize + "," + pageSize;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
@@ -53,9 +54,8 @@ namespace goods.Controller
         {
             WarehouseModel s = (WarehouseModel)obj;
             string sql = "";
-
-            sql = "insert into warehouse (num,name) values('"
-                + s.Num + "','" + s.Name + "');";
+            if (s.Id > 0) sql = "UPDATE warehouse SET num = '" + s.Num + "',name = '" + s.Name + "' WHERE id =  '" + s.Id + "'";
+            else sql = "insert into warehouse (num,name) values('"+ s.Num + "','" + s.Name + "')";
             MessageModel msg;
             try
             {
@@ -64,9 +64,9 @@ namespace goods.Controller
 
                 if (res > 0)
                 {
-                    msg = new MessageModel(0, "新建成功", s);
+                    msg = new MessageModel(0, "保存成功", s);
                 }
-                else msg = new MessageModel(10005, "新建失败");
+                else msg = new MessageModel(10005, "保存失败");
             }
             catch (Exception e)
             {
@@ -74,6 +74,33 @@ namespace goods.Controller
                 if (e.ToString().IndexOf("num_UNIQUE") != -1) err = "编码重复！";
                 msg = new MessageModel(10005, err);
             }
+            return msg;
+        }
+        #endregion
+        #region 更新仓库状态
+        public MessageModel switchStatus(int id, bool isActive)
+        {
+            MessageModel msg = new MessageModel();
+            if (isActive)
+            {
+                string sqlPos = "select count(id) from position where warehouse = '" + id + "' and isActive = 1";
+                DataTable dt = h.ExecuteQuery(sqlPos, CommandType.Text);
+                if (Convert.ToInt32(dt.Rows[0][0]) > 0)
+                {
+                    return new MessageModel(20001, "更新失败,存在激活的仓位。");
+                }
+            }
+            string sql = "UPDATE warehouse SET isActive = @isActive WHERE id = '" + id + "' ";
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@isActive", !isActive);
+            int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
+
+            if (res > 0)
+            {
+                msg = new MessageModel(0, "更新成功");
+            }
+            else msg = new MessageModel(10005, "更新失败");
+
             return msg;
         }
         #endregion

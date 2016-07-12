@@ -17,43 +17,57 @@ namespace goods.Controller
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
-        public DataTable getFilterList(int pageIndex, int pageSize, string num, string name)
+        public DataTable getFilterList(int pageIndex, int pageSize, SupplierModel s)
         {
-            string sql = "SELECT id,num,name FROM supplier ";
+            string sql = "SELECT id,num,name,isActive FROM supplier ";
             string select = "";
-            if (num != "")
+            if (s.Num != "")
             {
-                select += " where num like '%" + num + "%'";
+                select += " where num like '%" + s.Num + "%'";
             }
-            if (name != "")
+            if (s.Name != "")
             {
                 if (select == "") select += " where ";
                 else select += " and ";
-                select += " name like '%" + name + "%'";
+                select += " name like '%" + s.Name + "%'";
+            }
+            if(s.IsActive != null)
+            {
+                select += " and isActive = @isActive ";
             }
             sql += select;
             if (pageIndex < 1) pageIndex = 1;
+            sql += " order by id desc,isActive desc  ";
             sql += " LIMIT " + (pageIndex - 1) * pageSize + "," + pageSize;
-            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@isActive", s.IsActive);
+            DataTable dt = h.ExecuteQuery(sql, paras, CommandType.Text);
             return dt;
 
         }
-        public int getCount(string num, string name)
+        public int getCount(SupplierModel s)
         {
             string sql = "SELECT  count(*) FROM supplier ";
             string select = "";
-            if (num != "")
+            if (s.Num != "")
             {
-                select += " where num like '%" + num + "%'";
+                select += " where num like '%" + s.Num + "%'";
             }
-            if (name != "")
+            if (s.Name != "")
             {
                 if (select == "") select += " where ";
                 else select += " and ";
-                select += " name like '%" + name + "%'";
+                select += " name like '%" + s.Name + "%'";
+            }
+            if (s.IsActive != null)
+            {
+                select += " and isActive = @isActive ";
             }
             sql += select;
-            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@isActive", s.IsActive);
+            DataTable dt = h.ExecuteQuery(sql, paras, CommandType.Text);
             int count = Convert.ToInt32(dt.Rows[0][0]);
             return count;
         } 
@@ -63,20 +77,23 @@ namespace goods.Controller
         {
             SupplierModel s = (SupplierModel)obj;
             string sql = "";
-
-            sql = "insert into supplier (num,name,createdAt) values('"
-                + s.Num + "','" + s.Name + "','" + DateTime.Now + "');";
+            if (s.Id > 0) sql = "UPDATE supplier SET num = @num,name = @name WHERE id = @id ";
+            else sql = "insert into supplier (num,name,createdAt) values(@num,@name,'" + DateTime.Now + "');";
             MessageModel msg;
             try
             {
-                int res = h.ExecuteNonQuery(sql, CommandType.Text);
+                Dictionary<string, object> paras = new Dictionary<string, object>();
+                paras.Add("@num", s.Num);
+                paras.Add("@name", s.Name);
+                paras.Add("@id", s.Id);
+                int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
 
                 
                 if (res > 0)
                 {
-                    msg = new MessageModel(0, "新建成功", s);
+                    msg = new MessageModel(0, "保存成功", s);
                 }
-                else msg = new MessageModel(10005, "新建失败");
+                else msg = new MessageModel(10005, "保存失败");
             }
             catch (Exception e)
             {
@@ -84,6 +101,25 @@ namespace goods.Controller
                 if (e.ToString().IndexOf("num_UNIQUE") != -1) err = "编码重复！";
                 msg = new MessageModel(10005, err);
             }
+            return msg;
+        }
+        #endregion
+
+        #region 更新供应商状态
+        public MessageModel switchStatus(int id, bool isActive)
+        {
+            MessageModel msg = new MessageModel();
+            string sql = "UPDATE supplier SET isActive = @isActive WHERE id = '" + id + "' ";
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@isActive", !isActive);
+            int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
+
+            if (res > 0)
+            {
+                msg = new MessageModel(0, "更新成功");
+            }
+            else msg = new MessageModel(10005, "更新失败");
+
             return msg;
         }
         #endregion

@@ -15,10 +15,17 @@ namespace goods
     {
         supplierCtrl ctrl = new supplierCtrl();
         SupplierView parentForm;
-        public SupplierPopup(SupplierView form)
+        SupplierModel olds;
+        public SupplierPopup(SupplierView form,object obj)
         {
             parentForm = form;
             InitializeComponent();
+            if(obj != null)
+            {
+                olds = (SupplierModel)obj;
+                textBox1.Text = olds.Num;
+                textBox2.Text = olds.Name;
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -29,7 +36,9 @@ namespace goods
             }
             else
             {
-                SupplierModel s = new SupplierModel(textBox1.Text, textBox2.Text);
+                SupplierModel s;
+                if (olds!= null && olds.Id >0 ) s = new SupplierModel(olds.Id,textBox1.Text, textBox2.Text);
+                else s = new SupplierModel(textBox1.Text, textBox2.Text);
                 MessageModel msg = ctrl.add(s);
                 if (msg.Code == 0)
                 {

@@ -31,7 +31,7 @@ namespace goods.Controller
         #region 获取功能
         public DataTable getFeatureByRole(int roleId)
         {
-            string sql = "select f.name,f.id,f.key,p.id pid from policy p, feature f where p.feature = f.id and  role =" + roleId;
+            string sql = "select f.name,f.id,f.key,p.id pid from policy p, feature f where p.feature = f.id and  p.role =" + roleId;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
@@ -47,14 +47,13 @@ namespace goods.Controller
             MessageModel msg;
             try
             {
-                int res = h.ExecuteNonQuery(sql, CommandType.Text);
-
+                int res = h.ExecuteNonQuery(sql, CommandType.Text);  //ExecuteNonQuery
 
                 if (res > 0)
                 {
                     msg = new MessageModel(0, "新建成功", s);
                 }
-                else msg = new MessageModel(10005, "新建失败");
+                else msg = new MessageModel(10005, "新建失败或已存在该权限");
             }
             catch (Exception e)
             {

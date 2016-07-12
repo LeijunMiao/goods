@@ -34,10 +34,16 @@
             this.textBox1 = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripButton1 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton2 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton3 = new System.Windows.Forms.ToolStripButton();
-            this.toolStripButton4 = new System.Windows.Forms.ToolStripButton();
+            this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.新建ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.修改ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.注销ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.打印ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripDropDownButton2 = new System.Windows.Forms.ToolStripDropDownButton();
+            this.新建ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.修改ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.注销ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.打印ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.dataGridView2 = new System.Windows.Forms.DataGridView();
             this.pagingCom1 = new goods.pagingCom();
@@ -93,53 +99,97 @@
             // toolStrip1
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripButton1,
-            this.toolStripButton2,
-            this.toolStripButton3,
-            this.toolStripButton4});
+            this.toolStripDropDownButton1,
+            this.toolStripDropDownButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
             this.toolStrip1.Size = new System.Drawing.Size(972, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
-            // toolStripButton1
+            // toolStripDropDownButton1
             // 
-            this.toolStripButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton1.Name = "toolStripButton1";
-            this.toolStripButton1.Size = new System.Drawing.Size(60, 22);
-            this.toolStripButton1.Text = "新建仓库";
-            this.toolStripButton1.Click += new System.EventHandler(this.toolStripButton1_Click);
+            this.toolStripDropDownButton1.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton1.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.新建ToolStripMenuItem,
+            this.修改ToolStripMenuItem,
+            this.注销ToolStripMenuItem,
+            this.打印ToolStripMenuItem});
+            this.toolStripDropDownButton1.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton1.Image")));
+            this.toolStripDropDownButton1.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton1.Name = "toolStripDropDownButton1";
+            this.toolStripDropDownButton1.Size = new System.Drawing.Size(45, 22);
+            this.toolStripDropDownButton1.Text = "仓库";
             // 
-            // toolStripButton2
+            // 新建ToolStripMenuItem
             // 
-            this.toolStripButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton2.Image")));
-            this.toolStripButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton2.Name = "toolStripButton2";
-            this.toolStripButton2.Size = new System.Drawing.Size(60, 22);
-            this.toolStripButton2.Text = "打印仓库";
-            this.toolStripButton2.Click += new System.EventHandler(this.toolStripButton2_Click);
+            this.新建ToolStripMenuItem.Name = "新建ToolStripMenuItem";
+            this.新建ToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.新建ToolStripMenuItem.Text = "新建";
+            this.新建ToolStripMenuItem.Click += new System.EventHandler(this.新建ToolStripMenuItem_Click);
             // 
-            // toolStripButton3
+            // 修改ToolStripMenuItem
             // 
-            this.toolStripButton3.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton3.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton3.Image")));
-            this.toolStripButton3.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton3.Name = "toolStripButton3";
-            this.toolStripButton3.Size = new System.Drawing.Size(60, 22);
-            this.toolStripButton3.Text = "新建仓位";
-            this.toolStripButton3.Click += new System.EventHandler(this.toolStripButton3_Click);
+            this.修改ToolStripMenuItem.Name = "修改ToolStripMenuItem";
+            this.修改ToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.修改ToolStripMenuItem.Text = "修改";
+            this.修改ToolStripMenuItem.Click += new System.EventHandler(this.修改ToolStripMenuItem_Click);
             // 
-            // toolStripButton4
+            // 注销ToolStripMenuItem
             // 
-            this.toolStripButton4.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
-            this.toolStripButton4.Image = ((System.Drawing.Image)(resources.GetObject("toolStripButton4.Image")));
-            this.toolStripButton4.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.toolStripButton4.Name = "toolStripButton4";
-            this.toolStripButton4.Size = new System.Drawing.Size(60, 22);
-            this.toolStripButton4.Text = "打印仓位";
-            this.toolStripButton4.Click += new System.EventHandler(this.toolStripButton4_Click);
+            this.注销ToolStripMenuItem.Name = "注销ToolStripMenuItem";
+            this.注销ToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.注销ToolStripMenuItem.Text = "注销/激活";
+            this.注销ToolStripMenuItem.Click += new System.EventHandler(this.注销ToolStripMenuItem_Click);
+            // 
+            // 打印ToolStripMenuItem
+            // 
+            this.打印ToolStripMenuItem.Name = "打印ToolStripMenuItem";
+            this.打印ToolStripMenuItem.Size = new System.Drawing.Size(129, 22);
+            this.打印ToolStripMenuItem.Text = "打印";
+            this.打印ToolStripMenuItem.Click += new System.EventHandler(this.打印ToolStripMenuItem_Click);
+            // 
+            // toolStripDropDownButton2
+            // 
+            this.toolStripDropDownButton2.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Text;
+            this.toolStripDropDownButton2.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.新建ToolStripMenuItem1,
+            this.修改ToolStripMenuItem1,
+            this.注销ToolStripMenuItem1,
+            this.打印ToolStripMenuItem1});
+            this.toolStripDropDownButton2.Image = ((System.Drawing.Image)(resources.GetObject("toolStripDropDownButton2.Image")));
+            this.toolStripDropDownButton2.ImageTransparentColor = System.Drawing.Color.Magenta;
+            this.toolStripDropDownButton2.Name = "toolStripDropDownButton2";
+            this.toolStripDropDownButton2.Size = new System.Drawing.Size(45, 22);
+            this.toolStripDropDownButton2.Text = "仓位";
+            // 
+            // 新建ToolStripMenuItem1
+            // 
+            this.新建ToolStripMenuItem1.Name = "新建ToolStripMenuItem1";
+            this.新建ToolStripMenuItem1.Size = new System.Drawing.Size(129, 22);
+            this.新建ToolStripMenuItem1.Text = "新建";
+            this.新建ToolStripMenuItem1.Click += new System.EventHandler(this.新建ToolStripMenuItem1_Click);
+            // 
+            // 修改ToolStripMenuItem1
+            // 
+            this.修改ToolStripMenuItem1.Name = "修改ToolStripMenuItem1";
+            this.修改ToolStripMenuItem1.Size = new System.Drawing.Size(129, 22);
+            this.修改ToolStripMenuItem1.Text = "修改";
+            this.修改ToolStripMenuItem1.Click += new System.EventHandler(this.修改ToolStripMenuItem1_Click);
+            // 
+            // 注销ToolStripMenuItem1
+            // 
+            this.注销ToolStripMenuItem1.Name = "注销ToolStripMenuItem1";
+            this.注销ToolStripMenuItem1.Size = new System.Drawing.Size(129, 22);
+            this.注销ToolStripMenuItem1.Text = "注销/激活";
+            this.注销ToolStripMenuItem1.Click += new System.EventHandler(this.注销ToolStripMenuItem1_Click);
+            // 
+            // 打印ToolStripMenuItem1
+            // 
+            this.打印ToolStripMenuItem1.Name = "打印ToolStripMenuItem1";
+            this.打印ToolStripMenuItem1.Size = new System.Drawing.Size(129, 22);
+            this.打印ToolStripMenuItem1.Text = "打印";
+            this.打印ToolStripMenuItem1.Click += new System.EventHandler(this.打印ToolStripMenuItem1_Click);
             // 
             // dataGridView1
             // 
@@ -174,6 +224,7 @@
             this.dataGridView2.Location = new System.Drawing.Point(477, 3);
             this.dataGridView2.Name = "dataGridView2";
             this.dataGridView2.ReadOnly = true;
+            this.dataGridView2.RowHeadersVisible = false;
             this.dataGridView2.RowTemplate.Height = 23;
             this.dataGridView2.Size = new System.Drawing.Size(468, 321);
             this.dataGridView2.TabIndex = 9;
@@ -217,8 +268,10 @@
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.pagingCom1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "WarehouseView";
-            this.Text = "供应商管理";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "仓库管理";
             this.Load += new System.EventHandler(this.Form2_Load);
             this.Shown += new System.EventHandler(this.Form1_Shown);
             this.groupBox1.ResumeLayout(false);
@@ -244,15 +297,21 @@
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.DataGridView dataGridView1;
-        private System.Windows.Forms.ToolStripButton toolStripButton1;
         private System.Windows.Forms.TextBox textBox1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
-        private System.Windows.Forms.ToolStripButton toolStripButton2;
         private System.Windows.Forms.DataGridView dataGridView2;
-        private System.Windows.Forms.ToolStripButton toolStripButton3;
-        private System.Windows.Forms.ToolStripButton toolStripButton4;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton1;
+        private System.Windows.Forms.ToolStripMenuItem 新建ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 修改ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 注销ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 打印ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripDropDownButton toolStripDropDownButton2;
+        private System.Windows.Forms.ToolStripMenuItem 新建ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 修改ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 注销ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 打印ToolStripMenuItem1;
     }
 }
 

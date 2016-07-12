@@ -18,6 +18,12 @@ namespace goods.Model
             this.num = num;
             this.name = name;
         }
+        public MeteringModel(int id,String num, String name)
+        {
+            this.id = id;
+            this.num = num;
+            this.name = name;
+        }
 
         public int Id
         {

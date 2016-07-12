@@ -20,7 +20,12 @@ namespace goods.Model
             this.name = name;
             this.warehouse = warehouse;
         }
-
+        public PositionModel(int id,String num, String name)
+        {
+            this.num = num;
+            this.name = name;
+            this.id = id;
+        }
         public int Id
         {
             set

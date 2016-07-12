@@ -8,6 +8,8 @@ using System.Data;
 using goods.Model;
 using System.Data.SqlClient;
 using System.Security.Cryptography;
+using System.IO;
+
 namespace goods.Controller
 {
     class userCtrl
@@ -43,7 +45,7 @@ namespace goods.Controller
         public DataTable getUserList(int pageIndex, int pageSize, int role, string fullName)
         {
             innerParmas parmas = new innerParmas(pageIndex, pageSize, role, fullName);
-            string sql = "SELECT u.id,u.fullName,u.userName,u.isActive,r.name FROM db_goodsmanage.user u , db_goodsmanage.role r " +
+            string sql = "SELECT u.id,u.fullName,u.userName,u.isActive,u.role,r.name FROM user u , role r " +
                 "where u.role = r.id  ";
             if (parmas.role != -1)
             {
@@ -53,6 +55,8 @@ namespace goods.Controller
             {
                 sql += " and u.fullName like '%" + parmas.fullName + "%'";
             }
+
+            sql += " order by u.id desc ";
             if (parmas.pageIndex < 1) parmas.pageIndex = 1;
             sql += " LIMIT " + (parmas.pageIndex - 1) * parmas.pageSize + "," + parmas.pageSize;
             //sql += ";SELECT FOUND_ROWS();";
@@ -106,7 +110,15 @@ namespace goods.Controller
         #region 更新
         public MessageModel set(object obj)
         {
+            User u = (User)obj;
             MessageModel msg = new MessageModel();
+            string sql = "UPDATE user SET userName = '" + u.UserName + "' ,fullName  = '" + u.FullName + "',role = '" + u.Role + "' WHERE id = '" + u.Id + "' ";
+            int res = h.ExecuteNonQuery(sql, CommandType.Text);
+            if (res > 0)
+            {
+                msg = new MessageModel(0, "更新成功");
+            }
+            else msg = new MessageModel(10005, "更新失败");
             return msg;
         }
         #endregion

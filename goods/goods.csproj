@@ -47,6 +47,10 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>
+    </ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="GrapeCity.ActiveReports.ArsClient.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
     <Reference Include="GrapeCity.ActiveReports.Chart.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
@@ -82,6 +86,7 @@
   <ItemGroup>
     <Compile Include="Controller\customer.cs" />
     <Compile Include="Controller\department.cs" />
+    <Compile Include="Controller\information.cs" />
     <Compile Include="Controller\list.cs" />
     <Compile Include="Controller\materiel.cs" />
     <Compile Include="Controller\metering.cs" />
@@ -89,20 +94,30 @@
     <Compile Include="Controller\policy.cs" />
     <Compile Include="Controller\position.cs" />
     <Compile Include="Controller\role.cs" />
+    <Compile Include="Controller\stock.cs" />
     <Compile Include="Controller\supplier.cs" />
     <Compile Include="Controller\user.cs" />
     <Compile Include="Controller\warehouse.cs" />
     <Compile Include="Model\CallSlip.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\GoDownEntry.cs" />
+    <Compile Include="Model\Information.cs" />
     <Compile Include="Model\List.cs" />
     <Compile Include="Model\Materiel.cs" />
     <Compile Include="Model\Metering.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\Policy.cs" />
     <Compile Include="Model\Position.cs" />
+    <Compile Include="Model\Stock.cs" />
     <Compile Include="Model\Supplier.cs" />
     <Compile Include="Model\Warehouse.cs" />
+    <Compile Include="Service\Setting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Service\Setting.Designer.cs">
+      <DependentUpon>Setting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Service\xmlDoc.cs" />
     <Compile Include="Util\CalendarCell.cs" />
     <Compile Include="Util\CalendarColumn.cs" />
     <Compile Include="Util\CalendarEditingControl.cs">
@@ -111,6 +126,7 @@
     <Compile Include="Util\DatePicker.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Util\MD5.cs" />
     <Compile Include="Util\print.cs" />
     <Compile Include="Util\util.cs" />
     <Compile Include="View\Customer\CustomerPopup.cs">
@@ -174,6 +190,24 @@
     <Compile Include="View\Materiel\MaterielView.Designer.cs">
       <DependentUpon>MaterielView.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Materiel\SafetyStockList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Materiel\SafetyStockList.Designer.cs">
+      <DependentUpon>SafetyStockList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Materiel\SafetyStockSetting.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Materiel\SafetyStockSetting.Designer.cs">
+      <DependentUpon>SafetyStockSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Message\MsgBox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Message\MsgBox.Designer.cs">
+      <DependentUpon>MsgBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Metering\MeteringPopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -186,11 +220,23 @@
     <Compile Include="View\Metering\MeteringView.Designer.cs">
       <DependentUpon>MeteringView.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Order\BatchList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Order\BatchList.Designer.cs">
+      <DependentUpon>BatchList.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Order\CreateOrderView.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="View\Order\CreateOrderView.Designer.cs">
       <DependentUpon>CreateOrderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Order\OrderEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Order\OrderEdit.Designer.cs">
+      <DependentUpon>OrderEdit.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Order\OrderMaterielPopup.cs">
       <SubType>Form</SubType>
@@ -222,12 +268,6 @@
     <Compile Include="View\Order\QRCodeList.Designer.cs">
       <DependentUpon>QRCodeList.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\Order\TestPrint.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="View\Order\TestPrint.Designer.cs">
-      <DependentUpon>TestPrint.cs</DependentUpon>
-    </Compile>
     <Compile Include="View\Role\RolePopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -241,23 +281,53 @@
       <DependentUpon>RoleView.cs</DependentUpon>
     </Compile>
     <Compile Include="Service\ServerInfo.cs" />
-    <Compile Include="View\supplier\SupplierPopup.cs">
+    <Compile Include="View\Supplier\SupplierPopup.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\supplier\SupplierPopup.Designer.cs">
+    <Compile Include="View\Supplier\SupplierPopup.Designer.cs">
       <DependentUpon>SupplierPopup.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\supplier\SupplierSelect.cs">
+    <Compile Include="View\Supplier\SupplierSelect.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\supplier\SupplierSelect.Designer.cs">
+    <Compile Include="View\Supplier\SupplierSelect.Designer.cs">
       <DependentUpon>SupplierSelect.cs</DependentUpon>
     </Compile>
-    <Compile Include="View\supplier\SupplierView.cs">
+    <Compile Include="View\Supplier\SupplierView.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="View\supplier\SupplierView.Designer.cs">
+    <Compile Include="View\Supplier\SupplierView.Designer.cs">
       <DependentUpon>SupplierView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\CallSlipList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\CallSlipList.Designer.cs">
+      <DependentUpon>CallSlipList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\CallSlipView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\CallSlipView.Designer.cs">
+      <DependentUpon>CallSlipView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\CheckList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\CheckList.Designer.cs">
+      <DependentUpon>CheckList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\CreateCheckList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\CreateCheckList.Designer.cs">
+      <DependentUpon>CreateCheckList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\CheckListView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\CheckListView.Designer.cs">
+      <DependentUpon>CheckListView.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Table\GoDownEntryEdit.cs">
       <SubType>Form</SubType>
@@ -271,6 +341,48 @@
     <Compile Include="View\Table\GoDownEntryList.Designer.cs">
       <DependentUpon>GoDownEntryList.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Table\InOrderList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\InOrderList.Designer.cs">
+      <DependentUpon>InOrderList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\InOrderView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\InOrderView.Designer.cs">
+      <DependentUpon>InOrderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\OutOrderList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\OutOrderList.Designer.cs">
+      <DependentUpon>OutOrderList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\OutOrderView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\OutOrderView.Designer.cs">
+      <DependentUpon>OutOrderView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\StockList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\StockList.Designer.cs">
+      <DependentUpon>StockList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Table\StockSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Table\StockSelect.Designer.cs">
+      <DependentUpon>StockSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\User\UserEditInfo.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\User\UserEditInfo.Designer.cs">
+      <DependentUpon>UserEditInfo.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\User\UserEditPopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -282,6 +394,12 @@
     </Compile>
     <Compile Include="View\User\UserPopup.Designer.cs">
       <DependentUpon>UserPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\User\UserSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\User\UserSelect.Designer.cs">
+      <DependentUpon>UserSelect.cs</DependentUpon>
     </Compile>
     <Compile Include="View\User\UserView.cs">
       <SubType>Form</SubType>
@@ -317,6 +435,9 @@
       <DependentUpon>WarehouseView.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\licenses.licx" />
+    <EmbeddedResource Include="Service\Setting.resx">
+      <DependentUpon>Setting.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Util\pagingCom.resx">
       <DependentUpon>pagingCom.cs</DependentUpon>
     </EmbeddedResource>
@@ -331,9 +452,11 @@
     </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Login\Login.resx">
       <DependentUpon>Login.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -344,21 +467,43 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Materiel\MaterielView.resx">
       <DependentUpon>MaterielView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Materiel\SafetyStockList.resx">
+      <DependentUpon>SafetyStockList.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Materiel\SafetyStockSetting.resx">
+      <DependentUpon>SafetyStockSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Message\MsgBox.resx">
+      <DependentUpon>MsgBox.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Metering\MeteringPopup.resx">
       <DependentUpon>MeteringPopup.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Metering\MeteringView.resx">
       <DependentUpon>MeteringView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Order\BatchList.resx">
+      <DependentUpon>BatchList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Order\CreateOrderView.resx">
       <DependentUpon>CreateOrderView.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Order\OrderEdit.resx">
+      <DependentUpon>OrderEdit.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Order\OrderMaterielPopup.resx">
       <DependentUpon>OrderMaterielPopup.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Order\OrderPrint.resx">
       <DependentUpon>OrderPrint.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Order\OrderSearch.resx">
       <DependentUpon>OrderSearch.cs</DependentUpon>
@@ -368,9 +513,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Order\QRCodeList.resx">
       <DependentUpon>QRCodeList.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="View\Order\TestPrint.resx">
-      <DependentUpon>TestPrint.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Role\RolePopup.resx">
       <DependentUpon>RolePopup.cs</DependentUpon>
@@ -378,14 +521,29 @@
     <EmbeddedResource Include="View\Role\RoleView.resx">
       <DependentUpon>RoleView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\supplier\SupplierPopup.resx">
+    <EmbeddedResource Include="View\Supplier\SupplierPopup.resx">
       <DependentUpon>SupplierPopup.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\supplier\SupplierSelect.resx">
+    <EmbeddedResource Include="View\Supplier\SupplierSelect.resx">
       <DependentUpon>SupplierSelect.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="View\supplier\SupplierView.resx">
+    <EmbeddedResource Include="View\Supplier\SupplierView.resx">
       <DependentUpon>SupplierView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\CallSlipList.resx">
+      <DependentUpon>CallSlipList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\CallSlipView.resx">
+      <DependentUpon>CallSlipView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\CheckList.resx">
+      <DependentUpon>CheckList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\CheckListView.resx">
+      <DependentUpon>CheckListView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\CreateCheckList.resx">
+      <DependentUpon>CreateCheckList.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Table\GoDownEntryEdit.resx">
       <DependentUpon>GoDownEntryEdit.cs</DependentUpon>
@@ -393,11 +551,35 @@
     <EmbeddedResource Include="View\Table\GoDownEntryList.resx">
       <DependentUpon>GoDownEntryList.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\InOrderList.resx">
+      <DependentUpon>InOrderList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\InOrderView.resx">
+      <DependentUpon>InOrderView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\OutOrderList.resx">
+      <DependentUpon>OutOrderList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\OutOrderView.resx">
+      <DependentUpon>OutOrderView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\StockList.resx">
+      <DependentUpon>StockList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Table\StockSelect.resx">
+      <DependentUpon>StockSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\User\UserEditInfo.resx">
+      <DependentUpon>UserEditInfo.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\User\UserEditPopup.resx">
       <DependentUpon>UserEditPopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\User\UserPopup.resx">
       <DependentUpon>UserPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\User\UserSelect.resx">
+      <DependentUpon>UserSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\User\UserView.resx">
       <DependentUpon>UserView.cs</DependentUpon>
@@ -438,6 +620,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Component\PagingControl.dll" />
+    <Content Include="Resources\1.ico" />
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
@@ -459,6 +642,35 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="Microsoft.Office.Core">
+      <Guid>{2DF8D04C-5BFA-101B-BDE5-00AA0044DE52}</Guid>
+      <VersionMajor>2</VersionMajor>
+      <VersionMinor>8</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="Microsoft.Office.Interop.Excel">
+      <Guid>{00020813-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>1</VersionMajor>
+      <VersionMinor>9</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
+    <COMReference Include="VBIDE">
+      <Guid>{0002E157-0000-0000-C000-000000000046}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>3</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>primary</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

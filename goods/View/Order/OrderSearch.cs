@@ -23,6 +23,7 @@ namespace goods
             InitializeComponent();
             MidModule.EventSend += new MsgDlg(MidModule_EventSend);
             initPage();
+            BindDataWithPage(1);
         }
         private void initPage()
         {
@@ -86,10 +87,12 @@ namespace goods
             DataColumn dcStatus = new DataColumn("状态");
             DataColumn dcId = new DataColumn("ID");
             DataColumn dcmId = new DataColumn("mid");
+            DataColumn dcpoId = new DataColumn("poid");
+            DataColumn dcclosed = new DataColumn("closed");
             DataColumn dcInGoods = new DataColumn("入库数量");
             DataColumn dcNotInGoods = new DataColumn("未入库数量");
             DataColumn[] list_dc = { dcNum, dcDate, dcSup, dcMNum, dcMName, dcSep, dcMete, dcPrice,dcQuantity, dcTaxPrice,
-                dcAmount, dcTax, dcTaxAmount, dcAll, dcDeliveryDate, dcStatus,dcId,dcmId,dcInGoods,dcNotInGoods };
+                dcAmount, dcTax, dcTaxAmount, dcAll, dcDeliveryDate, dcStatus,dcId,dcmId,dcInGoods,dcNotInGoods,dcpoId,dcclosed };
             dt.Columns.AddRange(list_dc);
 
             for (int i = 0; i < dtData.Rows.Count; i++)
@@ -109,16 +112,18 @@ namespace goods
                 dr[11] = dtData.Rows[i]["tax"].ToString();
                 dr[12] = Convert.ToDouble(dtData.Rows[i]["amount"])* Convert.ToDouble(dtData.Rows[i]["tax"]);
                 dr[13] = Convert.ToDouble(dtData.Rows[i]["amount"]) * (1 + Convert.ToDouble(dtData.Rows[i]["tax"]));
-                dr[14] = DateTime.Parse( dtData.Rows[i]["deliveryDate"].ToString()).ToString("yyyy/M/d");
+                if (dtData.Rows[i]["deliveryDate"].ToString() == "") dr[14] = "";
+                else dr[14] = DateTime.Parse( dtData.Rows[i]["deliveryDate"].ToString()).ToString("yyyy/M/d");
                 if (dtData.Rows[i]["quantityAll"] == DBNull.Value) dtData.Rows[i]["quantityAll"] = 0;
                 var diff = Convert.ToDouble(dtData.Rows[i]["quantity"]) - Convert.ToDouble(dtData.Rows[i]["quantityAll"]);
-                if (diff <= 0) dr[15] = "关闭";
+                if (diff <= 0 || Convert.ToBoolean(dtData.Rows[i]["closed"])) dr[15] = "关闭";
                 else dr[15] = "激活";
                 dr[16] = dtData.Rows[i]["id"].ToString();
                 dr[17] = dtData.Rows[i]["mid"].ToString();
                 dr[18] = dtData.Rows[i]["quantityAll"].ToString();
                 dr[19] = diff;
-
+                dr[20] = dtData.Rows[i]["poid"].ToString(); ;
+                dr[21] = dtData.Rows[i]["closed"].ToString(); ;
                 dt.Rows.Add(dr);
             }
 
@@ -126,6 +131,8 @@ namespace goods
             dataGridView1.DataSource = dt;
             dataGridView1.Columns[16].Visible = false;
             dataGridView1.Columns[17].Visible = false;
+            dataGridView1.Columns[20].Visible = false;
+            dataGridView1.Columns[21].Visible = false;
 
             pagingCom1.RecordCount = ctrl.getCount(this.textBox3.Text, this.dateTimePicker1.Checked, dateTimePicker1.Value.Date, textBox1.Text, textBox2.Text);
             pagingCom1.reSet();
@@ -141,17 +148,65 @@ namespace goods
             {
                 for (int i = 0; i < dataGridView1.SelectedRows.Count; i++)
                 {
+                    if(dataGridView1.SelectedRows[i].Cells["状态"].Value.ToString() == "关闭")
+                    {
+                        MessageBox.Show("包含关闭订单，生成失败。");
+                        return;
+                    }
                     list_p.Add(new parmas(Convert.ToInt32( dataGridView1.SelectedRows[i].Cells["id"].Value),
                         Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["mid"].Value),
                         dataGridView1.SelectedRows[i].Cells["物料代码"].Value.ToString()));
                 }
                 uuids = ctrl.updateBatch(list_p);
-
+                QRCodeList pop = new QRCodeList(uuids);
+                pop.Show();
             }
-            QRCodeList pop = new QRCodeList(uuids);
-            pop.Show();
+            else
+            {
+                MessageBox.Show("请选择物料！");
+            }
 
+        }
 
+        private void toolStripButton2_Click(object sender, EventArgs e)
+        {
+            if (this.dataGridView1.CurrentCell != null)
+            {
+                int poid = Convert.ToInt32(dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["poid"].Value);
+                OrderEdit view = new OrderEdit(poid);
+                view.Show();
+                //int can = ctrl.hasGoDownEntry(poid);
+                //if (can == 0)
+                //{
+                //    OrderEdit view = new OrderEdit(poid);
+                //    view.Show();
+                //}
+                //else
+                //{
+                //    MessageBox.Show("订单已关联，不得编辑！");
+                //}
+            }
+            else
+            {
+                MessageBox.Show("请选择物料！");
+            }
+        }
+
+        private void 关闭ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if(dataGridView1.CurrentCell != null)
+            {
+                var msg = ctrl.setClosed(Convert.ToInt32(dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["id"].Value));
+                if (msg.Code == 0)
+                {
+                    MessageBox.Show(msg.Msg);
+                    dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["状态"].Value = "关闭";
+                }
+                else
+                {
+                    MessageBox.Show(msg.Msg);
+                }
+            }
         }
     }
 }

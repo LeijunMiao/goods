@@ -13,7 +13,8 @@ namespace goods
         public MySqlHelper()
         {
             //connStr = ConfigurationManager.AppSettings["connStr"].ToString();
-            connStr = "Server=" + ServerInfo.ServerIP + ";Database=db_GoodsManage;Uid=sa;Pwd=killer123;charset=utf8";
+            connStr = "Server=" + ServerInfo.ServerIP + ";Database=db_GoodsManage;Uid=" + ServerInfo.User_ID + ";Pwd=" + ServerInfo.User_Pwd + ";charset=utf8";
+            //connStr = "Server=" + ServerInfo.ServerIP + ";Database=db_GoodsManage;Uid=" + ServerInfo.User_ID + ";Pwd=killer123;charset=utf8";
         }
         public MySqlHelper(string connStr)
         {

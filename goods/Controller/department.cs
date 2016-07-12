@@ -25,7 +25,7 @@ namespace goods.Controller
         }
         public DataTable getChildren()
         {
-            string sql = "select * from department where parentId !=0 order by parentId,sortby";
+            string sql = "select * from department where parentId !=null order by parentId,sortby";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
 
@@ -39,18 +39,11 @@ namespace goods.Controller
             {
                 new SqlParameter("@id", SqlDbType.Int)
             };
-            if (dep.ParentId != null)
-            {
-                sql = "insert into department (name,createdAt,parentId) values('" + dep.Name + "','" + DateTime.Now + "','" + dep.ParentId + "');";//select @id=@@IDENTITY
-
-            }
-            else
-            {
-                sql = "insert into department (name,createdAt) values('" + dep.Name + "','" + DateTime.Now + "');";//select @id=@@IDENTITY
-
-            }
+            sql = "insert into department (name,createdAt,parentId) values('" + dep.Name + "','" + DateTime.Now + "',@parentId);";//select @id=@@IDENTITY
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@parentId", dep.ParentId);
             //int res = DBHelp.GetSQL(sql);
-            int res = h.ExecuteNonQuery(sql, CommandType.Text);
+            int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
             
             //dep.Id = Convert.ToInt32(para[0].Value.ToString());
             MessageModel msg;
