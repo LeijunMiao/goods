@@ -26,7 +26,7 @@ namespace goods
 
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
             numColumn.HeaderText = "批次编号";
-            numColumn.DataPropertyName = "batchnum";
+            numColumn.DataPropertyName = "batchTNum";
             dataGridView1.Columns.Add(numColumn);
 
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
@@ -34,6 +34,11 @@ namespace goods
             idColumn.Visible = false;
             idColumn.Name = "id";
             dataGridView1.Columns.Add(idColumn);
+
+            DataGridViewTextBoxColumn supColumn = new DataGridViewTextBoxColumn();
+            supColumn.DataPropertyName = "supplier";
+            supColumn.HeaderText = "供应商";
+            dataGridView1.Columns.Add(supColumn);
 
             DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
             nameColumn.DataPropertyName = "name";
@@ -55,13 +60,24 @@ namespace goods
             avaColumn.HeaderText = "可用库存";
             dataGridView1.Columns.Add(avaColumn);
 
+
+            
+
             this.textBox1.KeyDown += button1_KeyDown;
             this.textBox2.KeyDown += button1_KeyDown;
             this.textBox3.KeyDown += button1_KeyDown;
 
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
+            this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
+
         }
+
+        private void pageIndexChanged(object sender, EventArgs e)
+        {
+            loadData(pagingCom1.PageIndex);
+        }
+
         private void button1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) { loadData(1); }

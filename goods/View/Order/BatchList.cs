@@ -22,7 +22,7 @@ namespace goods
         private PrintPreviewDialog printPriview = new System.Windows.Forms.PrintPreviewDialog();
         
         private int count = 0;
-        private List<Bitmap> _printBmps = new List<Bitmap>();
+        private List<picModel> _printBmps = new List<picModel>();
 
         public BatchList(int omid)
         {
@@ -43,6 +43,30 @@ namespace goods
             colNum.HeaderText = "批次编号";
             colNum.ReadOnly = true;
             this.dataGridView1.Columns.Add(colNum);
+
+            DataGridViewColumn colName = new DataGridViewTextBoxColumn();
+            colName.DataPropertyName = "name";
+            colName.Name = "name";
+            colName.Visible = false;
+            this.dataGridView1.Columns.Add(colName);
+
+            DataGridViewColumn colSpe = new DataGridViewTextBoxColumn();
+            colSpe.DataPropertyName = "spe";
+            colSpe.Name = "spe";
+            colSpe.Visible = false;
+            this.dataGridView1.Columns.Add(colSpe);
+
+            DataGridViewColumn colMeter = new DataGridViewTextBoxColumn();
+            colMeter.DataPropertyName = "meter";
+            colMeter.Name = "meter";
+            colMeter.Visible = false;
+            this.dataGridView1.Columns.Add(colMeter);
+
+            DataGridViewColumn colSupplier = new DataGridViewTextBoxColumn();
+            colSupplier.DataPropertyName = "supplier";
+            colSupplier.Name = "supplier";
+            colSupplier.Visible = false;
+            this.dataGridView1.Columns.Add(colSupplier);
 
             DataGridViewColumn colDate = new DataGridViewTextBoxColumn();
             colDate.DataPropertyName = "date";
@@ -113,13 +137,67 @@ namespace goods
         }
         private void picToPrint_PrintPage(object sender, PrintPageEventArgs e)
         {
-            Font f = new Font("宋体", 10, FontStyle.Regular);
+            Font f = new Font("宋体", 12, FontStyle.Regular);
             decimal Chinese_OneWidth = Convert.ToDecimal(e.Graphics.MeasureString("测", f).Width);
             int pageWidth = Convert.ToInt32(Math.Round(e.PageSettings.PrintableArea.Width, 0)) - 1;//打印机可打印区域的宽度
             int onePageHeight = Convert.ToInt32(Math.Round(e.PageSettings.PrintableArea.Height, 0)) - 1;//打印机可打印区域的高度
             //getPic();
-            e.Graphics.DrawImage(_printBmps[count], new Rectangle((int)Math.Ceiling(Chinese_OneWidth), 0, _printBmps[count].Width, _printBmps[count].Height));
 
+            Brush bru = Brushes.Black;
+            Bitmap bpItem = new Bitmap(e.PageBounds.Width, e.PageBounds.Height);
+            Graphics gItem = Graphics.FromImage(bpItem);
+            
+            int fHeight = Convert.ToInt32(e.Graphics.MeasureString("测", f).Height);
+            int fWidth = Convert.ToInt32(e.Graphics.MeasureString("测", f).Width);
+            int maxWidth = (int)Math.Ceiling(Convert.ToDecimal(e.Graphics.MeasureString(getmax(_printBmps[count]), f).Width));
+
+            int pic_X = (e.PageBounds.Width - _printBmps[count].printBmp.Width - maxWidth) / 2;
+            if (pic_X < 0) pic_X = 0;
+            int pic_Y = (e.PageBounds.Height - _printBmps[count].printBmp.Height) / 2;
+            if (pic_Y < 0) pic_Y = 0;
+
+            e.Graphics.DrawImage(_printBmps[count].printBmp, pic_X, 0);//new Rectangle((int)Math.Ceiling(Chinese_OneWidth), 0 _printBmps[count].printBmp.Width, _printBmps[count].printBmp.Height)
+
+            var pm = _printBmps[count];
+            int line = 0;
+            foreach (System.Reflection.PropertyInfo p in pm.GetType().GetProperties())
+            {
+                if (p.Name != "printBmp")
+                {
+                    var attr = p.GetValue(pm).ToString();
+                    decimal pWidth = Convert.ToDecimal(e.Graphics.MeasureString(attr, f).Width);
+                    List<string> list = util.GetMultiLineString(attr, e.PageBounds.Width - pic_X - pm.printBmp.Width - fWidth, gItem, f);
+                    int i;
+                    for (i = 0; i < list.Count; i++)
+                    {
+                        e.Graphics.DrawString(list[i], f, bru, pic_X + pm.printBmp.Width, fHeight * (line + i) + fHeight/2);
+                    }
+                    line += i;
+                }
+            }
+
+            //decimal ckWidth = Convert.ToDecimal(e.Graphics.MeasureString(ck, f).Width);
+            //decimal cwWidth = Convert.ToDecimal(e.Graphics.MeasureString(cw, f).Width);
+
+            //e.Graphics.DrawImage(pictureBox1.Image, pic_X, pic_Y);//e.Graphics.VisibleClipBounds);, pictureBox1.Image.Width, pictureBox1.Image.Height
+            //List<string> list_ck = util.GetMultiLineString(ck, e.PageBounds.Width - pic_X - pictureBox1.Image.Width - fWidth, gItem, f);
+            //List<string> list_cw = util.GetMultiLineString(cw, e.PageBounds.Width - pic_X - pictureBox1.Image.Width - fWidth, gItem, f);
+            //int minHeight = (pictureBox1.Image.Height - (list_ck.Count + list_cw.Count) * fHeight) / 2;
+            //if (minHeight < 0) minHeight = 0;
+            //int i;
+            //for (i = 0; i < list_ck.Count; i++)
+            //{
+            //    e.Graphics.DrawString(list_ck[i], f, bru, pic_X + pictureBox1.Image.Width, pic_Y + minHeight + fHeight * i);
+            //}
+
+            //if (this.label4.Text != "")
+            //{
+            //    for (int j = 0; j < list_cw.Count; j++)
+            //    {
+            //        e.Graphics.DrawString(list_cw[j], f, bru, pic_X + pictureBox1.Image.Width, pic_Y + fHeight * (i + j) + minHeight);
+            //    }
+            //}
+            //e.Graphics.DrawString("名称：" + _printBmps[count].batch, f, bru, 100, 20);
             /********************start--判断是否需要再打印下一页--start*************************/
             count++;
             if (_printBmps.Count > count)
@@ -127,6 +205,19 @@ namespace goods
             else
                 e.HasMorePages = false;
 
+        }
+
+        private string getmax(picModel pm)
+        {
+            string max = "";
+            foreach(System.Reflection.PropertyInfo p in pm.GetType().GetProperties())
+            {
+                if(p.Name != "printBmp")
+                {
+                    if (p.GetValue(pm).ToString().Length > max.Length) max = p.GetValue(pm).ToString();
+                }
+            }
+            return max;
         }
         private void printPreviewDialog1_Load(object sender, EventArgs e)
         {
@@ -154,15 +245,39 @@ namespace goods
             }
             else
             {
-                _printBmps = new List<Bitmap>();
+                _printBmps = new List<picModel>();
                 for (int i = 0; i < this.dataGridView1.SelectedRows.Count; i++)
                 {
-                    _printBmps.Add(util.GenByZXingNet(this.dataGridView1.SelectedRows[i].Cells["num"].Value.ToString()));
+                    picModel pm = new picModel();
+                    pm.printBmp = util.GenByZXingNet(this.dataGridView1.SelectedRows[i].Cells["num"].Value.ToString());
+                    pm.batch = "批次：" + this.dataGridView1.SelectedRows[i].Cells["num"].Value.ToString();
+                    pm.name = "物料：" + this.dataGridView1.SelectedRows[i].Cells["name"].Value.ToString();
+                    if(this.dataGridView1.SelectedRows[i].Cells["spe"].Value != DBNull.Value) pm.spe = "规格：" + this.dataGridView1.SelectedRows[i].Cells["spe"].Value.ToString();
+                    pm.meter = "单位：" + this.dataGridView1.SelectedRows[i].Cells["meter"].Value.ToString();
+                    pm.supplier = "供应商：" + this.dataGridView1.SelectedRows[i].Cells["supplier"].Value.ToString();
+                    _printBmps.Add(pm);
                     //(Bitmap)this.dataGridView1.SelectedRows[i].Cells["image"].Value
                 }
                 PrintPriview();
             }
             
+        }
+
+        private void toolStripButton3_Click(object sender, EventArgs e)
+        {
+            PrintDialog dlg = new PrintDialog();
+            dlg.Document = picToPrint;
+            dlg.ShowDialog();
+        }
+
+        private class picModel
+        {
+            public Bitmap printBmp { get; set; }
+            public string name { get; set; }
+            public string spe { get; set; }
+            public string batch { get; set; }
+            public string meter { get; set; }
+            public string supplier { get; set; }
         }
     }
 }

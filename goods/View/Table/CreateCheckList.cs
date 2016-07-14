@@ -33,9 +33,14 @@ namespace goods
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.AutoGenerateColumns = false;
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
-            numColumn.HeaderText = "批次编号";
             numColumn.DataPropertyName = "batchnum";
             numColumn.Name = "batchnum";
+            numColumn.Visible = false;
+
+            DataGridViewTextBoxColumn batchTNumColumn = new DataGridViewTextBoxColumn();
+            batchTNumColumn.HeaderText = "批次编号";
+            batchTNumColumn.DataPropertyName = "batchTNum";
+            batchTNumColumn.Name = "batchTNum";
 
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "id";
@@ -78,7 +83,7 @@ namespace goods
             zvaColumn.Name = "avaquantity";
 
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-           idColumn,materielColumn,warehouseColumn,positionColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn});
+           idColumn,materielColumn,warehouseColumn, positionColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn, batchTNumColumn});
 
         }
         private void toolStripButton1_Click(object sender, EventArgs e)
@@ -138,11 +143,13 @@ namespace goods
             if (msg.Code == 0)
             {
                 System.Data.DataTable dtcheck =  ctrl.getlastinsert(PropertyClass.UserId);
-                label2.Visible = true;
-                label3.Text = dtcheck.Rows[0]["num"].ToString();
-                label4.Visible = true;
-                label5.Text = dtcheck.Rows[0]["date"].ToString();
-
+                if (dtcheck.Rows.Count>0)
+                {
+                    label2.Visible = true;
+                    label3.Text = dtcheck.Rows[0]["num"].ToString();
+                    label4.Visible = true;
+                    label5.Text = dtcheck.Rows[0]["date"].ToString();
+                }
                 this.label6.Text = dt.Rows[0]["id"].ToString();
 
                 toolStripButton1.Enabled = false;

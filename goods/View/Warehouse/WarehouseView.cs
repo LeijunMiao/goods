@@ -207,9 +207,9 @@ namespace goods
 
         private void 打印ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (num != null)
+            if (this.dataGridView1.CurrentCell != null)
             {
-                WarehouseQRCode popup = new WarehouseQRCode("ck", num,"");
+                WarehouseQRCode popup = new WarehouseQRCode("ck", dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["num"].Value.ToString(), "", dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["name"].Value.ToString(), "");
                 popup.Show();
             }
             else
@@ -267,7 +267,9 @@ namespace goods
             {
                 string positionNum = dataGridView2.SelectedRows[0].Cells["num"].Value.ToString();
                 string warNum = dataGridView1.SelectedRows[0].Cells["num"].Value.ToString();
-                WarehouseQRCode popup = new WarehouseQRCode("cw", warNum, positionNum);
+                string warName = dataGridView1.SelectedRows[0].Cells["name"].Value.ToString();
+                string posName = dataGridView2.SelectedRows[0].Cells["name"].Value.ToString();
+                WarehouseQRCode popup = new WarehouseQRCode("cw", warNum, positionNum, warName, posName);
                 popup.Show();
             }
         }

@@ -32,5 +32,56 @@ namespace goods
             Bitmap img = writer.Write(bm);
             return img;
         }
+
+        /// <summary>
+        /// 讲一个字符串按照固定的长度切分为多个适合长度的字符串
+        /// </summary>
+        /// <param name="dataLine">需要切分的字符串</param>
+        /// <param name="width">固定的长度</param>
+        /// <param name="g">绘制对象</param>
+        /// <param name="f">字体</param>
+        /// <returns>切分后得到的字符串集合</returns>
+        public List<string> GetMultiLineString(string dataLine, float width, Graphics g, Font f)
+        {
+            List<string> dataLines = new List<string>();
+            char[] chars = dataLine.ToCharArray();
+            decimal widthT = Convert.ToDecimal(width);
+            decimal charWidth = Convert.ToDecimal(g.MeasureString("c".ToString(), f).Width);
+            if (widthT < charWidth)
+            {
+                throw new Exception("数据无法正常显示，经优化计算后的列宽不足以存放一个字符！");
+            }
+            decimal widthC = 0;
+            int i = 0;
+            string dLine = "";
+            string tmpLine = "";
+            while (true)
+            {
+                if (i == chars.Length)
+                    widthC = decimal.MaxValue;
+                else
+                {
+                    tmpLine += chars[i].ToString();
+                    widthC = Convert.ToDecimal(g.MeasureString(tmpLine, f).Width);
+                }
+                if (widthC < widthT)
+                {
+                    dLine = tmpLine;
+                }
+                else
+                {
+                    dataLines.Add(dLine);
+                    widthC = 0;
+                    dLine = "";
+                    tmpLine = "";
+                    if (i < chars.Length)
+                        i--;
+                }
+                if (i >= chars.Length || i == -1)
+                    break;
+                i++;
+            }
+            return dataLines;
+        }
     }
 }

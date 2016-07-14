@@ -34,7 +34,7 @@ namespace goods
 
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
             numColumn.HeaderText = "批次编号";
-            numColumn.DataPropertyName = "batchnum";
+            numColumn.DataPropertyName = "batchTNum";
             dataGridView1.Columns.Add(numColumn);
 
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();

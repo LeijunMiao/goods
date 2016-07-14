@@ -404,15 +404,15 @@ namespace goods.Controller
             string mark = "-";
             if (gm.isDeficit) mark = "+";
 
-            string sql = "DELETE FROM godownentry WHERE num = '" + gm.id + "' ";
-            string sqlstock = "DELETE FROM stock s inner join entrymateriel em on s.entrymateriel = em.id WHERE em.entry = '" + gm.id + "'  and s.batchnum >0";
+            string sql = "DELETE FROM godownentry WHERE id = '" + gm.id + "' ";
+            string sqlstock = "DELETE s FROM stock s inner join entrymateriel em on s.entrymateriel = em.id WHERE em.entry = '" + gm.id + "'  and s.batchnum >0";
             string sqlup = "";
             string sqlSafetyStock = "";
             for (int i = 0; i < list.Count; i++)
             {
                 if (!list[i].isBatch)
                 {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + gm.warehouse + "'|";
+                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + gm.warehouse + "|'";
                     if (gm.position != null) sqlup += "'" + gm.position + "'";
                     sqlList.Add(sqlup);
                 }

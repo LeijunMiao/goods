@@ -25,9 +25,13 @@ namespace goods
 
         private void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
-            SupplierModel sm = new SupplierModel(Convert.ToInt32(this.dataGridView1[0, e.RowIndex].Value) , this.dataGridView1[2, e.RowIndex].Value.ToString());
-            MidModule.SendMessage(this, sm);//发送参数值
-            this.Close();
+            if (e.RowIndex > -1)
+            {
+                SupplierModel sm = new SupplierModel(Convert.ToInt32(this.dataGridView1[0, e.RowIndex].Value), this.dataGridView1[2, e.RowIndex].Value.ToString());
+                MidModule.SendMessage(this, sm);//发送参数值
+                this.Close();
+            }
+
         }
 
         private void button1_Click(object sender, EventArgs e)

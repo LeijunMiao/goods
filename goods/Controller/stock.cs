@@ -22,7 +22,7 @@ namespace goods.Controller
         #region 按条件获取批次库存
         public DataTable getFilterListLimit(int pageIndex, int pageSize, string materirl,string warehouse,string position, List<int> ids)
         {
-            string sql = " SELECT s.id,s.avaquantity,s.batchnum,m.name,w.name wname,p.name pname FROM materiel m, warehouse w,stock s left join position p on s.position = p.id ";
+            string sql = " SELECT s.id,s.avaquantity,s.batchnum,bm.num batchTNum,sup.name supplier,m.name,w.name wname,p.name pname FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id left join ordermateriel om on bm.ordermateriel = om.id left join purchaseorder po on om.purchaseorder = po.id left join supplier sup on po.supplier = sup.id ";
             string select = " Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0 ";
             string filter = "";
             if (materirl != "")
@@ -61,19 +61,19 @@ namespace goods.Controller
         public DataTable getCheckList(int pageIndex, int pageSize,string num,DateTime date,bool isDate)
         {
             var lagedate = date.AddDays(1);
-            string sql = " SELECT * FROM db_goodsmanage.checklist ";
+            string sql = " SELECT cl.num,cl.date,case cl.status when 1 then '结束' else '开始' end as status ,u.fullname user FROM checklist cl inner join user u on cl.user = u.id ";
             string filter = "";
             if(num != "")
             {
-                filter += " where num like '%"+ num + "%' ";
+                filter += " where cl.num like '%" + num + "%' ";
             }
             if (isDate)
             {
                 if (filter != "") filter += " AND ";
                 else filter += " where ";
-                filter += " date >= '" + date + "' and  date < '" + lagedate + "'";
+                filter += " cl.date >= '" + date + "' and  cl.date < '" + lagedate + "'";
             }
-            sql += filter + " order by id desc ";
+            sql += filter + " order by cl.id desc ";
             sql += " LIMIT " + (pageIndex - 1) * pageSize + "," + pageSize;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
@@ -141,7 +141,7 @@ namespace goods.Controller
         #region 按id获取批次库存
         public DataTable getByids(List<int> ids)
         {
-            string sql = " SELECT s.id,s.batchnum,m.id materiel,m.name,w.id warehouse,w.name wname,p.id position,p.name pname,s.avaquantity FROM materiel m, warehouse w,stock s left join position p on s.position = p.id Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0";
+            string sql = " SELECT s.id,s.batchnum,bm.num batchTNum,m.id materiel,m.name,w.id warehouse,w.name wname,p.id position,p.name pname,s.avaquantity FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0";
             string filter = "";
             if (ids.Count > 0)
             {
@@ -169,8 +169,8 @@ namespace goods.Controller
         #region 按编号批次库存
         public DataTable getByNum(string num)
         {
-            string sql = " SELECT c.id,c.date, cm.batchnum,m.name,w.name wname,p.name pname,cm.truequantity,cm.avaquantity "+ 
-                    " FROM materiel m, checklist c, warehouse w, checkmateriel cm left join position p on cm.position = p.id "+
+            string sql = " SELECT c.id,c.date, cm.batchnum,bm.num batchTNum,m.name,w.name wname,p.name pname,cm.truequantity,cm.avaquantity " +
+                    " FROM materiel m, checklist c, warehouse w, checkmateriel cm left join position p on cm.position = p.id left join batchmateriel bm on cm.batchnum = bm.id " +
                     " where m.id = cm.materiel AND w.id = cm.warehouse  and cm.checklist = c.id and c.num = '"+ num + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;

@@ -31,7 +31,7 @@ namespace goods.Controller
         public DataTable getFilterOrderMateriel(int pageIndex, int pageSize, string supplier,bool isDate ,DateTime date, string orderNum, string materielNum)
         {
             string sql = " SELECT om.id,po.id poid,po.num ponum, m.num mnum,m.id mid,po.date date,s.name sname,m.name mname,m.specifications specifications, meter.name metering,om.price,om.quantity,om.amount,om.tax,om.deliveryDate,om.closed,  " +
-                "(SELECT SUM(quantity) FROM entrymateriel e, godownentry g WHERE e.entry = g.id and g.purchaseOrder = po.id and e.materiel = m.id) quantityAll" +
+                "(SELECT SUM(quantity) FROM entrymateriel e, godownentry g WHERE e.entry = g.id and g.purchaseOrder = po.id and e.materiel = m.id and g.isDeficit = 0) quantityAll" +
                 " FROM ordermateriel om ,purchaseorder po,materiel m,supplier s,metering meter where om.purchaseorder = po.id and om.materiel = m.id and po.supplier = s.id and m.metering = meter.id";
             string select = "";
             if (orderNum != "")
@@ -95,15 +95,15 @@ namespace goods.Controller
             {
                 dateStr += " and om.deliveryDate <= '" + end + "' ";
             }
-            string sqlAll = " (SELECT SUM(quantity) sum FROM " +
+            string sqlAll = " (SELECT SUM(om.quantity) sum FROM " +
                             " ordermateriel om, purchaseorder po,supplier s WHERE " +
-                            " om.purchaseorder = po.id AND om.deliveryDate <= curdate() AND s.id = po.supplier AND s.id = s2.id "+ dateStr + " ) allquantity ";
+                            " om.purchaseorder = po.id AND om.deliveryDate < curdate() AND s.id = po.supplier AND s.id = s2.id "+ dateStr + " ) allquantity ";
             string sqlright = " (SELECT SUM(em.quantity) FROM " +
                             " entrymateriel em,godownentry g,purchaseorder po,ordermateriel om WHERE " +
-                            " em.entry = g.id AND em.materiel = om.materiel AND g.purchaseOrder = om.purchaseorder " +
-                            " AND om.deliveryDate < curdate() AND g.date <= om.deliveryDate AND g.supplier = s2.id " + dateStr + ") rightquantity ";
+                            " em.entry = g.id AND em.materiel = om.materiel AND g.purchaseOrder = om.purchaseorder and om.purchaseorder = po.id " +
+                            " AND om.deliveryDate < curdate() AND g.date <= date_add(om.deliveryDate, INTERVAL 1 day) AND g.supplier = s2.id " + dateStr + ") rightquantity ";
             string sql = " SELECT s2.id, s2.name, s2.num , "+ sqlAll +","+ sqlright +
-                            " from db_goodsmanage.supplier s2 ";
+                            " from supplier s2 ";
             if (supplier != "")
             {
                 sql += " where s2.name like '%" + supplier + "%' ";
@@ -165,7 +165,7 @@ namespace goods.Controller
         }
         public DataTable getqrcode(List<string> ids)
         {
-            var sql = " SELECT num FROM batchmateriel where uuid in ( ";
+            var sql = " SELECT bm.num,bm.date,m.name,m.specifications spe, me.name meter,s.name supplier FROM batchmateriel bm inner join ordermateriel om on bm.ordermateriel = om.id inner join materiel m on bm.materiel = m.id inner join metering me on m.metering = me.id inner join purchaseorder po on om.purchaseorder = po.id inner join supplier s on po.supplier = s.id where bm.uuid in ( ";
             for (int i = 0; i < ids.Count; i++)
             {
                 if (i == 0) sql += "'" + ids[i] + "'";
@@ -454,8 +454,8 @@ namespace goods.Controller
 
         public DataTable getbyOMId(int id)
         {
-            string sql = "SELECT num,date FROM batchmateriel " +
-                "where  ordermateriel = '"+id+"'";
+            string sql = "SELECT bm.num,bm.date,m.name,m.specifications spe, me.name meter,s.name supplier FROM batchmateriel bm inner join ordermateriel om on bm.ordermateriel = om.id inner join materiel m on bm.materiel = m.id inner join metering me on m.metering = me.id inner join purchaseorder po on om.purchaseorder = po.id inner join supplier s on po.supplier = s.id " +
+                "where  bm.ordermateriel = '" + id+"'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }

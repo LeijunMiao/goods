@@ -31,6 +31,7 @@ namespace goods
             DataGridViewCheckBoxColumn newColumn = new DataGridViewCheckBoxColumn();
             newColumn.HeaderText = "选择";
             newColumn.FillWeight = 20;
+            newColumn.Name = "ck";
             dataGridView1.Columns.Add(newColumn);
 
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
@@ -69,8 +70,12 @@ namespace goods
             //    dr[2] = dtData.Rows[i]["name"].ToString();
             //    dt.Rows.Add(dr);
             //}
-
             dataGridView1.DataSource = dtData;
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                if(list_selected.Contains(Convert.ToInt32(dataGridView1.Rows[i].Cells["id"].Value)))
+                    dataGridView1.Rows[i].Cells["ck"].Value = true;
+            }
             pagingCom1.RecordCount = mctrl.getCount(textBox1.Text, parentIds);
             pagingCom1.reSet();
 

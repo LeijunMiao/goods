@@ -48,8 +48,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>
-    </ApplicationIcon>
+    <ApplicationIcon>1.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GrapeCity.ActiveReports.ArsClient.v10, Version=10.1.6726.0, Culture=neutral, PublicKeyToken=cc4967777c49a3ff" />
@@ -434,7 +433,6 @@
     <Compile Include="View\Warehouse\WarehouseView.Designer.cs">
       <DependentUpon>WarehouseView.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Properties\licenses.licx" />
     <EmbeddedResource Include="Service\Setting.resx">
       <DependentUpon>Setting.cs</DependentUpon>
     </EmbeddedResource>
@@ -619,6 +617,7 @@
     <None Include="Images\Blue.ico" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="1.ico" />
     <Content Include="Component\PagingControl.dll" />
     <Content Include="Resources\1.ico" />
   </ItemGroup>

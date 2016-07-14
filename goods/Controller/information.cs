@@ -67,7 +67,7 @@ namespace goods.Controller
             if (list_u.Count >0)
             {
                 string sql = "insert into messageuser (user,usernum,type) values";
-                for (int i = 0; i < list.Count; i++)
+                for (int i = 0; i < list_u.Count; i++)
                 {
                     if (i != 0) sql += ",";
                     sql += "('" + list_u[i].Id + "','" + list_u[i].UserName + "','" + key + "')";

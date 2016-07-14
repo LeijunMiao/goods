@@ -67,6 +67,9 @@ namespace goods
                         case "message":
                             this.消息管理ToolStripMenuItem.Visible = true;
                             break;
+                        case "table":
+                            this.报表ToolStripMenuItem.Visible = true;
+                            break;
                         default:
                             break;
                     }

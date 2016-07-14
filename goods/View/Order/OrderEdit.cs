@@ -90,7 +90,7 @@ namespace goods
             price.Name = "price";
 
             DataGridViewColumn quantity = new DataGridViewTextBoxColumn();
-            quantity.HeaderText = "实收数量";
+            quantity.HeaderText = "数量";
             quantity.Name = "quantity";
             quantity.DataPropertyName = "quantity";
 
@@ -124,6 +124,7 @@ namespace goods
             summary.HeaderText = "备注";
             summary.Name = "summary";
             summary.DataPropertyName = "summary";
+            summary.ReadOnly = true;
 
             DataGridViewColumn colallamount = new DataGridViewTextBoxColumn();
             colallamount.Name = "allamount";
@@ -138,11 +139,12 @@ namespace goods
             this.deliveryDate.HeaderText = "交货日期";
             this.deliveryDate.Name = "deliveryDate";
             this.deliveryDate.DataPropertyName = "deliveryDate";
+            this.deliveryDate.ReadOnly = true;
             this.deliveryDate.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.deliveryDate.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                colId,colNum,colName,colSep,metering,quantity,conversion,price,tax,amount,summary,colallamount,this.deliveryDate,colOMId});
+                colId,colNum,colName,colSep,metering,quantity,conversion,price,tax, amount,summary,colallamount,this.deliveryDate,colOMId});
         }
 
         private void loadData()
@@ -159,7 +161,7 @@ namespace goods
             {
                 allids.Add(Convert.ToInt32(dt.Rows[i]["id"]));
 
-                dt.Rows[i]["allamount"] = Convert.ToDouble(dt.Rows[i]["quantity"]) * Convert.ToDouble(dt.Rows[i]["price"])*(1 + Convert.ToDouble(dt.Rows[i]["tax"]));
+                dt.Rows[i]["allamount"] = Math.Round(Convert.ToDouble(dt.Rows[i]["quantity"]) * Convert.ToDouble(dt.Rows[i]["price"])*(1 + Convert.ToDouble(dt.Rows[i]["tax"])),2);
             }
             this.label7.Text = DateTime.Parse(dt.Rows[0]["date"].ToString()).ToString("yyyy/M/d");
             this.label13.Text = dt.Rows[0]["ponum"].ToString();
@@ -231,7 +233,7 @@ namespace goods
                     = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value) *
                     Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
 
-                this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value));
+                this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)),2);
             }
         }
 
@@ -311,7 +313,10 @@ namespace goods
                     "供应商：" + label10.Text,
                     "交货日期："+ label8.Text,
                     "制单人：" +label11.Text,
+                    "",
                     "摘要："+textBox1.Text
+                    //"制单人：" +label11.Text
+                    
                 };
 
                 try

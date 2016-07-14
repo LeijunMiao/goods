@@ -14,10 +14,10 @@ namespace goods
     public partial class WarehouseQRCode : Form
     {
         utilCls util = new utilCls();
-        public WarehouseQRCode(string type,string warCode,string posCode)
+        public WarehouseQRCode(string type,string warCode,string posCode, string warName, string posName)
         {
             InitializeComponent();
-            this.label1.Text = warCode;
+            this.label1.Text = warName;
             if(posCode == "")
             {
                 pictureBox1.Image = util.GenByZXingNet(warCode);
@@ -27,7 +27,7 @@ namespace goods
             else
             {
                 pictureBox1.Image = util.GenByZXingNet(posCode);
-                this.label4.Text = posCode;
+                this.label4.Text = posName;
             }
             printDocument1.PrintPage += new System.Drawing.Printing.PrintPageEventHandler(this.printDocument1_PrintPage);
             this.printDocument1.DefaultPageSettings.Margins = new Margins(0, 0, 0, 0);
@@ -102,11 +102,44 @@ namespace goods
             {
                 if (pictureBox1.Image != null)
                 {
-                    e.Graphics.DrawImage(pictureBox1.Image, 5, 5);//e.Graphics.VisibleClipBounds);
-                    Font font = new Font("宋体", 12);
+                    Font f = new Font("宋体", 12);
                     Brush bru = Brushes.Black;
-                    e.Graphics.DrawString(this.label2.Text + this.label1.Text, font, bru, 100,  20);
-                    if(this.label4.Text != "") e.Graphics.DrawString(this.label3.Text + this.label4.Text, font, bru, 100, 50);
+                    Bitmap bpItem = new Bitmap(e.PageBounds.Width, e.PageBounds.Height);
+                    Graphics gItem = Graphics.FromImage(bpItem);
+
+                    string ck = this.label2.Text + this.label1.Text;
+                    string cw = this.label3.Text + this.label4.Text;
+                    
+                    decimal ckWidth = Convert.ToDecimal(e.Graphics.MeasureString(ck, f).Width);
+                    decimal cwWidth = Convert.ToDecimal(e.Graphics.MeasureString(cw, f).Width);
+                    int fHeight = Convert.ToInt32(e.Graphics.MeasureString("测", f).Height);
+                    int fWidth = Convert.ToInt32(e.Graphics.MeasureString("测", f).Width);
+                    int maxWidth = (int)Math.Ceiling((ckWidth > cwWidth ? ckWidth : cwWidth));
+                    
+
+
+                    int pic_X = (e.PageBounds.Width - pictureBox1.Image.Width - maxWidth) / 2;
+                    if (pic_X < 0) pic_X = 0;
+                    int pic_Y = (e.PageBounds.Height - pictureBox1.Image.Height) / 2;
+                    if (pic_Y < 0) pic_Y = 0;
+                    e.Graphics.DrawImage(pictureBox1.Image, pic_X, pic_Y);//e.Graphics.VisibleClipBounds);, pictureBox1.Image.Width, pictureBox1.Image.Height
+                    List<string> list_ck = util.GetMultiLineString(ck, e.PageBounds.Width - pic_X - pictureBox1.Image.Width - fWidth, gItem, f);
+                    List<string> list_cw = util.GetMultiLineString(cw, e.PageBounds.Width - pic_X - pictureBox1.Image.Width - fWidth, gItem, f);
+                    int minHeight = (pictureBox1.Image.Height - (list_ck.Count + list_cw.Count) * fHeight) / 2;
+                    if (minHeight < 0) minHeight = 0;
+                    int i;
+                    for ( i= 0; i < list_ck.Count; i++)
+                    {
+                        e.Graphics.DrawString(list_ck[i], f, bru, pic_X + pictureBox1.Image.Width, pic_Y + minHeight+ fHeight*i);
+                    }
+                    
+                    if(this.label4.Text != "")
+                    {
+                        for (int j = 0; j < list_cw.Count; j++)
+                        {
+                            e.Graphics.DrawString(list_cw[j], f, bru, pic_X + pictureBox1.Image.Width, pic_Y + fHeight * (i+j) + minHeight);
+                        }
+                    }
                     e.HasMorePages = false;
                 }
             }

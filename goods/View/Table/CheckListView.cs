@@ -32,8 +32,8 @@ namespace goods
 
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
             numColumn.HeaderText = "批次编号";
-            numColumn.DataPropertyName = "batchnum";
-            numColumn.Name = "batchnum";
+            numColumn.DataPropertyName = "batchTNum";
+            numColumn.Name = "batchTNum";
 
             DataGridViewTextBoxColumn idColumn = new DataGridViewTextBoxColumn();
             idColumn.DataPropertyName = "id";
@@ -80,8 +80,13 @@ namespace goods
             avaColumn.HeaderText = "盘点库存";
             avaColumn.Name = "avaquantity";
 
+            DataGridViewTextBoxColumn lossColumn = new DataGridViewTextBoxColumn();
+            lossColumn.DataPropertyName = "loss";
+            lossColumn.HeaderText = "盈亏";
+            lossColumn.Name = "loss";
+
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-           idColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn,avaColumn});
+           idColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn,avaColumn,lossColumn});
 
         }
 
@@ -90,6 +95,12 @@ namespace goods
             this.label3.Text = num;
             this.label5.Text = dt.Rows[0]["date"].ToString();
             this.label6.Text = dt.Rows[0]["id"].ToString();
+            dt.Columns.Add("loss");
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                if (dt.Rows[i]["avaquantity"] == DBNull.Value) dt.Rows[i]["avaquantity"] = 0;
+                dt.Rows[i]["loss"] = Convert.ToDouble(dt.Rows[i]["avaquantity"]) - Convert.ToDouble(dt.Rows[i]["truequantity"]);
+            }
             dataGridView1.DataSource = dt;
         }
         private void toolStripButton4_Click(object sender, EventArgs e)
@@ -99,7 +110,7 @@ namespace goods
                 MessageBox.Show("请先保存！");
                 return;
             }
-            this.pictureBox1.Image = utilcls.GenByZXingNet(label3.Text);
+            this.pictureBox1.Image = utilcls.GenByZXingNet(label6.Text);
             string path = Path.GetDirectoryName(Assembly.GetExecutingAssembly().ManifestModule.FullyQualifiedName) + "\\image\\";
             if (!Directory.Exists(path))
             {

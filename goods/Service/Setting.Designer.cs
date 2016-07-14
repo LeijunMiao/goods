@@ -60,7 +60,7 @@
             this.button1.Location = new System.Drawing.Point(85, 255);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
+            this.button1.TabIndex = 6;
             this.button1.Text = "保存";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -71,7 +71,7 @@
             this.label2.Location = new System.Drawing.Point(83, 129);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(65, 12);
-            this.label2.TabIndex = 3;
+            this.label2.TabIndex = 4;
             this.label2.Text = "数据库用户";
             // 
             // label3
@@ -80,7 +80,7 @@
             this.label3.Location = new System.Drawing.Point(119, 186);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(29, 12);
-            this.label3.TabIndex = 4;
+            this.label3.TabIndex = 5;
             this.label3.Text = "密码";
             // 
             // textBox2
@@ -88,7 +88,7 @@
             this.textBox2.Location = new System.Drawing.Point(188, 126);
             this.textBox2.Name = "textBox2";
             this.textBox2.Size = new System.Drawing.Size(183, 21);
-            this.textBox2.TabIndex = 5;
+            this.textBox2.TabIndex = 2;
             // 
             // textBox3
             // 
@@ -96,7 +96,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.PasswordChar = '*';
             this.textBox3.Size = new System.Drawing.Size(183, 21);
-            this.textBox3.TabIndex = 6;
+            this.textBox3.TabIndex = 3;
             // 
             // button2
             // 
@@ -122,6 +122,7 @@
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Setting";
+            this.Load += Setting_Load;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "设置";
             this.ResumeLayout(false);

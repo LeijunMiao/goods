@@ -196,9 +196,9 @@ namespace goods
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (dataGridView1.CurrentCell != null)
             {
-                CallSlipView view = new CallSlipView(dataGridView1.SelectedRows[0].Cells["单据编码"].Value.ToString());
+                CallSlipView view = new CallSlipView(dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["num"].Value.ToString());
                 view.Show();
             }
             else
