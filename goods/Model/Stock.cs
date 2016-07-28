@@ -18,6 +18,8 @@ namespace goods.Model
         public int warehouse { get; set; }
 
         public int? position { get; set; }
+        public int? combination { get; set; }
+        public int supplier { get; set; }
         public StockMateriel() { }
 
     }

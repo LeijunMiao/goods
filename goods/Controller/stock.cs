@@ -22,7 +22,7 @@ namespace goods.Controller
         #region 按条件获取批次库存
         public DataTable getFilterListLimit(int pageIndex, int pageSize, string materirl,string warehouse,string position, List<int> ids)
         {
-            string sql = " SELECT s.id,s.avaquantity,s.batchnum,bm.num batchTNum,sup.name supplier,m.name,w.name wname,p.name pname FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id left join ordermateriel om on bm.ordermateriel = om.id left join purchaseorder po on om.purchaseorder = po.id left join supplier sup on po.supplier = sup.id ";
+            string sql = " SELECT s.id,s.avaquantity,s.batchnum,bm.num batchTNum,sup.name supplier,m.name,w.name wname,p.name pname, s.combination FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id  left join supplier sup on s.supplier = sup.id ";
             string select = " Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0 ";
             string filter = "";
             if (materirl != "")
@@ -83,7 +83,7 @@ namespace goods.Controller
         public int getCheckListCount( string num, DateTime date, bool isDate)
         {
             var lagedate = date.AddDays(1);
-            string sql = " SELECT Count(id) FROM db_goodsmanage.checklist ";
+            string sql = " SELECT Count(id) FROM checklist ";
             string filter = "";
             if (num != "")
             {
@@ -141,7 +141,7 @@ namespace goods.Controller
         #region 按id获取批次库存
         public DataTable getByids(List<int> ids)
         {
-            string sql = " SELECT s.id,s.batchnum,bm.num batchTNum,m.id materiel,m.name,w.id warehouse,w.name wname,p.id position,p.name pname,s.avaquantity FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0";
+            string sql = " SELECT s.id,s.batchnum,bm.num batchTNum,m.id materiel,m.name,w.id warehouse,w.name wname,p.id position,p.name pname,s.avaquantity,sup.name supplier,sup.id supplierId, s.combination FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id left join supplier sup on s.supplier = sup.id Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0";
             string filter = "";
             if (ids.Count > 0)
             {
@@ -169,9 +169,9 @@ namespace goods.Controller
         #region 按编号批次库存
         public DataTable getByNum(string num)
         {
-            string sql = " SELECT c.id,c.date, cm.batchnum,bm.num batchTNum,m.name,w.name wname,p.name pname,cm.truequantity,cm.avaquantity " +
-                    " FROM materiel m, checklist c, warehouse w, checkmateriel cm left join position p on cm.position = p.id left join batchmateriel bm on cm.batchnum = bm.id " +
-                    " where m.id = cm.materiel AND w.id = cm.warehouse  and cm.checklist = c.id and c.num = '"+ num + "'";
+            string sql = " SELECT c.id,c.date, cm.batchnum,bm.num batchTNum,m.name,w.name wname,p.name pname,cm.truequantity,cm.avaquantity,cm.combination, sup.name supplier " +
+                    " FROM materiel m, checklist c, warehouse w, checkmateriel cm left join position p on cm.position = p.id left join batchmateriel bm on cm.batchnum = bm.id, supplier sup " +
+                    " where m.id = cm.materiel AND w.id = cm.warehouse  and cm.checklist = c.id and cm.supplier = sup.id and c.num = '" + num + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
@@ -185,16 +185,25 @@ namespace goods.Controller
             string sqlOrder = "insert into checklist (user,num) " +
                 " values(@user, concat('CHECK',LPAD(" + num + ",9,'0')));";
             
-            string sqlMat = "insert into checkmateriel (checklist,materiel,truequantity,warehouse,batchnum,position) values ";
+            string sqlMat = "insert into checkmateriel (checklist,supplier,materiel,truequantity,warehouse,batchnum,position,combination) values ";
             for (int i = 0; i < ck.list_sm.Count; i++)
             {
                 if (i != 0) sqlMat += ",";
-                sqlMat += " (last_insert_id(),'" + ck.list_sm[i].materiel + "','" + ck.list_sm[i].truequantity + "','" + ck.list_sm[i].warehouse + "',";
+                sqlMat += " (last_insert_id(),'" + ck.list_sm[i].supplier + "','" + ck.list_sm[i].materiel + "','" + ck.list_sm[i].truequantity + "','" + ck.list_sm[i].warehouse + "',";
                 if (ck.list_sm[i].batchnum != null) sqlMat += "'" + ck.list_sm[i].batchnum + "',";
                 else sqlMat += "null,";
-                if(ck.list_sm[i].position != null) sqlMat += "'" + ck.list_sm[i].position + "')";
-                else sqlMat += "null)";
+                if(ck.list_sm[i].position != null) sqlMat += "'" + ck.list_sm[i].position + "',";
+                else sqlMat += "null,";
+                if (ck.list_sm[i].combination != null)
+                {
+                    sqlMat += "'" + ck.list_sm[i].combination + "')";
+                }
+                else
+                {
+                     sqlMat += "null)";
+                }
             }
+
             sqlList.Add(sqlOrder);
             sqlList.Add(sqlMat);
 

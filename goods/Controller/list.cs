@@ -77,8 +77,8 @@ namespace goods.Controller
 
             string sql = " SELECT g.date,g.num, w.name warehouseName, p.name positionName, m.num MNum, m.name MName, " +
                 " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,u.fullName,g.isDeficit " +
-                " FROM callslipmateriel em,warehouse w,callslip g left join position p on g.position = p.id,metering me,materiel m left join metering me2 on m.subMetering = me2.id,user u " +
-                " WHERE em.callslip = g.id AND g.warehouse = w.id AND em.materiel = m.id AND g.user = u.id  AND m.metering = me.id ";
+                " FROM callslipmateriel em left join position p on em.position = p.id,warehouse w,callslip g,metering me,materiel m left join metering me2 on m.subMetering = me2.id,user u " +
+                " WHERE em.callslip = g.id AND em.warehouse = w.id AND em.materiel = m.id AND g.user = u.id  AND m.metering = me.id ";
             string select = "";
             if (num != "")
             {
@@ -263,7 +263,7 @@ namespace goods.Controller
 
         public DataTable getbyNum(string num)
         {
-            string sql = " SELECT em.id,g.id gid,g.date,g.num,g.isDeficit,s.name supplierName, g.warehouse ,w.name warehouseName,g.position , p.name positionName,em.materiel, m.num MNum, m.name MName, " +
+            string sql = " SELECT em.id,g.id gid,g.date,g.num,g.isDeficit,s.id supplier,s.name supplierName, g.warehouse ,w.name warehouseName,g.position , p.name positionName,em.materiel, m.num MNum, m.name MName, " +
                 " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,em.price,u.fullName, u.id user ,m.isBatch " +
                 " FROM entrymateriel em,godownentry g left join position p on g.position = p.id,materiel m left join metering me2 on m.subMetering = me2.id,metering me,supplier s,warehouse w,user u " +
                 " WHERE em.entry = g.id AND g.supplier = s.id AND g.warehouse = w.id  AND em.materiel = m.id AND g.user = u.id AND m.metering = me.id and g.num = '" + num + "'";
@@ -273,10 +273,10 @@ namespace goods.Controller
         #region 领料单详情
         public DataTable getCallSlipbyNum(string num)
         {
-            string sql = " SELECT em.id,g.id gid,g.isDeficit,g.date,g.num,g.warehouse,g.position , w.name warehouseName, p.name positionName, m.num MNum, m.name MName,em.materiel, " +
+            string sql = " SELECT em.id,g.id gid,g.isDeficit,g.date,g.num,em.warehouse,em.position,em.supplier,em.batch , w.name warehouseName, p.name positionName, m.num MNum, m.name MName,m.isBatch,em.materiel, " +
                 " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,u.fullName,u.id user " +
-                " FROM callslipmateriel em,callslip g left join position p on g.position = p.id,warehouse w,materiel m left join metering me2 on m.subMetering = me2.id,metering me,user u " +
-                " WHERE em.callslip = g.id  AND g.warehouse = w.id AND em.materiel = m.id AND g.user = u.id  AND m.metering = me.id and g.num = '" + num + "'";
+                " FROM callslipmateriel em left join position p on em.position = p.id,callslip g,warehouse w,materiel m left join metering me2 on m.subMetering = me2.id,metering me,user u " +
+                " WHERE em.callslip = g.id  AND em.warehouse = w.id AND em.materiel = m.id AND g.user = u.id  AND m.metering = me.id and g.num = '" + num + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
@@ -412,7 +412,7 @@ namespace goods.Controller
             {
                 if (!list[i].isBatch)
                 {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + gm.warehouse + "|'";
+                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + gm.supplier + "|" + list[i].materiel + "|" + gm.warehouse + "|'";
                     if (gm.position != null) sqlup += "'" + gm.position + "'";
                     sqlList.Add(sqlup);
                 }
@@ -441,20 +441,25 @@ namespace goods.Controller
             string sqlup = "";
             string sqlSafetyStock = "";
             string mark = "+";
-            if (cp.isDeficit) mark = "-";
+            string _mark = "-";
+            if (cp.isDeficit)
+            {
+                mark = "-";
+                _mark = "+";
+            }
             for (int i = 0; i < list.Count; i++)
             {
                 if (!list[i].isBatch)
                 {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + cp.warehouse + "'|";
-                    if (cp.position != null) sqlup += "'" + cp.position + "'";
-
+                    sqlup = "update stock set lastModifiedAt = NOW(),usedquantity = usedquantity " + _mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].supplier + "|" + list[i].materiel + "|" + list[i].warehouse + "|";
+                    if (list[i].position != null) sqlup += "" + list[i].position + "'";
+                    else sqlup += "'";
                 }
                 else
                 {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity  " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + cp.warehouse + "'|";
-                    if (cp.position != null) sqlup += "'" + cp.position + "'";
-                    sqlup += "|'" + list[i].batch + "'";
+                    sqlup = "update stock set lastModifiedAt = NOW(),usedquantity = usedquantity  " + _mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].supplier + "|" + list[i].materiel + "|" + list[i].warehouse + "|";
+                    if (list[i].position != null) sqlup += list[i].position ;
+                    sqlup += "|" + list[i].batch + "'";
                 }
 
                 sqlSafetyStock = "Update safetystock set stock = stock " + mark + list[i].quantity + " where materiel = '" + list[i].materiel + "'";

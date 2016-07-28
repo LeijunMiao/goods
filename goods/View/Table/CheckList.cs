@@ -45,6 +45,7 @@ namespace goods
             DataGridViewTextBoxColumn statusColumn = new DataGridViewTextBoxColumn();
             statusColumn.HeaderText = "状态";
             statusColumn.DataPropertyName = "status";
+            statusColumn.Name = "status";
             dataGridView1.Columns.Add(statusColumn);
         }
         private void pageIndexChanged(object sender, EventArgs e)
@@ -83,7 +84,7 @@ namespace goods
         {
             if (dataGridView1.CurrentCell != null)
             {
-                CheckListView view = new CheckListView(dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["num"].Value.ToString());
+                CheckListView view = new CheckListView(dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["num"].Value.ToString(), dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["status"].Value.ToString());
                 view.Show();
             }
             else

@@ -143,7 +143,7 @@ namespace goods
                     e.HasMorePages = false;
                 }
             }
-            catch (Exception exception)
+            catch (Exception )
             {
                 MessageBox.Show("出错！");
             }

@@ -17,11 +17,13 @@ namespace goods
     {
         materielCtrl ctrl = new materielCtrl();
         meteringCtrl mctrl = new meteringCtrl();
+        categoryCtrl cactrl = new categoryCtrl();
         MaterielView parentForm;
         private string pattern = @"(^(\d*\.)?\d*$)"; //@"(^[1-9]\.\d{0,2}$)";
         private string param1 = null;
         private string param2 = null;
         int id;
+        int category = -1;
         public MaterielPopup(MaterielView form,int id)
         {
             parentForm = form;
@@ -48,7 +50,7 @@ namespace goods
             this.comboBox2.DisplayMember = "name";
             this.comboBox2.ValueMember = "id";
 
-            if(id > 0)
+            if (id > 0)
             {
                 DataTable dt = ctrl.getByid(id);
                 if(dt.Rows.Count > 0)
@@ -66,13 +68,19 @@ namespace goods
                     this.textBox3.Text = dt.Rows[0]["specifications"].ToString();
                     if(dt.Rows[0]["conversion"] != DBNull.Value) this.textBox6.Text = dt.Rows[0]["conversion"].ToString();
                     this.checkBox1.Checked = Convert.ToBoolean( dt.Rows[0]["isBatch"]);
+
+                    if(dt.Rows[0]["category"] != DBNull.Value)
+                    {
+                        this.textBox4.Text = dt.Rows[0]["categoryName"].ToString();
+                        this.category = Convert.ToInt32(dt.Rows[0]["category"]);
+
+                    }
                 }
                 else
                 {
                     MessageBox.Show("加载失败，请重试。");
                     this.Close();
                 }
-
             }
             else
             {
@@ -116,6 +124,10 @@ namespace goods
             {
                 mm.SubMetering = subMetering;
                 mm.Conversion = Convert.ToDouble(textBox6.Text);
+            }
+            if (this.category > 0)
+            {
+                mm.Catgegory = this.category;
             }
             if(type != "") mm.Type = type;
             if (id>0)
@@ -197,6 +209,19 @@ namespace goods
                     param2 = this.textBox6.Text;   // 将现在textBox的值保存下来
                 }
             }
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            CategorySelect view = new CategorySelect();
+            view.CategorySet += View_CategorySet;
+            view.Show();
+        }
+
+        private void View_CategorySet(object sender, CategoryEventArgs e)
+        {
+            this.textBox4.Text = e.name;
+            this.category = e.id;
         }
     }
 }

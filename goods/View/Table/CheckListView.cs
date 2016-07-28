@@ -17,18 +17,25 @@ namespace goods
     public partial class CheckListView : Form
     {
         stockCtrl ctrl = new stockCtrl();
+        solidbackingCtrl sbCtrl = new solidbackingCtrl();
         System.Data.DataTable dt = new System.Data.DataTable();
         utilCls utilcls = new utilCls();
-        public CheckListView(string num)
+        public CheckListView(string num,string status)
         {
             InitializeComponent();
-            initTable();
+            initTable(status);
             loadData(num);
         }
-        private void initTable()
+        private void initTable(string status)
         {
+            this.dataGridView1.CellMouseEnter += DataGridView1_CellMouseEnter;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.AutoGenerateColumns = false;
+
+            DataGridViewTextBoxColumn supColumn = new DataGridViewTextBoxColumn();
+            supColumn.HeaderText = "供应商";
+            supColumn.DataPropertyName = "supplier";
+            dataGridView1.Columns.Add(supColumn);
 
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
             numColumn.HeaderText = "批次编号";
@@ -75,6 +82,7 @@ namespace goods
             zvaColumn.HeaderText = "库存";
             zvaColumn.Name = "truequantity";
 
+
             DataGridViewTextBoxColumn avaColumn = new DataGridViewTextBoxColumn();
             avaColumn.DataPropertyName = "avaquantity";
             avaColumn.HeaderText = "盘点库存";
@@ -85,23 +93,61 @@ namespace goods
             lossColumn.HeaderText = "盈亏";
             lossColumn.Name = "loss";
 
+            DataGridViewTextBoxColumn combColumn = new DataGridViewTextBoxColumn();
+            combColumn.DataPropertyName = "combination";
+            combColumn.Name = "combination";
+            combColumn.Visible = false;
+
+            DataGridViewTextBoxColumn avColumn = new DataGridViewTextBoxColumn();
+            avColumn.DataPropertyName = "attrvalue";
+            avColumn.HeaderText = "辅助属性";
+            avColumn.Name = "attrvalue";
+
+            if (status == "开始")
+            {
+                avaColumn.Visible = false;
+                lossColumn.Visible = false;
+            }
+
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-           idColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn,avaColumn,lossColumn});
+           idColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn,avaColumn,lossColumn,combColumn,avColumn});
 
         }
-
+        private void DataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex < 0 || e.RowIndex < 0 || dataGridView1.Rows.Count <= 0) return;
+            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value ?? string.Empty).ToString();
+        }
         private void loadData(string num){
             dt = ctrl.getByNum(num);
             this.label3.Text = num;
             this.label5.Text = dt.Rows[0]["date"].ToString();
             this.label6.Text = dt.Rows[0]["id"].ToString();
             dt.Columns.Add("loss");
+            dt.Columns.Add("attrvalue");
+            List<int> ids = new List<int>();
+
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 if (dt.Rows[i]["avaquantity"] == DBNull.Value) dt.Rows[i]["avaquantity"] = 0;
                 dt.Rows[i]["loss"] = Convert.ToDouble(dt.Rows[i]["avaquantity"]) - Convert.ToDouble(dt.Rows[i]["truequantity"]);
+                if (dt.Rows[i]["combination"] != DBNull.Value) ids.Add(Convert.ToInt32(dt.Rows[i]["combination"]));
             }
             dataGridView1.DataSource = dt;
+
+            Dictionary<int, string> map = sbCtrl.getbyCombIds(ids);
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                if (dataGridView1.Rows[i].Cells["combination"].Value != DBNull.Value)
+                {
+                    var comb = Convert.ToInt32(dataGridView1.Rows[i].Cells["combination"].Value);
+
+                    if (map.Keys.Contains(comb))
+                    {
+                        dataGridView1.Rows[i].Cells["attrvalue"].Value = map[comb];
+                    }
+                }
+            }
         }
         private void toolStripButton4_Click(object sender, EventArgs e)
         {
@@ -121,7 +167,7 @@ namespace goods
             string filepath = path + DateTime.Now.ToString("yyyyMMddhhmmss") + ".jpg";
             this.pictureBox1.Image.Save(filepath);
             //int result = this.ExportExcel("盘点单", this.dataGridView1); //this.dataGridView1:DataGridView控件
-            bool result = OutToExcelFromDataGridView("盘点单", filepath, path, label6.Text, label5.Text, this.dataGridView1, true);
+            bool result = OutToExcelFromDataGridView("盘点单", filepath, path, label3.Text, label5.Text, this.dataGridView1, true);
         }
 
         public bool OutToExcelFromDataGridView(string title, string filepath, string path, string num, string date, DataGridView dgv, bool isShowExcel)

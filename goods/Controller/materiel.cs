@@ -38,13 +38,19 @@ namespace goods.Controller
             return dt;
         }
         #endregion
-        public int getCountAll(string key)
+        public int getCountAll(string key, int category)
         {
-            string sql = "SELECT Count(*) FROM materiel ";
+            string sql = "SELECT Count(*) FROM materiel m left join category c on m.category = c.id ";
             string select = "";
             if (key != "")
             {
-                select += " and num like '%" + key + "%' or name like '%" + key + "%'";
+                select += " where m.num like '%" + key + "%' or m.name like '%" + key + "%'";
+            }
+            if (category > 0)
+            {
+                if (select != "") select += " and ";
+                else select += " where ";
+                select += " m.category = '" + category + "' ";
             }
             sql += select;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
@@ -76,21 +82,50 @@ namespace goods.Controller
             int count = Convert.ToInt32(dt.Rows[0][0]);
             return count;
         }
-        public DataTable getFilterList(int pageIndex, int pageSize, string keyword)
+        public DataTable[] getFilterList(int pageIndex, int pageSize, string keyword,int category)
         {
-            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,m.isActive,meter.name metering,meter2.name subMetering,m.isBatch "+
-                "FROM metering meter,materiel m left join metering meter2 on m.subMetering = meter2.id where m.metering = meter.id ";
-            string select = "";
+            DataTable[] dts = new DataTable[2];
+            string areaids = "";
+            if(category >0)
+            {
+                string sqlarea = "select queryChildrenAreaInfo('"+ category + "');";
+                DataTable dtarea = h.ExecuteQuery(sqlarea, CommandType.Text);
+                areaids = dtarea.Rows[0][0].ToString();
+            }
+            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,m.isActive,meter.name metering,meter2.name subMetering,m.isBatch,case m.isBatch when 1 then '是' else '否' end as batchStatus ,c.name category " +
+                "FROM metering meter,materiel m left join metering meter2 on m.subMetering = meter2.id left join category c on m.category = c.id ";
+            string select = " where m.metering = meter.id ";
             if (keyword != "")
             {
                 select += " and (m.num like '%" + keyword + "%' or m.name like '%" + keyword + "%')";
+            }
+            if (areaids != "")
+            {
+                select += " and m.category in (" + areaids + ") ";
             }
             sql += select + " order by m.id desc ";
 
             if (pageIndex < 1) pageIndex = 1;
             sql += " LIMIT " + (pageIndex - 1) * pageSize + "," + pageSize;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
-            return dt;
+            dts[0] = dt;
+
+            string sqlcount = "SELECT Count(*) FROM materiel m left join category c on m.category = c.id ";
+            string selectcount = "";
+            if (keyword != "")
+            {
+                selectcount += " where m.num like '%" + keyword + "%' or m.name like '%" + keyword + "%'";
+            }
+            if (areaids != "")
+            {
+                if (selectcount != "") selectcount += " and ";
+                else selectcount += " where ";
+                selectcount += " m.category in (" + areaids + ") ";
+            }
+            sqlcount += selectcount;
+            DataTable dtcount = h.ExecuteQuery(sqlcount, CommandType.Text);
+            dts[1] = dtcount;
+            return dts;
 
         }
         public DataTable getStockWarning(int pageIndex, int pageSize, string keyword)
@@ -152,15 +187,15 @@ namespace goods.Controller
         
         public DataTable getByids(List<int> ids)
         {
-            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,meter.name metering,meter2.name subMetering " +
-                "FROM metering meter,materiel m left join metering meter2 on m.subMetering = meter2.id  where m.metering = meter.id";
+            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,meter.name metering,meter2.name subMetering,count(ms.id) attrnum " +
+                "FROM metering meter,materiel m left join metering meter2 on m.subMetering = meter2.id left join materielsolidbacking ms on m.id = ms.materiel  where m.metering = meter.id";
             string select = " and m.id in (";
             for (int i = 0; i < ids.Count; i++)
             {
                 if(i == 0) select += ids[i];
                 else select += "," + ids[i];
             }
-            select += ")";
+            select += ")  group by m.id";
             sql += select;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
@@ -169,21 +204,29 @@ namespace goods.Controller
         #region 获取物料根据id
         public DataTable getByid(int id)
         {
-            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,m.metering,m.subMetering,m.isBatch FROM materiel m where m.id  = '" + id + "'";
+            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,m.metering,m.subMetering,m.isBatch,m.category,c.name categoryName FROM materiel m left join category c on m.category = c.id where m.id  = '" + id + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
         #endregion
 
-
+        #region 获取物料图片根据id
+        public DataTable getImages(int id)
+        {
+            string sql = "SELECT * FROM image where materiel = '" + id + "'";
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            return dt;
+        }
+        #endregion
+        
         #region 新建
         public MessageModel add(object obj)
         {
             MaterielModel s = (MaterielModel)obj;
             string sql = "";
-            if (s.Id > 0) sql = "UPDATE materiel SET num = '" + s.Num + "',name = '" + s.Name + "',specifications = '" + s.Specifications + "',metering = '" + s.Metering + "',subMetering = @subMetering,conversion = @conversion,type = '" + s.Type + "',tax = '" + s.Tax + "',isBatch = @isBatch WHERE id = '" + s.Id + "' ";
-            else sql = "insert into materiel (num,name,specifications,metering,subMetering,conversion,type,tax,isBatch) values('"
-                + s.Num + "','" + s.Name + "','" + s.Specifications + "','" + s.Metering + "',@subMetering,@conversion,'" + s.Type + "','" + s.Tax + "',@isBatch);";
+            if (s.Id > 0) sql = "UPDATE materiel SET num = '" + s.Num + "',name = '" + s.Name + "',specifications = '" + s.Specifications + "',metering = '" + s.Metering + "',subMetering = @subMetering,conversion = @conversion,type = '" + s.Type + "',tax = '" + s.Tax + "',isBatch = @isBatch,category = '"+s.Catgegory+"' WHERE id = '" + s.Id + "' ";
+            else sql = "insert into materiel (num,name,specifications,metering,subMetering,conversion,type,tax,isBatch,category) values('"
+                + s.Num + "','" + s.Name + "','" + s.Specifications + "','" + s.Metering + "',@subMetering,@conversion,'" + s.Type + "','" + s.Tax + "',@isBatch, '" + s.Catgegory + "');";
             MessageModel msg;
             try
             {
@@ -239,6 +282,62 @@ namespace goods.Controller
             return msg;
         }
         #endregion
+        #region 新建物料图片
+        public MessageModel addImage(ImageModel img)
+        {
+            List<string> sqlList = new List<string>();
+
+            string sql = "insert into image (name,url,materiel) values (@name,@url,@materiel)";
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@name", img.name);
+            paras.Add("@url", img.url);
+            paras.Add("@materiel", img.materiel);
+            MessageModel msg;
+            try
+            {
+                int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
+                if (res > 0)
+                {
+                    msg = new MessageModel(0, "保存成功");
+                }
+                else msg = new MessageModel(10005, "保存失败");
+            }
+            catch (Exception e)
+            {
+                string err = "服务器错误，请重试！" + e.Message;
+                msg = new MessageModel(10005, err);
+            }
+            return msg;
+        }
+        #endregion
+        #region 删除物料图片
+        public MessageModel delImage(ImageModel img)
+        {
+            List<string> sqlList = new List<string>();
+
+            string sql = "delete from image where name = @name and materiel = @materiel";
+            Dictionary<string, object> paras = new Dictionary<string, object>();
+            paras.Add("@name", img.name);
+            paras.Add("@materiel", img.materiel);
+            MessageModel msg;
+            try
+            {
+                int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
+                if (res > 0)
+                {
+                    msg = new MessageModel(0, "删除成功");
+                }
+                else msg = new MessageModel(10005, "删除失败");
+            }
+            catch (Exception e)
+            {
+                string err = "服务器错误，请重试！" + e.Message;
+                msg = new MessageModel(10005, err);
+            }
+            return msg;
+        }
+        #endregion
+        
         #region 更新物料状态
         public MessageModel switchStatus(int id, bool isActive)
         {

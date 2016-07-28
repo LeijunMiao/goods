@@ -499,6 +499,13 @@ namespace goods
             this.reset();
             //docToPrint.Print();
         }
+
+        private void changePrinter()
+        {
+            PrintDialog dlg = new PrintDialog();
+            dlg.Document = docToPrint;
+            dlg.ShowDialog();
+        }
         public void PrintSetup()
         {
             try
@@ -546,7 +553,7 @@ namespace goods
             /// <param name="dataModel"></param>
             /// <param name="columnNames"></param>
             /// <returns></returns>
-            private DataTable ReflactionToDataTable<T>(List<T> dataModel, List<string> columnNames, ref string msg)
+            private DataTable ReflactionToDataTable(List<T> dataModel, List<string> columnNames, ref string msg)
             {
                 try
                 {

@@ -89,10 +89,11 @@ namespace goods
             DataColumn dcmId = new DataColumn("mid");
             DataColumn dcpoId = new DataColumn("poid");
             DataColumn dcclosed = new DataColumn("closed");
+            DataColumn dccombination = new DataColumn("combination");
             DataColumn dcInGoods = new DataColumn("入库数量");
             DataColumn dcNotInGoods = new DataColumn("未入库数量");
             DataColumn[] list_dc = { dcNum, dcDate, dcSup, dcMNum, dcMName, dcSep, dcMete, dcPrice,dcQuantity, dcTaxPrice,
-                dcAmount, dcTax, dcTaxAmount, dcAll, dcDeliveryDate, dcStatus,dcId,dcmId,dcInGoods,dcNotInGoods,dcpoId,dcclosed };
+                dcAmount, dcTax, dcTaxAmount, dcAll, dcDeliveryDate, dcStatus,dcId,dcmId,dcInGoods,dcNotInGoods,dcpoId,dcclosed,dccombination };
             dt.Columns.AddRange(list_dc);
 
             for (int i = 0; i < dtData.Rows.Count; i++)
@@ -122,8 +123,10 @@ namespace goods
                 dr[17] = dtData.Rows[i]["mid"].ToString();
                 dr[18] = dtData.Rows[i]["quantityAll"].ToString();
                 dr[19] = diff;
-                dr[20] = dtData.Rows[i]["poid"].ToString(); ;
-                dr[21] = dtData.Rows[i]["closed"].ToString(); ;
+                dr[20] = dtData.Rows[i]["poid"].ToString(); 
+                dr[21] = dtData.Rows[i]["closed"].ToString();
+                if (dtData.Rows[i]["combination"] == DBNull.Value) dr[22] = "";
+                else dr[22] = dtData.Rows[i]["combination"].ToString();
                 dt.Rows.Add(dr);
             }
 
@@ -133,6 +136,7 @@ namespace goods
             dataGridView1.Columns[17].Visible = false;
             dataGridView1.Columns[20].Visible = false;
             dataGridView1.Columns[21].Visible = false;
+            dataGridView1.Columns[22].Visible = false;
 
             pagingCom1.RecordCount = ctrl.getCount(this.textBox3.Text, this.dateTimePicker1.Checked, dateTimePicker1.Value.Date, textBox1.Text, textBox2.Text);
             pagingCom1.reSet();
@@ -153,9 +157,11 @@ namespace goods
                         MessageBox.Show("包含关闭订单，生成失败。");
                         return;
                     }
-                    list_p.Add(new parmas(Convert.ToInt32( dataGridView1.SelectedRows[i].Cells["id"].Value),
+                    var p = new parmas(Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["id"].Value),
                         Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["mid"].Value),
-                        dataGridView1.SelectedRows[i].Cells["物料代码"].Value.ToString()));
+                        dataGridView1.SelectedRows[i].Cells["物料代码"].Value.ToString());
+                    if (dataGridView1.SelectedRows[i].Cells["combination"].Value.ToString() != "") p.combination = Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["combination"].Value);
+                    list_p.Add(p);
                 }
                 uuids = ctrl.updateBatch(list_p);
                 QRCodeList pop = new QRCodeList(uuids);

@@ -134,6 +134,12 @@ namespace goods.Model
         public int? batch { get; set; }
 
         public string name { get; set; }
+        public int warehouse { get; set; }
+        public int? position { get; set; }
+        public int supplier { get; set; }
+
+        public int? combination { get; set; }
+
         public DateTime deliveryDate { get; set; }
 
         public ListModel() { }
@@ -153,6 +159,8 @@ namespace goods.Model
         public int id { get; set; }
         public int mid { get; set; }
         public string num { get; set; }
+
+        public int? combination { get; set; }
 
         public parmas(int id, int mid, string num)
         {

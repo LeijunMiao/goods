@@ -138,6 +138,7 @@ namespace goods
             gm.isDeficit = Convert.ToBoolean(dt.Rows[0]["isDeficit"]);
 
             gm.id = Convert.ToInt32(dt.Rows[0]["gid"]);
+            gm.supplier = Convert.ToInt32(dt.Rows[0]["supplier"]);
 
             dt.Columns.Add("amount");
             for (int i = 0; i < dt.Rows.Count; i++)

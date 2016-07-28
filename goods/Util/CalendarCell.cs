@@ -29,7 +29,7 @@ namespace goods
             {
                 val = this.Value;
             }
-            catch (Exception ex)
+            catch (Exception )
             {
                 // Argument ot of range (value doesn't exists in collection)
                 return;

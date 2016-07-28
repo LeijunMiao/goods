@@ -39,6 +39,7 @@
             this.供应商管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.仓库管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.计量单位ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.物料分类ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.物料管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.消息管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.采购订单ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -68,6 +69,7 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
+            this.辅助属性ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -102,6 +104,8 @@
             this.供应商管理ToolStripMenuItem,
             this.仓库管理ToolStripMenuItem,
             this.计量单位ToolStripMenuItem,
+            this.物料分类ToolStripMenuItem,
+            this.辅助属性ToolStripMenuItem,
             this.物料管理ToolStripMenuItem,
             this.消息管理ToolStripMenuItem});
             this.基础信息管理ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaption;
@@ -112,7 +116,7 @@
             // departmentItem
             // 
             this.departmentItem.Name = "departmentItem";
-            this.departmentItem.Size = new System.Drawing.Size(136, 22);
+            this.departmentItem.Size = new System.Drawing.Size(152, 22);
             this.departmentItem.Text = "组织架构";
             this.departmentItem.Visible = false;
             this.departmentItem.Click += new System.EventHandler(this.departmentMenuItem_Click);
@@ -120,7 +124,7 @@
             // roleItem
             // 
             this.roleItem.Name = "roleItem";
-            this.roleItem.Size = new System.Drawing.Size(136, 22);
+            this.roleItem.Size = new System.Drawing.Size(152, 22);
             this.roleItem.Text = "角色管理";
             this.roleItem.Visible = false;
             this.roleItem.Click += new System.EventHandler(this.roleMenuItem_Click);
@@ -128,7 +132,7 @@
             // 用户管理ToolStripMenuItem
             // 
             this.用户管理ToolStripMenuItem.Name = "用户管理ToolStripMenuItem";
-            this.用户管理ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.用户管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.用户管理ToolStripMenuItem.Text = "用户管理";
             this.用户管理ToolStripMenuItem.Visible = false;
             this.用户管理ToolStripMenuItem.Click += new System.EventHandler(this.用户管理ToolStripMenuItem_Click);
@@ -136,7 +140,7 @@
             // 客户管理ToolStripMenuItem
             // 
             this.客户管理ToolStripMenuItem.Name = "客户管理ToolStripMenuItem";
-            this.客户管理ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.客户管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.客户管理ToolStripMenuItem.Text = "客户管理";
             this.客户管理ToolStripMenuItem.Visible = false;
             this.客户管理ToolStripMenuItem.Click += new System.EventHandler(this.客户管理ToolStripMenuItem_Click);
@@ -144,7 +148,7 @@
             // 供应商管理ToolStripMenuItem
             // 
             this.供应商管理ToolStripMenuItem.Name = "供应商管理ToolStripMenuItem";
-            this.供应商管理ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.供应商管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.供应商管理ToolStripMenuItem.Text = "供应商管理";
             this.供应商管理ToolStripMenuItem.Visible = false;
             this.供应商管理ToolStripMenuItem.Click += new System.EventHandler(this.供应商管理ToolStripMenuItem_Click);
@@ -152,7 +156,7 @@
             // 仓库管理ToolStripMenuItem
             // 
             this.仓库管理ToolStripMenuItem.Name = "仓库管理ToolStripMenuItem";
-            this.仓库管理ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.仓库管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.仓库管理ToolStripMenuItem.Text = "仓库管理";
             this.仓库管理ToolStripMenuItem.Visible = false;
             this.仓库管理ToolStripMenuItem.Click += new System.EventHandler(this.仓库管理ToolStripMenuItem_Click);
@@ -160,15 +164,22 @@
             // 计量单位ToolStripMenuItem
             // 
             this.计量单位ToolStripMenuItem.Name = "计量单位ToolStripMenuItem";
-            this.计量单位ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.计量单位ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.计量单位ToolStripMenuItem.Text = "计量单位";
             this.计量单位ToolStripMenuItem.Visible = false;
             this.计量单位ToolStripMenuItem.Click += new System.EventHandler(this.计量单位ToolStripMenuItem_Click);
             // 
+            // 物料分类ToolStripMenuItem
+            // 
+            this.物料分类ToolStripMenuItem.Name = "物料分类ToolStripMenuItem";
+            this.物料分类ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.物料分类ToolStripMenuItem.Text = "物料分类";
+            this.物料分类ToolStripMenuItem.Click += new System.EventHandler(this.物料分类ToolStripMenuItem_Click);
+            // 
             // 物料管理ToolStripMenuItem
             // 
             this.物料管理ToolStripMenuItem.Name = "物料管理ToolStripMenuItem";
-            this.物料管理ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.物料管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.物料管理ToolStripMenuItem.Text = "物料管理";
             this.物料管理ToolStripMenuItem.Visible = false;
             this.物料管理ToolStripMenuItem.Click += new System.EventHandler(this.物料管理ToolStripMenuItem_Click);
@@ -176,7 +187,7 @@
             // 消息管理ToolStripMenuItem
             // 
             this.消息管理ToolStripMenuItem.Name = "消息管理ToolStripMenuItem";
-            this.消息管理ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.消息管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.消息管理ToolStripMenuItem.Text = "消息管理";
             this.消息管理ToolStripMenuItem.Visible = false;
             this.消息管理ToolStripMenuItem.Click += new System.EventHandler(this.消息管理ToolStripMenuItem_Click);
@@ -367,6 +378,7 @@
             // 
             // label1
             // 
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label1.AutoSize = true;
             this.label1.BackColor = System.Drawing.Color.Transparent;
             this.label1.Font = new System.Drawing.Font("微软雅黑", 21.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -380,6 +392,7 @@
             // 
             // label2
             // 
+            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label2.AutoSize = true;
             this.label2.BackColor = System.Drawing.Color.FromArgb(((int)(((byte)(255)))), ((int)(((byte)(196)))), ((int)(((byte)(0)))));
             this.label2.Font = new System.Drawing.Font("微软雅黑", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -394,6 +407,7 @@
             // 
             // pictureBox1
             // 
+            this.pictureBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox1.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox1.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox1.Image")));
             this.pictureBox1.Location = new System.Drawing.Point(709, 337);
@@ -404,6 +418,7 @@
             // 
             // label3
             // 
+            this.label3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.label3.AutoSize = true;
             this.label3.BackColor = System.Drawing.Color.Transparent;
             this.label3.Font = new System.Drawing.Font("微软雅黑", 10.5F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
@@ -416,6 +431,7 @@
             // 
             // pictureBox2
             // 
+            this.pictureBox2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.pictureBox2.BackColor = System.Drawing.Color.Transparent;
             this.pictureBox2.Image = ((System.Drawing.Image)(resources.GetObject("pictureBox2.Image")));
             this.pictureBox2.Location = new System.Drawing.Point(689, 563);
@@ -424,6 +440,13 @@
             this.pictureBox2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
             this.pictureBox2.TabIndex = 8;
             this.pictureBox2.TabStop = false;
+            // 
+            // 辅助属性ToolStripMenuItem
+            // 
+            this.辅助属性ToolStripMenuItem.Name = "辅助属性ToolStripMenuItem";
+            this.辅助属性ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.辅助属性ToolStripMenuItem.Text = "辅助属性";
+            this.辅助属性ToolStripMenuItem.Click += new System.EventHandler(this.辅助属性ToolStripMenuItem_Click);
             // 
             // MainForm
             // 
@@ -447,7 +470,6 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.menuStrip1;
             this.Margin = new System.Windows.Forms.Padding(4);
-            this.MaximizeBox = false;
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "十方数字化系统";
@@ -503,6 +525,8 @@
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.PictureBox pictureBox2;
+        private System.Windows.Forms.ToolStripMenuItem 物料分类ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 辅助属性ToolStripMenuItem;
     }
 }
 

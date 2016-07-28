@@ -116,5 +116,10 @@ namespace goods
             this.textBox1.Text = ServerInfo.GetSettingIP();
             this.textBox2.Text = ServerInfo.GetSettingUser();
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }

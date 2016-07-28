@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using Newtonsoft.Json.Linq;
 namespace goods.Model
 {
     class MessageModel
@@ -22,6 +22,11 @@ namespace goods.Model
             this.code = code;
             this.msg = msg;
             this.obj = obj;
+        }
+        public MessageModel(JObject obj)
+        {
+            this.code = Convert.ToInt32(obj.GetValue("code"));
+            this.msg = obj.GetValue("msg").ToString();
         }
 
         public int Code {

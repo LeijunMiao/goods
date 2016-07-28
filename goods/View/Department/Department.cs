@@ -61,21 +61,21 @@ namespace goods
         /// <param name="e"></param>
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            this.createDepartment("");
-            //if (treeView1.SelectedNode != null)
-            //{
-            //    innerTag it = (innerTag)treeView1.SelectedNode.Tag;
-            //    if(it.parent == "")
-            //    {
-            //        MessageBox.Show("禁止创建同级最高级别组织！");
-            //        return;
-            //    }
-            //    this.createDepartment(it.parent);//, treeView1.SelectedNode.Parent
-            //}
-            //else
-            //{
-            //    this.createDepartment("");
-            //}
+            //this.createDepartment("");
+            if (treeView1.SelectedNode != null)
+            {
+                innerTag it = (innerTag)treeView1.SelectedNode.Tag;
+                if (it.parent == "")
+                {
+                    MessageBox.Show("禁止创建同级最高级别组织！");
+                    return;
+                }
+                this.createDepartment(it.parent);//, treeView1.SelectedNode.Parent
+            }
+            else
+            {
+                this.createDepartment("");
+            }
         }
         /// <summary>
         /// 新建下一级部门

@@ -14,6 +14,7 @@ namespace goods
     public partial class MaterielView : Form
     {
         materielCtrl ctrl = new materielCtrl();
+        public int category;
         private DataTable dtData = null;
         public MaterielView()
         {
@@ -97,10 +98,23 @@ namespace goods
             dataGridView1.Columns.Add(tax);
 
             DataGridViewColumn isBatch = new DataGridViewTextBoxColumn();
-            isBatch.HeaderText = "业务批次管理";
             isBatch.Name = "isBatch";
             isBatch.DataPropertyName = "isBatch";
+            isBatch.Visible = false;
             dataGridView1.Columns.Add(isBatch);
+
+            DataGridViewColumn category = new DataGridViewTextBoxColumn();
+            category.Name = "category";
+            category.DataPropertyName = "category";
+            category.HeaderText = "分类";
+            dataGridView1.Columns.Add(category);
+            
+
+            DataGridViewColumn batchStatus = new DataGridViewTextBoxColumn();
+            batchStatus.HeaderText = "业务批次管理";
+            batchStatus.Name = "batchStatus";
+            batchStatus.DataPropertyName = "batchStatus";
+            dataGridView1.Columns.Add(batchStatus);
         }
         private void Form2_Load(object sender, EventArgs e)
         {
@@ -118,8 +132,8 @@ namespace goods
         {
             pagingCom1.PageIndex = Index;
             pagingCom1.PageSize = 10;
-            dtData = ctrl.getFilterList(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text);
-
+            DataTable[] dts = ctrl.getFilterList(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text,category);
+            dtData = dts[0];
             dtData.Columns.Add("status");
             for (int i = 0; i < dtData.Rows.Count; i++)
             {
@@ -128,7 +142,8 @@ namespace goods
                 else dtData.Rows[i]["status"] = "注销";
             }
             dataGridView1.DataSource = dtData;
-            pagingCom1.RecordCount = ctrl.getCountAll(textBox1.Text);
+            if (dts[1].Rows[0][0] != DBNull.Value) pagingCom1.RecordCount = Convert.ToInt32(dts[1].Rows[0][0]);
+            else pagingCom1.RecordCount = 0;
             pagingCom1.reSet();
 
         }
@@ -209,6 +224,52 @@ namespace goods
 
                 }
             }
+        }
+
+        private void toolStripButton5_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentCell != null)
+            {
+                MaterileImages view = new MaterileImages(Convert.ToInt32(dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["id"].Value));
+                view.Show();
+            }
+            else
+            {
+                MessageBox.Show("请选择物料。");
+            }
+        }
+
+        private void toolStripButton6_Click(object sender, EventArgs e)
+        {
+            if (dataGridView1.CurrentCell != null)
+            {
+                MaterielSolidBacking view = new MaterielSolidBacking(Convert.ToInt32(dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["id"].Value), dataGridView1.Rows[dataGridView1.CurrentCell.RowIndex].Cells["name"].Value.ToString());
+                view.Show();
+            }
+            else
+            {
+                MessageBox.Show("请选择物料。");
+            }
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            CategorySelect view = new CategorySelect();
+            view.CategorySet += View_CategorySet;
+            view.Show();
+        }
+
+        private void View_CategorySet(object sender, CategoryEventArgs e)
+        {
+            this.textBox2.Text = e.name;
+            this.category = e.id;
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            this.textBox2.Text = "";
+            this.textBox1.Text = "";
+            this.category = -1;
         }
     }
 }

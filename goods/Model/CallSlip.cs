@@ -9,8 +9,6 @@ namespace goods.Model
     {
         public int id { get; set; }
         public DateTime date { get; set; }
-        public int warehouse { get; set; }
-        public int? position { get; set; }
         public int user { get; set; }
         public bool isDeficit { get; set; }
         public CallSlipModel() { }
@@ -25,6 +23,8 @@ namespace goods.Model
         public double quantity { get; set; }
         public double conversion { get; set; }
         public double subquantity { get; set; }
+        public int warehouse { get; set; }
+        public int? position { get; set; }
         public CallSlipMaterielModel() { }
 
 

@@ -19,7 +19,7 @@ namespace goods
         roleCtrl rctrl = new roleCtrl();
         //private DataSet dsData = null;
         private DataTable dtData = null;
-        private DataTable dt = null;
+        //private DataTable dt = null;
         //总记录数
         public int RecordCount = 0;
         public UserView()

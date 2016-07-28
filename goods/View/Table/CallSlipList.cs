@@ -15,7 +15,7 @@ namespace goods
     {
         listCtrl ctrl = new listCtrl();
         private DataTable dtData = null;
-        private DataTable dt = null;
+        //private DataTable dt = null;
         public CallSlipList()
         {
             InitializeComponent();

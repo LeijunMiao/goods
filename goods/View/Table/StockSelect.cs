@@ -16,6 +16,7 @@ namespace goods
     public partial class StockSelect : Form
     {
         stockCtrl ctrl = new stockCtrl();
+        solidbackingCtrl sbCtrl = new solidbackingCtrl();
         List<int> parentIds;
         public StockSelect(List<int> ids)
         {
@@ -26,11 +27,17 @@ namespace goods
         }
         private void loadTabel()
         {
+            this.dataGridView1.CellMouseEnter += DataGridView1_CellMouseEnter;
             this.dataGridView1.AutoGenerateColumns = false;
             DataGridViewCheckBoxColumn newColumn = new DataGridViewCheckBoxColumn();
             newColumn.HeaderText = "选择";
             newColumn.FillWeight = 20;
             dataGridView1.Columns.Add(newColumn);
+
+            DataGridViewTextBoxColumn supColumn = new DataGridViewTextBoxColumn();
+            supColumn.HeaderText = "供应商";
+            supColumn.DataPropertyName = "supplier";
+            dataGridView1.Columns.Add(supColumn);
 
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
             numColumn.HeaderText = "批次编号";
@@ -63,6 +70,18 @@ namespace goods
             avaColumn.HeaderText = "可用库存";
             dataGridView1.Columns.Add(avaColumn);
 
+            DataGridViewTextBoxColumn combColumn = new DataGridViewTextBoxColumn();
+            combColumn.DataPropertyName = "combination";
+            combColumn.Name = "combination";
+            combColumn.Visible = false;
+            dataGridView1.Columns.Add(combColumn);
+
+            DataGridViewTextBoxColumn avColumn = new DataGridViewTextBoxColumn();
+            avColumn.DataPropertyName = "attrvalue";
+            avColumn.HeaderText = "辅助属性";
+            avColumn.Name = "attrvalue";
+            dataGridView1.Columns.Add(avColumn);
+
             this.textBox1.KeyDown += button1_KeyDown;
             this.textBox2.KeyDown += button1_KeyDown;
             this.textBox3.KeyDown += button1_KeyDown;
@@ -70,8 +89,19 @@ namespace goods
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.CellClick += dataGridView1_CellContentClick;
 
-
+            this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
         }
+
+        private void DataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex < 0 || e.RowIndex < 0 || dataGridView1.Rows.Count <= 0) return;
+            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value ?? string.Empty).ToString();
+        }
+        private void pageIndexChanged(object sender, EventArgs e)
+        {
+            loadData(pagingCom1.PageIndex);
+        }
+
         private void button1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) { loadData(1); }
@@ -85,8 +115,26 @@ namespace goods
             pagingCom1.PageIndex = index;
             pagingCom1.PageSize = 10;
             var dtData = ctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, textBox2.Text, textBox3.Text, parentIds);
-
+            dtData.Columns.Add("attrvalue");
+            List<int> ids = new List<int>();
+            for (int i = 0; i < dtData.Rows.Count; i++)
+            {
+                if(dtData.Rows[i]["combination"] != DBNull.Value) ids.Add(Convert.ToInt32(dtData.Rows[i]["combination"]));
+            }
             dataGridView1.DataSource = dtData;
+            Dictionary<int, string> map = sbCtrl.getbyCombIds(ids);
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                if (dataGridView1.Rows[i].Cells["combination"].Value != DBNull.Value)
+                {
+                    var comb = Convert.ToInt32(dataGridView1.Rows[i].Cells["combination"].Value);
+
+                    if (map.Keys.Contains(comb))
+                    {
+                        dataGridView1.Rows[i].Cells["attrvalue"].Value = map[comb];
+                    }
+                }
+            }
             pagingCom1.RecordCount = ctrl.getCount(textBox1.Text, textBox2.Text, textBox3.Text, parentIds);
             pagingCom1.reSet();
 

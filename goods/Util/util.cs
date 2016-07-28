@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 using System.Drawing;
 using System.Drawing.Printing;
 using ZXing;
+using System.IO;
+using System.Net;
+
 namespace goods
 {
     class utilCls
@@ -82,6 +85,28 @@ namespace goods
                 i++;
             }
             return dataLines;
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="ftpUrl">FTP地址</param>
+        /// <param name="fileName">文件名</param>
+        /// <returns></returns>
+        public Stream Info(string ftpUrl, string fileName)
+        {
+            try
+            {
+                FtpWebRequest reqFtp = (FtpWebRequest)FtpWebRequest.Create(new Uri(ftpUrl + "" + fileName));
+                reqFtp.UseBinary = true;
+                FtpWebResponse respFtp = (FtpWebResponse)reqFtp.GetResponse();
+                Stream stream = respFtp.GetResponseStream();
+                return stream;
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

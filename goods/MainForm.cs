@@ -51,6 +51,7 @@ namespace goods
                             break;
                         case "materiel":
                             this.物料管理ToolStripMenuItem.Visible = true;
+                            this.物料分类ToolStripMenuItem.Visible = true;
                             break;
                         case "order":
                             this.采购订单ToolStripMenuItem.Visible = true;
@@ -264,6 +265,18 @@ namespace goods
         private void 安全库存预警ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
             SafetyStockList view = new SafetyStockList();
+            view.Show();
+        }
+
+        private void 物料分类ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CategoryList view = new CategoryList();
+            view.Show();
+        }
+
+        private void 辅助属性ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            SolidBackingList view = new SolidBackingList();
             view.Show();
         }
     }

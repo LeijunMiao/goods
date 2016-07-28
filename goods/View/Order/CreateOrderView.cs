@@ -18,12 +18,14 @@ namespace goods
     {
         materielCtrl mctrl = new materielCtrl();
         orderCtrl octrl = new orderCtrl();
+        solidbackingCtrl sbctrl = new solidbackingCtrl();
         DataTable dt = new DataTable();
         int supplier = -1;
         int user = -1;
         bool isSave = false;
         public List<int> allids = new List<int>();
-
+        //Dictionary<int, List<attrClass>> mapAttr = new Dictionary<int, List<attrClass>>();
+        Dictionary<int, Dictionary<int, attrClass>> mapAttr = new Dictionary<int, Dictionary<int, attrClass>>();
         CommonPrintTools<object> cp;
         PrintDataModel<object> m;
         List<string> list_tableTitle = new List<string> { "物料编码", "名称", "规格参数", "计量单位", "数量", "价税合计", "交货日期" };
@@ -118,6 +120,10 @@ namespace goods
             colallamount.ReadOnly = true;
             colallamount.DefaultCellStyle = dataGridViewCellStyle3;
 
+            DataGridViewColumn colAttrNum = new DataGridViewTextBoxColumn();
+            colAttrNum.DataPropertyName = "attrnum";
+            colAttrNum.Name = "attrnum";
+            colAttrNum.Visible = false;
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             this.price,
             this.tax,
@@ -129,7 +135,7 @@ namespace goods
             coltaxamount,
             colallamount,
             this.deliveryDate,
-            this.summary});
+            this.summary,colAttrNum});
             // 
             // price
             // 
@@ -193,6 +199,15 @@ namespace goods
             // 
             this.summary.HeaderText = "备注";
             this.summary.Name = "summary";
+            this.summary.Visible = false;
+
+            DataGridViewButtonColumn colattbtn = new DataGridViewButtonColumn();
+            colattbtn.Name = "solidbacking";
+            colattbtn.HeaderText = "辅助属性";
+            colattbtn.DefaultCellStyle.NullValue = "空";
+            this.dataGridView1.Columns.Add(colattbtn);
+
+
 
         }
         private void initData()
@@ -243,6 +258,9 @@ namespace goods
                     this.dataGridView1.Rows[i].Cells["type"].Value = dtData.Rows[j]["type"];
                     this.dataGridView1.Rows[i].Cells["tax"].Value = dtData.Rows[j]["tax"];
                     this.dataGridView1.Rows[i].Cells["deliveryDate"].Value = dateTimePicker2.Value.Date.ToString("yyyy/M/d");
+
+                    this.dataGridView1.Rows[i].Cells["attrnum"].Value = dtData.Rows[j]["attrnum"];
+                    if (Convert.ToInt32(dtData.Rows[j]["attrnum"]) == 0) this.dataGridView1.Rows[i].Cells["solidbacking"].Value = "无";
                     j++;
                 }
 
@@ -299,10 +317,12 @@ namespace goods
                 MessageBox.Show("请添加供应商！");
                 return;
             }
+            
             orderParmas obj = new orderParmas(supplier, user, textBox1.Text, dateTimePicker1.Value, dateTimePicker2.Value);
             obj.listM = new List<ListModel>();
             for (int i = this.dataGridView1.RowCount; i > 0; i--)
             {
+                
                 ListModel lm = new ListModel();
                 if(this.dataGridView1.Rows[i - 1].Cells["conversion"].Value != DBNull.Value) lm.conversion = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["conversion"].Value),2);
                 lm.price = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["price"].Value),2);
@@ -317,7 +337,15 @@ namespace goods
                     MessageBox.Show("物料缺失价格或数量！");
                     return;
                 }
-
+                var num = 0;
+                var attrnum = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["attrnum"].Value);
+                if (mapAttr.Keys.Contains(lm.materiel)) num = mapAttr[lm.materiel].Keys.Count;
+                if (num < attrnum)
+                {
+                    MessageBox.Show("请添加辅助属性！");
+                    return;
+                }
+                if(attrnum > 0) lm.combination =  sbctrl.getCombin(lm.materiel, mapAttr[lm.materiel]);
                 obj.listM.Add(lm);
             }
             
@@ -339,8 +367,12 @@ namespace goods
                 DataTable dtorder = octrl.getlastinsert(PropertyClass.UserId);
                 label9.Visible = true;
                 label10.Text = dtorder.Rows[0]["num"].ToString();
-
-                octrl.addMsg(label10.Text, textBox2.Text, dateTimePicker2.Value.ToString());
+                double amount = 0;
+                for (int i = 0; i < this.dataGridView1.RowCount; i++)
+                {
+                    amount += Convert.ToDouble(this.dataGridView1.Rows[i].Cells["amount"].Value);
+                }
+                octrl.addMsg(label10.Text, textBox2.Text, dateTimePicker2.Value.ToString(), amount);
             }
             else
             {
@@ -511,6 +543,47 @@ namespace goods
                 default:
                     break;
             }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "solidbacking" && Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["attrnum"].Value) >0)
+            {
+                var id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
+                Dictionary<int, attrClass> map = new Dictionary<int, attrClass>();
+                if (mapAttr.Keys.Contains(id))
+                {
+                    map = mapAttr[id];
+                }
+                OrderSolidBacking view = new OrderSolidBacking(this, id, dataGridView1.Rows[e.RowIndex].Cells["name"].Value.ToString(), map);
+                view.Show();
+            }
+        }
+
+        public void setSolidBacking(int key,int attrId, attrClass ac)
+        {
+            if (!mapAttr.Keys.Contains(key))
+            {
+                mapAttr.Add(key, new Dictionary<int, attrClass>());
+                mapAttr[key].Add(attrId, ac);
+            }
+            else if (!mapAttr[key].Keys.Contains(attrId))
+            {
+                mapAttr[key].Add(attrId, ac);
+            }
+            else
+            {
+                mapAttr[key][attrId] = ac;
+
+            }
+            
+            dataGridView1.CurrentCell.Value = "";
+            for (int i = 0; i < mapAttr[key].Values.Count; i++)
+            {
+                if (i != 0) dataGridView1.CurrentCell.Value += ",";
+                dataGridView1.CurrentCell.Value += mapAttr[key].Values.ToList()[i].valueName;
+            }
+            
         }
     }
 }

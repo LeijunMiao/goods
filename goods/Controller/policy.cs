@@ -57,7 +57,7 @@ namespace goods.Controller
             }
             catch (Exception e)
             {
-                string err = "服务器错误，请重试！";
+                string err = "服务器错误，请重试！" + e.ToString();
                 msg = new MessageModel(10005, err);
             }
             return msg;

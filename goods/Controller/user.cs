@@ -25,7 +25,7 @@ namespace goods.Controller
         }
         public int getUserListCount(int role, string fullName)
         {
-            string sql = "SELECT  count(*) FROM db_goodsmanage.user ";
+            string sql = "SELECT  count(*) FROM user ";
             string select = "";
             if (role != -1)
             {
@@ -45,15 +45,16 @@ namespace goods.Controller
         public DataTable getUserList(int pageIndex, int pageSize, int role, string fullName)
         {
             innerParmas parmas = new innerParmas(pageIndex, pageSize, role, fullName);
-            string sql = "SELECT u.id,u.fullName,u.userName,u.isActive,u.role,r.name FROM user u , role r " +
-                "where u.role = r.id  ";
+            string sql = "SELECT u.id,u.fullName,u.userName,u.isActive,u.role,r.name FROM user u left join role r on u.role = r.id ";
             if (parmas.role != -1)
             {
-                sql += " and u.role = " + parmas.role;
+                sql += " where u.role = " + parmas.role;
             }
             if (parmas.fullName != "")
             {
-                sql += " and u.fullName like '%" + parmas.fullName + "%'";
+                if (parmas.role != -1) sql += " and ";
+                else sql += " where ";
+                sql += " u.fullName like '%" + parmas.fullName + "%'";
             }
 
             sql += " order by u.id desc ";

@@ -28,9 +28,33 @@ namespace goods.Controller
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
+        public Dictionary<int, string> getbyOMIds(List<int> ids)
+        {
+            string sql = "SELECT om.id,av.name FROM ordermateriel om inner join attrcombination c on om.combination = c.id inner join combinationitem ci on c.id = ci.combination inner join attrvalue av on ci.attrvalue = av.id  where om.id in (";
+            for (int i = 0; i < ids.Count; i++)
+            {
+                if (i != 0) sql += ",";
+                sql += ids[i];
+            }
+            sql += ")";
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            Dictionary<int, string> map = new Dictionary<int, string>();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                var id = Convert.ToInt32(dt.Rows[i]["id"]);
+                if (!map.Keys.Contains(id))
+                {
+                    map.Add(id,"");
+                }
+                if (map[id] != "") map[id] += ",";
+                map[id] += dt.Rows[i]["name"].ToString();
+            }
+            return map;
+        }
+            
         public DataTable getFilterOrderMateriel(int pageIndex, int pageSize, string supplier,bool isDate ,DateTime date, string orderNum, string materielNum)
         {
-            string sql = " SELECT om.id,po.id poid,po.num ponum, m.num mnum,m.id mid,po.date date,s.name sname,m.name mname,m.specifications specifications, meter.name metering,om.price,om.quantity,om.amount,om.tax,om.deliveryDate,om.closed,  " +
+            string sql = " SELECT om.id,po.id poid,po.num ponum, m.num mnum,m.id mid,po.date date,s.name sname,m.name mname,m.specifications specifications, meter.name metering,om.price,om.quantity,om.amount,om.tax,om.deliveryDate,om.closed,om.combination," +
                 "(SELECT SUM(quantity) FROM entrymateriel e, godownentry g WHERE e.entry = g.id and g.purchaseOrder = po.id and e.materiel = m.id and g.isDeficit = 0) quantityAll" +
                 " FROM ordermateriel om ,purchaseorder po,materiel m,supplier s,metering meter where om.purchaseorder = po.id and om.materiel = m.id and po.supplier = s.id and m.metering = meter.id";
             string select = "";
@@ -100,7 +124,7 @@ namespace goods.Controller
                             " om.purchaseorder = po.id AND om.deliveryDate < curdate() AND s.id = po.supplier AND s.id = s2.id "+ dateStr + " ) allquantity ";
             string sqlright = " (SELECT SUM(em.quantity) FROM " +
                             " entrymateriel em,godownentry g,purchaseorder po,ordermateriel om WHERE " +
-                            " em.entry = g.id AND em.materiel = om.materiel AND g.purchaseOrder = om.purchaseorder and om.purchaseorder = po.id " +
+                            " em.entry = g.id AND em.materiel = om.materiel AND g.purchaseOrder = om.purchaseorder and om.purchaseorder = po.id and g.isDeficit = 0 " +
                             " AND om.deliveryDate < curdate() AND g.date <= date_add(om.deliveryDate, INTERVAL 1 day) AND g.supplier = s2.id " + dateStr + ") rightquantity ";
             string sql = " SELECT s2.id, s2.name, s2.num , "+ sqlAll +","+ sqlright +
                             " from supplier s2 ";
@@ -127,7 +151,7 @@ namespace goods.Controller
         /// <returns></returns>
         public int getSupplierOrderCount(string supplier)
         {
-            string sql = " SELECT count(id) from db_goodsmanage.supplier s2 ";
+            string sql = " SELECT count(id) from supplier s2 ";
             if (supplier != "")
             {
                 sql += " where s2.name like '%" + supplier + "%' ";
@@ -155,7 +179,9 @@ namespace goods.Controller
             for (int i = 0; i < ids.Count; i++)
             {
                 var uuid = tempCartId.ToString() + i;
-                sqlbatch = "insert into batchmateriel (date,ordermateriel,materiel,num,uuid) values (now(), '" + ids[i].id + "','" + ids[i].mid + "', concat('" + dateStr + "','" + ids[i].num + "',LPAD(" + num + ",9,'0')),'" + uuid + "'); ";
+                sqlbatch = "insert into batchmateriel (date,ordermateriel,materiel,num,uuid,combination) values (now(), '" + ids[i].id + "','" + ids[i].mid + "', concat('" + dateStr + "','" + ids[i].num + "',LPAD(" + num + ",9,'0')),'" + uuid + "'";
+                if (ids[i].combination != null) sqlbatch += ",'" + ids[i].combination + "')";
+                else sqlbatch += ",null)";
                 sqlList.Add(sqlbatch);
                 uuids.Add(uuid);
             }
@@ -178,18 +204,20 @@ namespace goods.Controller
         #region 新建
         public MessageModel add(orderParmas gm)
         {
-            List<string> sqlList = new List<string>();   
+            List<string> sqlList = new List<string>();
             string num = "(SELECT AUTO_INCREMENT FROM information_schema.TABLES WHERE TABLE_NAME = 'purchaseorder')";
 
             string sqlOrder = "insert into purchaseorder (date,supplier,summary,user,deliveryDate,num) " +
                 " values(@date, @supplier, @summary,@user,@deliveryDate, concat('PO',LPAD(" + num + ",9,'0')));";
-            string sqlMat = "insert into ordermateriel (purchaseorder,line,materiel,quantity,price,tax,amount,summary,deliveryDate,conversion,subquantity) values ";
+            string sqlMat = "insert into ordermateriel (purchaseorder,line,materiel,quantity,price,tax,amount,summary,deliveryDate,conversion,subquantity,combination) values ";
             for (int i = 0; i < gm.listM.Count; i++)
             {
                 if (i != 0) sqlMat += ",";
                 sqlMat += " (last_insert_id(),'" + gm.listM[i].line + "','" + gm.listM[i].materiel + "' ,'" + gm.listM[i].quantity + "','" + gm.listM[i].price + "','" + gm.listM[i].tax + "','" + gm.listM[i].price * gm.listM[i].quantity + "','" + gm.listM[i].summary + "','" + gm.listM[i].deliveryDate + "'";
                 if (gm.listM[i].conversion != null) sqlMat += ",'" + gm.listM[i].conversion + "','" + gm.listM[i].conversion * gm.listM[i].quantity + "'";
                 else sqlMat += ", null,null";
+                if (gm.listM[i].combination != null && gm.listM[i].combination >0) sqlMat += ",'"+ gm.listM[i].combination + "'";
+                else sqlMat += ", null";
                 sqlMat += ") ";
             }
             sqlList.Add(sqlOrder);
@@ -213,11 +241,11 @@ namespace goods.Controller
         #endregion
 
         #region 新建信息
-        public void addMsg(string num,string supplier,string date)
+        public void addMsg(string num,string supplier,string date,double amount)
         {
             string[] strArray = new string[] {
-                num, supplier, date };
-            string text = string.Format("采购订单提醒：新增订单,订单号：{0}，供应商：{1}，交货日期：{2}。", (object[])strArray);
+                num, supplier, date,amount.ToString() };
+            string text = string.Format("采购订单提醒：新增订单,订单号：{0}，供应商：{1}，交货日期：{2}，金额：{3}。", (object[])strArray);
             msgHandle(new List<string> { text }, "order");
             //string user = "";
             //var sqluser = "SELECT * FROM messageuser where type = 'order'";

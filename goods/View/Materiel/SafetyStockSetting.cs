@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Model;
 using goods.Controller;
-using System.Data;
 namespace goods
 {
     public partial class SafetyStockSetting : Form

@@ -53,6 +53,9 @@ namespace goods
             DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1.AutoGenerateColumns = false;
 
+            this.dataGridView1.ShowCellToolTips = true;
+            this.dataGridView1.CellMouseEnter += DataGridView1_CellMouseEnter;
+
             DataGridViewColumn colId = new DataGridViewTextBoxColumn();
             colId.DataPropertyName = "id";
             colId.Visible = false;
@@ -143,8 +146,23 @@ namespace goods
             this.deliveryDate.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.deliveryDate.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 
+            DataGridViewColumn colattbtn = new DataGridViewTextBoxColumn();
+            colattbtn.DataPropertyName = "solidbacking";
+            colattbtn.Name = "solidbacking";
+            colattbtn.HeaderText = "辅助属性";
+            colattbtn.DefaultCellStyle.NullValue = "空";
+            colattbtn.ReadOnly = true;
+
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                colId,colNum,colName,colSep,metering,quantity,conversion,price,tax, amount,summary,colallamount,this.deliveryDate,colOMId});
+                colId,colNum,colName,colSep,metering,quantity,conversion,price,tax, amount,summary,colallamount,this.deliveryDate,colOMId,colattbtn });
+
+            
+        }
+
+        private void DataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex < 0 || e.RowIndex < 0 || dataGridView1.Rows.Count <= 0) return;
+            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value ?? string.Empty).ToString();
         }
 
         private void loadData()
@@ -156,11 +174,13 @@ namespace goods
                 return;
             }
             allids = new List<int>();
+            List<int> lits_omid = new List<int>();
             dt.Columns.Add("allamount");
+            dt.Columns.Add("solidbacking");
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 allids.Add(Convert.ToInt32(dt.Rows[i]["id"]));
-
+                lits_omid.Add(Convert.ToInt32(dt.Rows[i]["omid"]));
                 dt.Rows[i]["allamount"] = Math.Round(Convert.ToDouble(dt.Rows[i]["quantity"]) * Convert.ToDouble(dt.Rows[i]["price"])*(1 + Convert.ToDouble(dt.Rows[i]["tax"])),2);
             }
             this.label7.Text = DateTime.Parse(dt.Rows[0]["date"].ToString()).ToString("yyyy/M/d");
@@ -171,7 +191,18 @@ namespace goods
             this.textBox1.Text = dt.Rows[0]["posummary"].ToString();
 
             dataGridView1.DataSource = dt;
-            if(Convert.ToUInt32(dt.Rows[0]["pouser"]) != PropertyClass.UserId)
+            Dictionary<int, string> map = ctrl.getbyOMIds(lits_omid);
+            for (int i = 0; i < dataGridView1.RowCount; i++)
+            {
+                var omid = Convert.ToInt32(dataGridView1.Rows[i].Cells["omid"].Value);
+                
+                if (map.Keys.Contains(omid))
+                {
+                    dataGridView1.Rows[i].Cells["solidbacking"].Value = map[omid];
+                }
+                
+            }
+            if (Convert.ToUInt32(dt.Rows[0]["pouser"]) != PropertyClass.UserId)
             {
                 toolStripButton1.Enabled = false;
                 toolStripButton2.Enabled = false;
@@ -232,7 +263,6 @@ namespace goods
                 this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value
                     = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value) *
                     Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
-
                 this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)),2);
             }
         }

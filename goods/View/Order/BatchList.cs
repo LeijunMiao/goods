@@ -164,7 +164,7 @@ namespace goods
             {
                 if (p.Name != "printBmp")
                 {
-                    var attr = p.GetValue(pm).ToString();
+                    var attr = p.GetValue(pm,null).ToString();
                     decimal pWidth = Convert.ToDecimal(e.Graphics.MeasureString(attr, f).Width);
                     List<string> list = util.GetMultiLineString(attr, e.PageBounds.Width - pic_X - pm.printBmp.Width - fWidth, gItem, f);
                     int i;
@@ -214,7 +214,7 @@ namespace goods
             {
                 if(p.Name != "printBmp")
                 {
-                    if (p.GetValue(pm).ToString().Length > max.Length) max = p.GetValue(pm).ToString();
+                    if (p.GetValue(pm,null).ToString().Length > max.Length) max = p.GetValue(pm,null).ToString();
                 }
             }
             return max;

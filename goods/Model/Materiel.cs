@@ -20,6 +20,7 @@ namespace goods.Model
         private bool isBatch;
         public double safetystock;
         public double maxstock;
+        private int? catgegory;
 
         public MaterielModel() { }
         public MaterielModel(String num, String name, String specifications, int metering, bool isBatch)
@@ -45,7 +46,6 @@ namespace goods.Model
             this.safetystock = safetystock;
             this.maxstock = maxstock;
         }
-
         public int Id
         {
             set
@@ -55,6 +55,17 @@ namespace goods.Model
             get
             {
                 return id;
+            }
+        }
+        public int? Catgegory
+        {
+            set
+            {
+                catgegory = value;
+            }
+            get
+            {
+                return catgegory;
             }
         }
         public int Metering

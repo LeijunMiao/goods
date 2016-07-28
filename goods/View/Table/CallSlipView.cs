@@ -92,16 +92,30 @@ namespace goods
             submetering.DataPropertyName = "subMeterName";
             submetering.ReadOnly = true;
 
+            DataGridViewColumn warehouse = new DataGridViewTextBoxColumn();
+            warehouse.HeaderText = "仓库";
+            warehouse.Name = "warehouse";
+            warehouse.DataPropertyName = "warehouseName";
+            warehouse.ReadOnly = true;
+
+            DataGridViewColumn position = new DataGridViewTextBoxColumn();
+            position.HeaderText = "仓位";
+            position.Name = "position";
+            position.DataPropertyName = "positionName";
+            position.ReadOnly = true;
+
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             metering,
             submetering,
             quantity,
             conversion,
-            subquantity});
+            subquantity,
+            warehouse,
+            position});
         }
         private void initDate(string num)
         {
-            DataTable dt = ctrl.getCallSlipbyNum(num);
+            dt = ctrl.getCallSlipbyNum(num);
             if (dt.Rows.Count == 0)
             {
                 this.Hide();
@@ -110,13 +124,13 @@ namespace goods
             this.label9.Text = DateTime.Parse(dt.Rows[0]["date"].ToString()).ToString("yyyy/M/d");
             this.label10.Text = dt.Rows[0]["num"].ToString();
             this.label12.Text = dt.Rows[0]["fullName"].ToString();
-            this.label13.Text = dt.Rows[0]["warehouseName"].ToString();
-            this.label15.Text = dt.Rows[0]["positionName"].ToString();
+            //this.label13.Text = dt.Rows[0]["warehouseName"].ToString();
+            //this.label15.Text = dt.Rows[0]["positionName"].ToString();
             dataGridView1.DataSource = dt;
 
-            cm.warehouse = Convert.ToInt32(dt.Rows[0]["warehouse"]);
-            if (dt.Rows[0]["position"] == DBNull.Value) cm.position = null;
-            else cm.position = Convert.ToInt32(dt.Rows[0]["position"]);
+            //cm.warehouse = Convert.ToInt32(dt.Rows[0]["warehouse"]);
+            //if (dt.Rows[0]["position"] == DBNull.Value) cm.position = null;
+            //else cm.position = Convert.ToInt32(dt.Rows[0]["position"]);
             cm.isDeficit = Convert.ToBoolean(dt.Rows[0]["isDeficit"]);
 
             cm.id = Convert.ToInt32(dt.Rows[0]["gid"]);
@@ -138,6 +152,10 @@ namespace goods
                     lm.materiel = Convert.ToInt32(dt.Rows[i - 1]["materiel"]);
                     lm.quantity = Convert.ToDouble(dt.Rows[i - 1]["quantity"]);
                     lm.isBatch = Convert.ToBoolean(dt.Rows[i - 1]["isBatch"]);
+                    lm.warehouse = Convert.ToInt32(dt.Rows[i - 1]["warehouse"]);
+                    if (dt.Rows[i - 1]["position"] != DBNull.Value) lm.position = Convert.ToInt32(dt.Rows[i - 1]["position"]);
+                    lm.supplier = Convert.ToInt32(dt.Rows[i - 1]["supplier"]);
+                    if (dt.Rows[i - 1]["batch"] != DBNull.Value)  lm.batch = Convert.ToInt32(dt.Rows[i - 1]["batch"]);
                     listM.Add(lm);
                 }
 
@@ -167,8 +185,8 @@ namespace goods
             m.TitleData = new List<string> {
                 "日期：" + this.label9.Text ,
                 "编号：" + this.label10.Text,
-                "仓库："+ this.label13.Text,
-                "仓位："+ this.label15.Text,
+             //   "仓库："+ this.label13.Text,
+             //   "仓位："+ this.label15.Text,
                 "制单人：" +this.label12.Text
             };
 

@@ -53,6 +53,9 @@
             this.label11 = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
+            this.label14 = new System.Windows.Forms.Label();
+            this.textBox4 = new System.Windows.Forms.TextBox();
+            this.button3 = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // label1
@@ -147,7 +150,7 @@
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(40, 372);
+            this.label9.Location = new System.Drawing.Point(40, 369);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(77, 12);
             this.label9.TabIndex = 10;
@@ -196,7 +199,7 @@
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(143, 372);
+            this.checkBox1.Location = new System.Drawing.Point(143, 367);
             this.checkBox1.Name = "checkBox1";
             this.checkBox1.Size = new System.Drawing.Size(15, 14);
             this.checkBox1.TabIndex = 19;
@@ -270,11 +273,41 @@
             this.label13.TabIndex = 26;
             this.label13.Text = "*";
             // 
+            // label14
+            // 
+            this.label14.AutoSize = true;
+            this.label14.Location = new System.Drawing.Point(399, 367);
+            this.label14.Name = "label14";
+            this.label14.Size = new System.Drawing.Size(29, 12);
+            this.label14.TabIndex = 27;
+            this.label14.Text = "分类";
+            // 
+            // textBox4
+            // 
+            this.textBox4.Enabled = false;
+            this.textBox4.Location = new System.Drawing.Point(452, 366);
+            this.textBox4.Name = "textBox4";
+            this.textBox4.Size = new System.Drawing.Size(128, 21);
+            this.textBox4.TabIndex = 28;
+            // 
+            // button3
+            // 
+            this.button3.Location = new System.Drawing.Point(582, 365);
+            this.button3.Name = "button3";
+            this.button3.Size = new System.Drawing.Size(51, 23);
+            this.button3.TabIndex = 29;
+            this.button3.Text = "选择";
+            this.button3.UseVisualStyleBackColor = true;
+            this.button3.Click += new System.EventHandler(this.button3_Click);
+            // 
             // MaterielPopup
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(676, 502);
+            this.Controls.Add(this.button3);
+            this.Controls.Add(this.textBox4);
+            this.Controls.Add(this.label14);
             this.Controls.Add(this.label13);
             this.Controls.Add(this.label12);
             this.Controls.Add(this.label11);
@@ -334,5 +367,8 @@
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.Label label13;
+        private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.TextBox textBox4;
+        private System.Windows.Forms.Button button3;
     }
 }

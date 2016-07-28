@@ -20,6 +20,7 @@ namespace goods
     {
         List<int> allids = new List<int>();
         stockCtrl ctrl = new stockCtrl();
+        solidbackingCtrl sbCtrl = new solidbackingCtrl();
         System.Data.DataTable dt = new System.Data.DataTable();
         utilCls utilcls = new utilCls();
         public CreateCheckList()
@@ -30,6 +31,7 @@ namespace goods
         }
         private void initTable()
         {
+            this.dataGridView1.CellMouseEnter += DataGridView1_CellMouseEnter;
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.AutoGenerateColumns = false;
             DataGridViewTextBoxColumn numColumn = new DataGridViewTextBoxColumn();
@@ -82,9 +84,33 @@ namespace goods
             zvaColumn.HeaderText = "可用库存";
             zvaColumn.Name = "avaquantity";
 
-            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-           idColumn,materielColumn,warehouseColumn, positionColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn, batchTNumColumn});
+            DataGridViewTextBoxColumn supColumn = new DataGridViewTextBoxColumn();
+            supColumn.HeaderText = "供应商";
+            supColumn.DataPropertyName = "supplier";
 
+            DataGridViewTextBoxColumn supIdColumn = new DataGridViewTextBoxColumn();
+            supIdColumn.DataPropertyName = "supplierId";
+            supIdColumn.Visible = false;
+            supIdColumn.Name = "supplierId";
+
+            DataGridViewTextBoxColumn combColumn = new DataGridViewTextBoxColumn();
+            combColumn.DataPropertyName = "combination";
+            combColumn.Name = "combination";
+            combColumn.Visible = false;
+
+            DataGridViewTextBoxColumn avColumn = new DataGridViewTextBoxColumn();
+            avColumn.DataPropertyName = "attrvalue";
+            avColumn.HeaderText = "辅助属性";
+            avColumn.Name = "attrvalue";
+
+            this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
+           idColumn,supColumn,supIdColumn,materielColumn,warehouseColumn, positionColumn,numColumn,nameColumn,wnameColumn,pnameColumn,zvaColumn, batchTNumColumn,combColumn,avColumn});
+
+        }
+        private void DataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.ColumnIndex < 0 || e.RowIndex < 0 || dataGridView1.Rows.Count <= 0) return;
+            dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].ToolTipText = (dataGridView1.Rows[e.RowIndex].Cells[e.ColumnIndex].Value ?? string.Empty).ToString();
         }
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
@@ -98,8 +124,27 @@ namespace goods
             {
                 allids.AddRange(ids);
                 var dtData = ctrl.getByids(ids);
+                dtData.Columns.Add("attrvalue");
+                List<int> combs = new List<int>();
+                for (int i = 0; i < dtData.Rows.Count; i++)
+                {
+                    if (dtData.Rows[i]["combination"] != DBNull.Value) combs.Add(Convert.ToInt32(dtData.Rows[i]["combination"]));
+                }
                 dt.Merge(dtData);
-                dataGridView1.DataSource = dtData;
+                dataGridView1.DataSource = dt;
+                Dictionary<int, string> map = sbCtrl.getbyCombIds(combs);
+                for (int i = 0; i < dataGridView1.RowCount; i++)
+                {
+                    if (dataGridView1.Rows[i].Cells["combination"].Value != DBNull.Value)
+                    {
+                        var comb = Convert.ToInt32(dataGridView1.Rows[i].Cells["combination"].Value);
+
+                        if (map.Keys.Contains(comb))
+                        {
+                            dataGridView1.Rows[i].Cells["attrvalue"].Value = map[comb];
+                        }
+                    }
+                }
             }
         }
 
@@ -126,7 +171,7 @@ namespace goods
                 return;
             }
             CheckListModel obj = new CheckListModel();
-            obj.user = 1;
+            obj.user = PropertyClass.UserId;
             obj.list_sm = new List<StockMateriel>();
             for (int i = this.dataGridView1.RowCount; i > 0; i--)
             {
@@ -136,6 +181,8 @@ namespace goods
                 if (this.dataGridView1.Rows[i - 1].Cells["position"].Value != DBNull.Value) sm.position = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["position"].Value);
                 sm.warehouse = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["warehouse"].Value);
                 sm.truequantity = Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["avaquantity"].Value);
+                sm.supplier = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["supplierId"].Value);
+                if(this.dataGridView1.Rows[i - 1].Cells["combination"].Value != DBNull.Value) sm.combination = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["combination"].Value);
                 obj.list_sm.Add(sm);
             }
 
@@ -149,8 +196,9 @@ namespace goods
                     label3.Text = dtcheck.Rows[0]["num"].ToString();
                     label4.Visible = true;
                     label5.Text = dtcheck.Rows[0]["date"].ToString();
+                    this.label6.Text = dtcheck.Rows[0]["id"].ToString();
                 }
-                this.label6.Text = dt.Rows[0]["id"].ToString();
+                
 
                 toolStripButton1.Enabled = false;
                 toolStripButton2.Enabled = false;
@@ -182,7 +230,7 @@ namespace goods
             string filepath = path + DateTime.Now.ToString("yyyyMMddhhmmss") + ".jpg";
             this.pictureBox1.Image.Save(filepath);
             //int result = this.ExportExcel("盘点单", this.dataGridView1); //this.dataGridView1:DataGridView控件
-            bool result = OutToExcelFromDataGridView("盘点单", filepath,path, label6.Text, label5.Text, this.dataGridView1, true);
+            bool result = OutToExcelFromDataGridView("盘点单", filepath,path, label3.Text, label5.Text, this.dataGridView1, true);
         }
 
         public  bool OutToExcelFromDataGridView(string title, string filepath, string path, string num,string date, DataGridView dgv, bool isShowExcel)

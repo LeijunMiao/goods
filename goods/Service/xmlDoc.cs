@@ -62,7 +62,7 @@ namespace goods
                 xmldoc.Save(path);
 				return true;
 			}
-			catch(Exception e) 
+			catch(Exception ) 
 			{
 				return false;
 			}
