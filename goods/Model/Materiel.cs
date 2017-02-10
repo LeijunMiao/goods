@@ -18,9 +18,10 @@ namespace goods.Model
         private String type;
         private double tax;
         private bool isBatch;
-        public double safetystock;
-        public double maxstock;
+        public double? safetystock;
+        public double? maxstock;
         private int? catgegory;
+        private double? normprice;
 
         public MaterielModel() { }
         public MaterielModel(String num, String name, String specifications, int metering, bool isBatch)
@@ -179,6 +180,45 @@ namespace goods.Model
                 return isBatch;
             }
         }
+        public double? NormPrice
+        {
+            set
+            {
+                normprice = value;
+            }
+            get
+            {
+                return normprice;
+            }
+        }
+        
 
+    }
+    public class attrNumModel
+    {
+        public int num { get; set; }
+        public string value { get; set; }
+
+        public List<sbKeyValueModel> list { get; set; }
+        public attrNumModel() { }
+        public attrNumModel(int num, string value)
+        {
+            this.num = num;
+            this.value = value;
+        }
+    }
+
+    public class sbKeyValueModel
+    {
+        public int solidbacking { get; set; }
+        public int key { get; set; }
+        public string value { get; set; }
+        public sbKeyValueModel() { }
+        public sbKeyValueModel(int solidbacking,int key, string value)
+        {
+            this.solidbacking = solidbacking;
+            this.key = key;
+            this.value = value;
+        }
     }
 }

@@ -9,11 +9,13 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Controller;
 using goods.Model;
-using Observer;
 namespace goods
 {
     public partial class UserSelect : Form
     {
+        public delegate void UserEventHandler(object sender, UserEventArgs e);
+        public event UserEventHandler UserSet;
+
         userCtrl ctrl = new userCtrl();
         List<User> list_uids = new List<User>();
         public UserSelect()
@@ -101,7 +103,7 @@ namespace goods
 
         private void button3_Click(object sender, EventArgs e)
         {
-            MidModule.SendUsers(this, new List<object>(list_uids));//发送参数值
+            UserSet(this,new UserEventArgs(list_uids));
             this.Close();
         }
     }

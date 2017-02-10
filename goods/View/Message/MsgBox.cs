@@ -9,7 +9,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Controller;
 using goods.Model;
-using Observer;
 namespace goods
 {
     public partial class MsgBox : Form
@@ -17,6 +16,7 @@ namespace goods
         informationCtrl ctrl = new informationCtrl();
         string key = "order";
         bool first = true;
+        bool firstTab3 = true;
         public MsgBox()
         {
             InitializeComponent();
@@ -25,7 +25,6 @@ namespace goods
         }
         private void initTable()
         {
-            MidModule.EventUser += new UsersDlg(saveDate);
             dataGridView1.AutoGenerateColumns = false;
 
             DataGridViewColumn colId = new DataGridViewLinkColumn();
@@ -62,7 +61,7 @@ namespace goods
             colUId2.DataPropertyName = "uid";//字段
             colUId2.Visible = false;
             colUId2.Name = "uid";
-            dataGridView1.Columns.Add(colUId2);
+            dataGridView2.Columns.Add(colUId2);
 
             DataGridViewColumn colUName2 = new DataGridViewTextBoxColumn();
             colUName2.DataPropertyName = "username";//字段
@@ -74,6 +73,31 @@ namespace goods
             colName2.HeaderText = "名称";
             dataGridView2.Columns.Add(colName2);
 
+
+            dataGridView3.AutoGenerateColumns = false;
+
+            DataGridViewColumn colId3 = new DataGridViewLinkColumn();
+            colId3.DataPropertyName = "id";//字段
+            colId3.Visible = false;
+            colId3.Name = "id";
+            dataGridView3.Columns.Add(colId3);
+
+            DataGridViewColumn colUId3 = new DataGridViewLinkColumn();
+            colUId3.DataPropertyName = "uid";//字段
+            colUId3.Visible = false;
+            colUId3.Name = "uid";
+            dataGridView3.Columns.Add(colUId3);
+
+            DataGridViewColumn colUName3 = new DataGridViewTextBoxColumn();
+            colUName3.DataPropertyName = "username";//字段
+            colUName3.HeaderText = "用户名";
+            dataGridView3.Columns.Add(colUName3);
+
+            DataGridViewColumn colName3 = new DataGridViewTextBoxColumn();
+            colName3.DataPropertyName = "fullname";//字段
+            colName3.HeaderText = "名称";
+            dataGridView3.Columns.Add(colName3);
+
             tabControl1.Selected += TabControl1_Selected;
         }
 
@@ -83,7 +107,7 @@ namespace goods
             {
                 key = "order";
             }
-            else 
+            else if(e.TabPage == tabPage2)
             {
                 key = "stock";
                 if (first)
@@ -93,20 +117,39 @@ namespace goods
                     first = false;
                 }
             }
+            else
+            {
+                key = "salesorder";
+                if (firstTab3)
+                {
+                    var dtData = ctrl.getbyFilter(key);
+                    dataGridView3.DataSource = dtData;
+                    firstTab3 = false;
+                }
+                
+            }
         }
         
         public void loadDate() {
             var dtData = ctrl.getbyFilter(key);
             if (key == "order") dataGridView1.DataSource = dtData;
-            else dataGridView2.DataSource = dtData;
+            else if(key == "stock") dataGridView2.DataSource = dtData;
+            else dataGridView3.DataSource = dtData;
         } 
-        
-        public void saveDate(object sender, List<object> users)
+       
+        private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            if (users.Count > 0)
+            UserSelect view = new UserSelect();
+            view.UserSet += View_UserSet;
+            view.Show();
+        }
+
+        private void View_UserSet(object sender, UserEventArgs e)
+        {
+            if (e.list_uids.Count > 0)
             {
-                MessageModel res = ctrl.addbyids(users, key);
-                if(res.Code > 0)
+                MessageModel res = ctrl.addbyids(e.list_uids, key);
+                if (res.Code > 0)
                 {
                     MessageBox.Show(res.Msg);
                 }
@@ -115,11 +158,6 @@ namespace goods
                     loadDate();
                 }
             }
-        }
-        private void toolStripButton1_Click(object sender, EventArgs e)
-        {
-            UserSelect view = new UserSelect();
-            view.Show();
         }
 
         private void toolStripButton2_Click(object sender, EventArgs e)
@@ -141,12 +179,24 @@ namespace goods
                             MessageBox.Show(msg.Msg);
                         }
                     }
-                    else
+                    else if (key == "stock")
                     {
                         msg = ctrl.del(dataGridView2.CurrentRow.Cells["id"].Value);
                         if (msg.Code == 0)
                         {
                             this.dataGridView2.Rows.Remove(dataGridView2.CurrentRow);
+                        }
+                        else
+                        {
+                            MessageBox.Show(msg.Msg);
+                        }
+                    }
+                    else
+                    {
+                        msg = ctrl.del(dataGridView3.CurrentRow.Cells["id"].Value);
+                        if (msg.Code == 0)
+                        {
+                            this.dataGridView3.Rows.Remove(dataGridView3.CurrentRow);
                         }
                         else
                         {

@@ -31,6 +31,7 @@ namespace goods
         private void initPage()
         {
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.CellDoubleClick += DataGridView1_CellDoubleClick;
             this.textBox1.KeyDown += button1_KeyDown;
 
             dataGridView1.AutoGenerateColumns = false;
@@ -76,6 +77,12 @@ namespace goods
             colStatus.HeaderText = "状态";
             dataGridView1.Columns.Add(colStatus);
         }
+
+        private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            edit();
+        }
+
         private void button1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) { BindDataWithPage(1); }
@@ -109,7 +116,8 @@ namespace goods
         {
             pagingCom1.PageIndex = Index;
             pagingCom1.PageSize = 10;
-            int roleId = Convert.ToInt32(this.comboBox1.SelectedValue.ToString());
+            int roleId = -1;
+            if(this.comboBox1.SelectedValue != null) roleId = Convert.ToInt32(this.comboBox1.SelectedValue.ToString());
             innerParmas parmas = new innerParmas(pagingCom1.PageIndex, pagingCom1.PageSize, roleId, textBox1.Text);//textBox1.Text
             dtData = uctrl.getUserList(parmas.pageIndex, parmas.pageSize, parmas.role, parmas.fullName);
             //获取并设置总记录数
@@ -213,12 +221,17 @@ namespace goods
             if (dataGridView1.SelectedRows.Count == 0) MessageBox.Show("请选中一行");
             else
             {
-                int id = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
-                string status = dataGridView1.SelectedRows[0].Cells[4].Value.ToString();
-                User u = new User(Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["id"].Value), dataGridView1.SelectedRows[0].Cells["userName"].Value.ToString(), dataGridView1.SelectedRows[0].Cells["fullName"].Value.ToString(), Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["role"].Value));
-                UserEditInfo view = new UserEditInfo(this, u);
-                view.Show();
+                edit();
             }
+        }
+
+        private void edit()
+        {
+            int id = Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value);
+            string status = dataGridView1.SelectedRows[0].Cells[4].Value.ToString();
+            User u = new User(Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["id"].Value), dataGridView1.SelectedRows[0].Cells["userName"].Value.ToString(), dataGridView1.SelectedRows[0].Cells["fullName"].Value.ToString(), Convert.ToInt32(dataGridView1.SelectedRows[0].Cells["role"].Value));
+            UserEditInfo view = new UserEditInfo(this, u);
+            view.Show();
         }
     }
 }

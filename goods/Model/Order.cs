@@ -10,6 +10,7 @@ namespace goods.Model
     {
         private int id;
         private int supplier;
+        private string supName;
         private int user;
         private string num;
         private string summary;
@@ -95,7 +96,17 @@ namespace goods.Model
                 deliveryDate = value;
             }
         }
-
+        public string SupName
+        {
+            get
+            {
+                return supName;
+            }
+            set
+            {
+                supName = value;
+            }
+        }
 
     }
 
@@ -146,8 +157,8 @@ namespace goods.Model
 
         public ListModel(DataRow dr) {
             this.materiel = Convert.ToInt32(dr["materiel"]);
-            this.price = Convert.ToInt32(dr["price"]);
-            this.quantity = Convert.ToInt32(dr["quantity"]);
+            this.price = Convert.ToDouble(dr["price"]);
+            this.quantity = Convert.ToDouble(dr["quantity"]);
             if (dr["name"] != DBNull.Value) this.name = dr["name"].ToString();
          }
 
@@ -159,14 +170,15 @@ namespace goods.Model
         public int id { get; set; }
         public int mid { get; set; }
         public string num { get; set; }
-
         public int? combination { get; set; }
+        public int supplier { get; set; }
 
-        public parmas(int id, int mid, string num)
+        public parmas(int id, int mid, string num,int supplier)
         {
             this.id = id;
             this.mid = mid;
             this.num = num;
+            this.supplier = supplier;
         }
     }
     public class printModel
@@ -304,6 +316,11 @@ namespace goods.Model
         public double? conversion { get; set; }
         public double tax { get; set; }
         public string summary { get; set; }
+        public DateTime deliveryDate { get; set; }
+        public int? combination { get; set; }
+        public int line { get; set; }
+
+
 
         public OrderMaterielChange(int materiel, int purchaseorder, string type)
         {
@@ -319,7 +336,7 @@ namespace goods.Model
             this.price = price;
             this.quantity = quantity;
         }
-        public OrderMaterielChange(int materiel, int purchaseorder, string type, double price, double quantity, double? conversion, double tax,string summary)
+        public OrderMaterielChange(int materiel, int purchaseorder, string type, double price, double quantity, double? conversion, double tax,string summary,DateTime deliveryDate,int? combination, int line)
         {
             this.materiel = materiel;
             this.purchaseorder = purchaseorder;
@@ -329,6 +346,9 @@ namespace goods.Model
             this.conversion = conversion;
             this.tax = tax;
             this.summary = summary;
+            this.deliveryDate = deliveryDate;
+            this.combination = combination;
+            this.line = line;
         }
     }
 }

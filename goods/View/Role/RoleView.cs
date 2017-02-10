@@ -170,7 +170,7 @@ namespace goods
             if (dataGridView1.SelectedRows.Count == 0) MessageBox.Show("请选中一行");
             else
             {
-                string str = Interaction.InputBox("请输入名称", "输入名称", dataGridView1.SelectedRows[0].Cells[1].Value.ToString());
+                string str = Interaction.InputBox("请输入名称", "输入名称", dataGridView1.SelectedRows[0].Cells[1].Value.ToString()).Trim();
                 if (str.Count() != 0)
                 {
                     RoleModel rm = new RoleModel(Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value), str);
@@ -189,6 +189,11 @@ namespace goods
 
         private void toolStripButton3_Click(object sender, EventArgs e)
         {
+            if (dataGridView1.SelectedRows.Count == 0)
+            {
+                MessageBox.Show("请选中一行");
+                return;
+            }
             if (MessageBox.Show("确定删除?", "提示", MessageBoxButtons.YesNo) == DialogResult.Yes)
             {
                 RoleModel rm = new RoleModel(Convert.ToInt32(dataGridView1.SelectedRows[0].Cells[0].Value));

@@ -264,7 +264,7 @@ namespace goods.Controller
         public DataTable getbyNum(string num)
         {
             string sql = " SELECT em.id,g.id gid,g.date,g.num,g.isDeficit,s.id supplier,s.name supplierName, g.warehouse ,w.name warehouseName,g.position , p.name positionName,em.materiel, m.num MNum, m.name MName, " +
-                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,em.price,u.fullName, u.id user ,m.isBatch " +
+                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,em.price,u.fullName, u.id user ,m.isBatch,em.combination,em.batch " +
                 " FROM entrymateriel em,godownentry g left join position p on g.position = p.id,materiel m left join metering me2 on m.subMetering = me2.id,metering me,supplier s,warehouse w,user u " +
                 " WHERE em.entry = g.id AND g.supplier = s.id AND g.warehouse = w.id  AND em.materiel = m.id AND g.user = u.id AND m.metering = me.id and g.num = '" + num + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
@@ -274,7 +274,7 @@ namespace goods.Controller
         public DataTable getCallSlipbyNum(string num)
         {
             string sql = " SELECT em.id,g.id gid,g.isDeficit,g.date,g.num,em.warehouse,em.position,em.supplier,em.batch , w.name warehouseName, p.name positionName, m.num MNum, m.name MName,m.isBatch,em.materiel, " +
-                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,u.fullName,u.id user " +
+                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,u.fullName,u.id user ,em.combination" +
                 " FROM callslipmateriel em left join position p on em.position = p.id,callslip g,warehouse w,materiel m left join metering me2 on m.subMetering = me2.id,metering me,user u " +
                 " WHERE em.callslip = g.id  AND em.warehouse = w.id AND em.materiel = m.id AND g.user = u.id  AND m.metering = me.id and g.num = '" + num + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
@@ -285,7 +285,7 @@ namespace goods.Controller
         public DataTable getInOrderbyNum(string num)
         {
             string sql = " SELECT em.id,g.id gid,g.date,g.num,g.warehouse warehouse,g.position position, w.name warehouseName, p.name positionName, em.materiel,m.num MNum, m.name MName, " +
-                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,u.fullName,u.id user ,em.batch" +
+                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName, em.conversion,em.subquantity,u.fullName,u.id user ,em.batch ,em.supplier,m.isBatch,em.combination " +
                 " FROM inmateriel em,inorder g left join position p on g.position = p.id ,warehouse w,materiel m left join metering me2 on m.subMetering = me2.id,metering me ,user u " +
                 " WHERE em.orderlist = g.id  AND g.warehouse = w.id AND em.materiel = m.id AND g.user = u.id  AND m.metering = me.id and g.num = '" + num + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
@@ -296,7 +296,7 @@ namespace goods.Controller
         public DataTable getOutOrderbyNum(string num)
         {
             string sql = " SELECT em.id,g.id gid,g.date,g.num,g.warehouse,g.position,em.materiel, w.name warehouseName, p.name positionName, m.num MNum, m.name MName, " +
-                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity,u.fullName,u.id user " +
+                " m.specifications ,me.name meterName,em.quantity,me2.name subMeterName,em.conversion,em.subquantity, u.fullName,u.id user, em.batch ,em.supplier,m.isBatch,em.combination " +
                 " FROM outmateriel em,outorder g left join position p on g.position = p.id,warehouse w,materiel m left join metering me2 on m.subMetering = me2.id,metering me,user u " +
                 " WHERE em.orderlist = g.id  AND g.warehouse = w.id  AND em.materiel = m.id AND g.user = u.id  AND m.metering = me.id and g.num = '" + num + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
@@ -353,22 +353,43 @@ namespace goods.Controller
         #region 更新入库单物料数量
         public MessageModel setList(GoDownEntryModel gm ,List<ListModel> list)
         {
-            List<string> sqlList = new List<string>();
+            string sqlold = " SELECT em.id,em.quantity,em.batch,batch.combination,batch.supplier FROM entrymateriel em inner join batchmateriel batch on em.batch = batch.id  where entry = '" + gm.id+"'";
+            DataTable dt = h.ExecuteQuery(sqlold, CommandType.Text);
+            Dictionary<int, ListModel> map = new Dictionary<int, ListModel>();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                var lm = new ListModel();
+                lm.id = Convert.ToInt32(dt.Rows[i]["id"]);
+                lm.quantity = Convert.ToDouble(dt.Rows[i]["quantity"]);
+                lm.batch = Convert.ToInt32(dt.Rows[i]["batch"]);
+                if(dt.Rows[i]["combination"] != DBNull.Value) lm.combination = Convert.ToInt32(dt.Rows[i]["combination"]);
+                lm.supplier = Convert.ToInt32(dt.Rows[i]["supplier"]);
+                map.Add(lm.id, lm);
+            }
 
+            List<string> sqlList = new List<string>();
             string sql = "";
             string sqlstock = "";
             string sqlSafetyStock = "";
-            string mark = "-";
-            if (gm.isDeficit) mark = "+";
             for (int i = 0; i < list.Count; i++)
             {
-                sql  = "update entrymateriel set quantity = '" + list[i].quantity + "' ,subquantity = '" + list[i].conversion * list[i].quantity + "' where id = '" + list[i].id + "' ";
-                sqlstock = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + gm.warehouse + "'|";
-                if(gm.position != null ) sqlstock += "'" + gm.position + "'";
+                sql  = "update entrymateriel set quantity = '" + list[i].quantity + "',price = '" + list[i].price + "'  ";
+                if (list[i].conversion != null) sql += ",subquantity = '" + list[i].conversion * list[i].quantity + "'";
+                sql += " where id = '" + list[i].id + "'";
+                var diff = list[i].quantity - map[list[i].id].quantity;
+                if ((diff < 0 && gm.isDeficit) || (diff > 0 && !gm.isDeficit)) diff = -diff;
+                sqlstock = "update stock set lastModifiedAt = NOW(),quantity = quantity + " + diff + ",avaquantity = avaquantity  +" + diff + " where uqkey = '" + map[list[i].id].supplier + "|" + list[i].materiel + "|" + gm.warehouse + "|";
+                if (gm.position != null) sqlstock += "" + gm.position + "|";
+                else sqlstock += "|";
+                if (list[i].isBatch) sqlstock += "" + map[list[i].id].batch + "|";
+                else sqlstock += "|";
+                if (map[list[i].id].combination != null) sqlstock += "" + map[list[i].id].combination + "'";
+                else sqlstock += "'";
+
                 sqlList.Add(sql);
                 sqlList.Add(sqlstock);
 
-                sqlSafetyStock = "Update safetystock set stock = stock " + mark + list[i].quantity + " where materiel = '" + list[i].materiel + "'";
+                sqlSafetyStock = "Update safetystock set stock = stock " + diff + " where materiel = '" + list[i].materiel + "'";
 
                 sqlList.Add(sqlSafetyStock);
             }
@@ -405,22 +426,25 @@ namespace goods.Controller
             if (gm.isDeficit) mark = "+";
 
             string sql = "DELETE FROM godownentry WHERE id = '" + gm.id + "' ";
-            string sqlstock = "DELETE s FROM stock s inner join entrymateriel em on s.entrymateriel = em.id WHERE em.entry = '" + gm.id + "'  and s.batchnum >0";
+            //string sqlstock = "DELETE s FROM stock s inner join entrymateriel em on s.entrymateriel = em.id WHERE em.entry = '" + gm.id + "'  and s.batchnum >0";
             string sqlup = "";
             string sqlSafetyStock = "";
             for (int i = 0; i < list.Count; i++)
             {
-                if (!list[i].isBatch)
-                {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + gm.supplier + "|" + list[i].materiel + "|" + gm.warehouse + "|'";
-                    if (gm.position != null) sqlup += "'" + gm.position + "'";
-                    sqlList.Add(sqlup);
-                }
+                sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity " + mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + gm.supplier + "|" + list[i].materiel + "|" + gm.warehouse + "|";
+                if (gm.position != null) sqlup += "" + gm.position + "|";
+                else sqlup += "|";
+                if (list[i].isBatch) sqlup += "" + list[i].batch + "|";
+                else sqlup += "|";
+                if (list[i].combination != null) sqlup += "" + list[i].combination + "'";
+                else sqlup += "'";
+                sqlList.Add(sqlup);
+
                 sqlSafetyStock = "Update safetystock set stock = stock " + mark + list[i].quantity + " where materiel = '" + list[i].materiel + "'";
 
                 sqlList.Add(sqlSafetyStock);
             }
-            sqlList.Add(sqlstock);
+            //sqlList.Add(sqlstock);
             sqlList.Add(sql);
             bool result = h.ExcuteTransaction(sqlList);
             MessageModel msg;
@@ -449,18 +473,13 @@ namespace goods.Controller
             }
             for (int i = 0; i < list.Count; i++)
             {
-                if (!list[i].isBatch)
-                {
-                    sqlup = "update stock set lastModifiedAt = NOW(),usedquantity = usedquantity " + _mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].supplier + "|" + list[i].materiel + "|" + list[i].warehouse + "|";
-                    if (list[i].position != null) sqlup += "" + list[i].position + "'";
-                    else sqlup += "'";
-                }
-                else
-                {
-                    sqlup = "update stock set lastModifiedAt = NOW(),usedquantity = usedquantity  " + _mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].supplier + "|" + list[i].materiel + "|" + list[i].warehouse + "|";
-                    if (list[i].position != null) sqlup += list[i].position ;
-                    sqlup += "|" + list[i].batch + "'";
-                }
+                sqlup = "update stock set lastModifiedAt = NOW(),usedquantity = usedquantity " + _mark + list[i].quantity + ",avaquantity = avaquantity  " + mark + list[i].quantity + " where uqkey = '" + list[i].supplier + "|" + list[i].materiel + "|" + list[i].warehouse + "|";
+                if (list[i].position != null) sqlup += "" + list[i].position + "|";
+                else sqlup += "|";
+                if (list[i].isBatch) sqlup += "" + list[i].batch + "|";
+                else sqlup += "|";
+                if (list[i].combination != null) sqlup += "" + list[i].combination + "'";
+                else sqlup += "'";
 
                 sqlSafetyStock = "Update safetystock set stock = stock " + mark + list[i].quantity + " where materiel = '" + list[i].materiel + "'";
 
@@ -491,12 +510,15 @@ namespace goods.Controller
             string sqlSafetyStock = "";
             for (int i = 0; i < list.Count; i++)
             {
-                if (!list[i].isBatch)
-                {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity - " + list[i].quantity + ",avaquantity = avaquantity - " + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + cp.warehouse + "'|";
-                    if (cp.position != null) sqlup += "'" + cp.position + "'";
-                    sqlList.Add(sqlup);
-                }
+                sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity - " + list[i].quantity + ",avaquantity = avaquantity - " + list[i].quantity + " where uqkey = '" + list[i].supplier + "|" + list[i].materiel + "|" + cp.warehouse + "|";
+                if (cp.position != null) sqlup += "" + cp.position + "|";
+                else sqlup += "|";
+                if (list[i].isBatch) sqlup += "" + list[i].batch + "|";
+                else sqlup += "|";
+                if (list[i].combination != null) sqlup += "" + list[i].combination + "'";
+                else sqlup += "'";
+
+                sqlList.Add(sqlup);
                 sqlSafetyStock = "Update safetystock set stock = stock  - "  + list[i].quantity + " where materiel = '" + list[i].materiel + "'";
 
                 sqlList.Add(sqlSafetyStock);
@@ -523,18 +545,14 @@ namespace goods.Controller
             string sqlSafetyStock = "";
             for (int i = 0; i < list.Count; i++)
             {
-                if (!list[i].isBatch)
-                {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity + " + list[i].quantity + ",avaquantity = avaquantity + " + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + cp.warehouse + "'|";
-                    if (cp.position != null) sqlup += "'" + cp.position + "'";
-                    
-                }
-                else
-                {
-                    sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity + " + list[i].quantity + ",avaquantity = avaquantity + " + list[i].quantity + " where uqkey = '" + list[i].materiel + "|" + cp.warehouse + "'|";
-                    if (cp.position != null) sqlup += "'" + cp.position + "'";
-                    sqlup += "|'" + list[i].batch + "'";
-                }
+                sqlup = "update stock set lastModifiedAt = NOW(),quantity = quantity + " + list[i].quantity + ",avaquantity = avaquantity + " + list[i].quantity + " where uqkey = '" + list[i].supplier + "|" + list[i].materiel + "|" + cp.warehouse + "|";
+                if (cp.position != null) sqlup += "" + cp.position + "|";
+                else sqlup += "|";
+                if (list[i].isBatch) sqlup += "" + list[i].batch + "|";
+                else sqlup += "|";
+                if (list[i].combination != null) sqlup += "" + list[i].combination + "'";
+                else sqlup += "'";
+
                 sqlSafetyStock = "Update safetystock set stock = stock  + " + list[i].quantity + " where materiel = '" + list[i].materiel + "'";
 
                 sqlList.Add(sqlSafetyStock);

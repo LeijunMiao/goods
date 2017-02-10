@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using goods.Controller;
 using goods.Model;
 using Observer;
-
 namespace goods
 {
     public partial class StockSelect : Form
@@ -18,12 +17,22 @@ namespace goods
         stockCtrl ctrl = new stockCtrl();
         solidbackingCtrl sbCtrl = new solidbackingCtrl();
         List<int> parentIds;
+        public int category;
         public StockSelect(List<int> ids)
         {
             InitializeComponent();
+            MidModule.EventSend += new MsgDlg(MidModule_EventSend);
             parentIds = ids;
             loadTabel();
             loadData(1);
+        }
+        private void MidModule_EventSend(object sender, object msg)
+        {
+            if (sender != null)
+            {
+                SupplierModel sm = (SupplierModel)msg;
+                this.textBox4.Text = sm.Name;
+            }
         }
         private void loadTabel()
         {
@@ -82,9 +91,17 @@ namespace goods
             avColumn.Name = "attrvalue";
             dataGridView1.Columns.Add(avColumn);
 
+            DataGridViewTextBoxColumn ctgyColumn = new DataGridViewTextBoxColumn();
+            ctgyColumn.DataPropertyName = "category";
+            ctgyColumn.HeaderText = "分类";
+            ctgyColumn.Name = "category";
+            dataGridView1.Columns.Add(ctgyColumn);
+            
+
             this.textBox1.KeyDown += button1_KeyDown;
             this.textBox2.KeyDown += button1_KeyDown;
             this.textBox3.KeyDown += button1_KeyDown;
+            this.textBox4.KeyDown += button1_KeyDown;
 
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
             dataGridView1.CellClick += dataGridView1_CellContentClick;
@@ -114,7 +131,8 @@ namespace goods
         {
             pagingCom1.PageIndex = index;
             pagingCom1.PageSize = 10;
-            var dtData = ctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, textBox2.Text, textBox3.Text, parentIds);
+            var dts = ctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, textBox2.Text, textBox3.Text, textBox4.Text, category, parentIds);
+            var dtData = dts[0];
             dtData.Columns.Add("attrvalue");
             List<int> ids = new List<int>();
             for (int i = 0; i < dtData.Rows.Count; i++)
@@ -135,7 +153,8 @@ namespace goods
                     }
                 }
             }
-            pagingCom1.RecordCount = ctrl.getCount(textBox1.Text, textBox2.Text, textBox3.Text, parentIds);
+            if (dts[1].Rows[0][0] != DBNull.Value) pagingCom1.RecordCount = Convert.ToInt32(dts[1].Rows[0][0]);
+            else pagingCom1.RecordCount = 0;
             pagingCom1.reSet();
 
         }
@@ -170,6 +189,35 @@ namespace goods
         private void button3_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            SupplierSelect ss = new SupplierSelect();
+            ss.Show();
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            CategorySelect view = new CategorySelect();
+            view.CategorySet += View_CategorySet;
+            view.Show();
+        }
+
+        private void View_CategorySet(object sender, CategoryEventArgs e)
+        {
+            this.textBox5.Text = e.name;
+            this.category = e.id;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            this.textBox1.Text = "";
+            this.textBox2.Text = "";
+            this.textBox3.Text = "";
+            this.textBox4.Text = "";
+            this.textBox5.Text = "";
+            this.category = -1;
         }
     }
 }

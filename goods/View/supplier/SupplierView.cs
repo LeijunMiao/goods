@@ -25,6 +25,9 @@ namespace goods
         }
         public void initPage()
         {
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            dataGridView1.CellDoubleClick += DataGridView1_CellDoubleClick;
+
             dataGridView1.ReadOnly = true;
             dataGridView1.AutoGenerateColumns = false;
             DataGridViewColumn colIsActive = new DataGridViewLinkColumn();
@@ -59,7 +62,10 @@ namespace goods
             this.textBox1.KeyDown += button1_KeyDown;
             this.textBox2.KeyDown += button1_KeyDown;
         }
-        
+        private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            edit();
+        }
         private void button1_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Enter) { BindDataWithPage(1); }
@@ -119,9 +125,7 @@ namespace goods
         {
             if (this.dataGridView1.CurrentCell != null)
             {
-                SupplierModel s = new SupplierModel(Convert.ToInt32(this.dataGridView1.Rows[this.dataGridView1.CurrentCell.RowIndex].Cells["id"].Value),this.dataGridView1.Rows[this.dataGridView1.CurrentCell.RowIndex].Cells["num"].Value.ToString(), this.dataGridView1.Rows[this.dataGridView1.CurrentCell.RowIndex].Cells["name"].Value.ToString());
-                SupplierPopup popup = new SupplierPopup(this, s);
-                popup.Show();
+                edit();
             }
         }
 
@@ -152,6 +156,12 @@ namespace goods
 
                 }
             }
+        }
+        private void edit()
+        {
+            SupplierModel s = new SupplierModel(Convert.ToInt32(this.dataGridView1.Rows[this.dataGridView1.CurrentCell.RowIndex].Cells["id"].Value), this.dataGridView1.Rows[this.dataGridView1.CurrentCell.RowIndex].Cells["num"].Value.ToString(), this.dataGridView1.Rows[this.dataGridView1.CurrentCell.RowIndex].Cells["name"].Value.ToString());
+            SupplierPopup popup = new SupplierPopup(this, s);
+            popup.Show();
         }
     }
 }

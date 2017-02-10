@@ -40,8 +40,10 @@
             this.仓库管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.计量单位ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.物料分类ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.辅助属性ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.物料管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.消息管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.bOMToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.采购订单ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.新增ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.查询ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -59,6 +61,11 @@
             this.安全库存预警ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.帮助ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.修改密码ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.销售订单ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.新建ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.查询ToolStripMenuItem3 = new System.Windows.Forms.ToolStripMenuItem();
+            this.生产计划ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.新建ToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.statusUser = new System.Windows.Forms.ToolStripStatusLabel();
             this.toolStripStatusLabel2 = new System.Windows.Forms.ToolStripStatusLabel();
@@ -69,7 +76,20 @@
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.辅助属性ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.查询ToolStripMenuItem4 = new System.Windows.Forms.ToolStripMenuItem();
+            this.车间管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.工序管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.派工单ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.计件工资报表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.追溯管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.产品追溯查询ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.原料追溯查询ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.财务管理ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.应收账款ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.应付账款ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.帐龄分析ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.实际成本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.材料明细报表ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.statusStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
@@ -86,7 +106,12 @@
             this.出库管理ToolStripMenuItem,
             this.盘点管理ToolStripMenuItem,
             this.报表ToolStripMenuItem,
-            this.帮助ToolStripMenuItem});
+            this.帮助ToolStripMenuItem,
+            this.销售订单ToolStripMenuItem,
+            this.生产计划ToolStripMenuItem,
+            this.车间管理ToolStripMenuItem,
+            this.追溯管理ToolStripMenuItem,
+            this.财务管理ToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
             this.menuStrip1.Padding = new System.Windows.Forms.Padding(8, 3, 0, 3);
@@ -107,7 +132,8 @@
             this.物料分类ToolStripMenuItem,
             this.辅助属性ToolStripMenuItem,
             this.物料管理ToolStripMenuItem,
-            this.消息管理ToolStripMenuItem});
+            this.消息管理ToolStripMenuItem,
+            this.bOMToolStripMenuItem});
             this.基础信息管理ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaption;
             this.基础信息管理ToolStripMenuItem.Name = "基础信息管理ToolStripMenuItem";
             this.基础信息管理ToolStripMenuItem.Size = new System.Drawing.Size(92, 21);
@@ -176,6 +202,13 @@
             this.物料分类ToolStripMenuItem.Text = "物料分类";
             this.物料分类ToolStripMenuItem.Click += new System.EventHandler(this.物料分类ToolStripMenuItem_Click);
             // 
+            // 辅助属性ToolStripMenuItem
+            // 
+            this.辅助属性ToolStripMenuItem.Name = "辅助属性ToolStripMenuItem";
+            this.辅助属性ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.辅助属性ToolStripMenuItem.Text = "辅助属性";
+            this.辅助属性ToolStripMenuItem.Click += new System.EventHandler(this.辅助属性ToolStripMenuItem_Click);
+            // 
             // 物料管理ToolStripMenuItem
             // 
             this.物料管理ToolStripMenuItem.Name = "物料管理ToolStripMenuItem";
@@ -191,6 +224,13 @@
             this.消息管理ToolStripMenuItem.Text = "消息管理";
             this.消息管理ToolStripMenuItem.Visible = false;
             this.消息管理ToolStripMenuItem.Click += new System.EventHandler(this.消息管理ToolStripMenuItem_Click);
+            // 
+            // bOMToolStripMenuItem
+            // 
+            this.bOMToolStripMenuItem.Name = "bOMToolStripMenuItem";
+            this.bOMToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.bOMToolStripMenuItem.Text = "BOM";
+            this.bOMToolStripMenuItem.Click += new System.EventHandler(this.bOMToolStripMenuItem_Click);
             // 
             // 采购订单ToolStripMenuItem
             // 
@@ -334,6 +374,48 @@
             this.修改密码ToolStripMenuItem.Text = "修改密码";
             this.修改密码ToolStripMenuItem.Click += new System.EventHandler(this.修改密码ToolStripMenuItem_Click);
             // 
+            // 销售订单ToolStripMenuItem
+            // 
+            this.销售订单ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.新建ToolStripMenuItem,
+            this.查询ToolStripMenuItem3});
+            this.销售订单ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.销售订单ToolStripMenuItem.Name = "销售订单ToolStripMenuItem";
+            this.销售订单ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.销售订单ToolStripMenuItem.Text = "销售管理";
+            this.销售订单ToolStripMenuItem.Visible = false;
+            // 
+            // 新建ToolStripMenuItem
+            // 
+            this.新建ToolStripMenuItem.Name = "新建ToolStripMenuItem";
+            this.新建ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.新建ToolStripMenuItem.Text = "新建";
+            this.新建ToolStripMenuItem.Click += new System.EventHandler(this.新建ToolStripMenuItem_Click);
+            // 
+            // 查询ToolStripMenuItem3
+            // 
+            this.查询ToolStripMenuItem3.Name = "查询ToolStripMenuItem3";
+            this.查询ToolStripMenuItem3.Size = new System.Drawing.Size(152, 22);
+            this.查询ToolStripMenuItem3.Text = "查询";
+            this.查询ToolStripMenuItem3.Click += new System.EventHandler(this.查询ToolStripMenuItem3_Click);
+            // 
+            // 生产计划ToolStripMenuItem
+            // 
+            this.生产计划ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.新建ToolStripMenuItem1,
+            this.查询ToolStripMenuItem4});
+            this.生产计划ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.生产计划ToolStripMenuItem.Name = "生产计划ToolStripMenuItem";
+            this.生产计划ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.生产计划ToolStripMenuItem.Text = "生产管理";
+            // 
+            // 新建ToolStripMenuItem1
+            // 
+            this.新建ToolStripMenuItem1.Name = "新建ToolStripMenuItem1";
+            this.新建ToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.新建ToolStripMenuItem1.Text = "新建";
+            this.新建ToolStripMenuItem1.Click += new System.EventHandler(this.新建ToolStripMenuItem1_Click);
+            // 
             // statusStrip1
             // 
             this.statusStrip1.AutoSize = false;
@@ -441,12 +523,115 @@
             this.pictureBox2.TabIndex = 8;
             this.pictureBox2.TabStop = false;
             // 
-            // 辅助属性ToolStripMenuItem
+            // 查询ToolStripMenuItem4
             // 
-            this.辅助属性ToolStripMenuItem.Name = "辅助属性ToolStripMenuItem";
-            this.辅助属性ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
-            this.辅助属性ToolStripMenuItem.Text = "辅助属性";
-            this.辅助属性ToolStripMenuItem.Click += new System.EventHandler(this.辅助属性ToolStripMenuItem_Click);
+            this.查询ToolStripMenuItem4.Name = "查询ToolStripMenuItem4";
+            this.查询ToolStripMenuItem4.Size = new System.Drawing.Size(152, 22);
+            this.查询ToolStripMenuItem4.Text = "查询";
+            // 
+            // 车间管理ToolStripMenuItem
+            // 
+            this.车间管理ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.派工单ToolStripMenuItem,
+            this.工序管理ToolStripMenuItem,
+            this.计件工资报表ToolStripMenuItem});
+            this.车间管理ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.车间管理ToolStripMenuItem.Name = "车间管理ToolStripMenuItem";
+            this.车间管理ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.车间管理ToolStripMenuItem.Text = "车间管理";
+            // 
+            // 工序管理ToolStripMenuItem
+            // 
+            this.工序管理ToolStripMenuItem.Enabled = false;
+            this.工序管理ToolStripMenuItem.Name = "工序管理ToolStripMenuItem";
+            this.工序管理ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.工序管理ToolStripMenuItem.Text = "工序管理";
+            // 
+            // 派工单ToolStripMenuItem
+            // 
+            this.派工单ToolStripMenuItem.Enabled = false;
+            this.派工单ToolStripMenuItem.Name = "派工单ToolStripMenuItem";
+            this.派工单ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.派工单ToolStripMenuItem.Text = "派工单";
+            // 
+            // 计件工资报表ToolStripMenuItem
+            // 
+            this.计件工资报表ToolStripMenuItem.Enabled = false;
+            this.计件工资报表ToolStripMenuItem.Name = "计件工资报表ToolStripMenuItem";
+            this.计件工资报表ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.计件工资报表ToolStripMenuItem.Text = "计件工资报表";
+            // 
+            // 追溯管理ToolStripMenuItem
+            // 
+            this.追溯管理ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.产品追溯查询ToolStripMenuItem,
+            this.原料追溯查询ToolStripMenuItem});
+            this.追溯管理ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.追溯管理ToolStripMenuItem.Name = "追溯管理ToolStripMenuItem";
+            this.追溯管理ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.追溯管理ToolStripMenuItem.Text = "追溯管理";
+            // 
+            // 产品追溯查询ToolStripMenuItem
+            // 
+            this.产品追溯查询ToolStripMenuItem.Enabled = false;
+            this.产品追溯查询ToolStripMenuItem.Name = "产品追溯查询ToolStripMenuItem";
+            this.产品追溯查询ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.产品追溯查询ToolStripMenuItem.Text = "产品追溯查询";
+            // 
+            // 原料追溯查询ToolStripMenuItem
+            // 
+            this.原料追溯查询ToolStripMenuItem.Enabled = false;
+            this.原料追溯查询ToolStripMenuItem.Name = "原料追溯查询ToolStripMenuItem";
+            this.原料追溯查询ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.原料追溯查询ToolStripMenuItem.Text = "原料追溯查询";
+            // 
+            // 财务管理ToolStripMenuItem
+            // 
+            this.财务管理ToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.应收账款ToolStripMenuItem,
+            this.应付账款ToolStripMenuItem,
+            this.帐龄分析ToolStripMenuItem,
+            this.实际成本ToolStripMenuItem,
+            this.材料明细报表ToolStripMenuItem});
+            this.财务管理ToolStripMenuItem.ForeColor = System.Drawing.SystemColors.ActiveCaption;
+            this.财务管理ToolStripMenuItem.Name = "财务管理ToolStripMenuItem";
+            this.财务管理ToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
+            this.财务管理ToolStripMenuItem.Text = "财务管理";
+            // 
+            // 应收账款ToolStripMenuItem
+            // 
+            this.应收账款ToolStripMenuItem.Enabled = false;
+            this.应收账款ToolStripMenuItem.Name = "应收账款ToolStripMenuItem";
+            this.应收账款ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.应收账款ToolStripMenuItem.Text = "应收账款";
+            // 
+            // 应付账款ToolStripMenuItem
+            // 
+            this.应付账款ToolStripMenuItem.Enabled = false;
+            this.应付账款ToolStripMenuItem.Name = "应付账款ToolStripMenuItem";
+            this.应付账款ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.应付账款ToolStripMenuItem.Text = "应付账款";
+            // 
+            // 帐龄分析ToolStripMenuItem
+            // 
+            this.帐龄分析ToolStripMenuItem.Enabled = false;
+            this.帐龄分析ToolStripMenuItem.Name = "帐龄分析ToolStripMenuItem";
+            this.帐龄分析ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.帐龄分析ToolStripMenuItem.Text = "帐龄分析";
+            // 
+            // 实际成本ToolStripMenuItem
+            // 
+            this.实际成本ToolStripMenuItem.Enabled = false;
+            this.实际成本ToolStripMenuItem.Name = "实际成本ToolStripMenuItem";
+            this.实际成本ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.实际成本ToolStripMenuItem.Text = "实际成本";
+            // 
+            // 材料明细报表ToolStripMenuItem
+            // 
+            this.材料明细报表ToolStripMenuItem.Enabled = false;
+            this.材料明细报表ToolStripMenuItem.Name = "材料明细报表ToolStripMenuItem";
+            this.材料明细报表ToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.材料明细报表ToolStripMenuItem.Text = "材料明细报表";
             // 
             // MainForm
             // 
@@ -472,7 +657,7 @@
             this.Margin = new System.Windows.Forms.Padding(4);
             this.Name = "MainForm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "十方数字化系统";
+            this.Text = "数字化系统";
             this.Load += new System.EventHandler(this.MainForm_Load);
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
@@ -527,6 +712,26 @@
         private System.Windows.Forms.PictureBox pictureBox2;
         private System.Windows.Forms.ToolStripMenuItem 物料分类ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 辅助属性ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 销售订单ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 新建ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 查询ToolStripMenuItem3;
+        private System.Windows.Forms.ToolStripMenuItem bOMToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 生产计划ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 新建ToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem 查询ToolStripMenuItem4;
+        private System.Windows.Forms.ToolStripMenuItem 车间管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 派工单ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 工序管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 计件工资报表ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 追溯管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 产品追溯查询ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 原料追溯查询ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 财务管理ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 应收账款ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 应付账款ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 帐龄分析ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 实际成本ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 材料明细报表ToolStripMenuItem;
     }
 }
 

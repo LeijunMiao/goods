@@ -16,10 +16,15 @@ namespace goods
         public MainForm()
         {
             InitializeComponent();
+            this.WindowState = FormWindowState.Maximized;
             dateLoad();
         }
         private void dateLoad()
         {
+            if (PropertyClass.SendNameValue == "李健仁")
+            {
+                销售订单ToolStripMenuItem.Visible = true;
+            }
             if(PropertyClass.Role > 0)
             {
                 policyCtrl pctrl = new policyCtrl();
@@ -277,6 +282,30 @@ namespace goods
         private void 辅助属性ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SolidBackingList view = new SolidBackingList();
+            view.Show();
+        }
+
+        private void 新建ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            CreateSalesOrder view = new CreateSalesOrder();
+            view.Show();
+        }
+
+        private void 查询ToolStripMenuItem3_Click(object sender, EventArgs e)
+        {
+            SalesOrderList view = new SalesOrderList();
+            view.Show();
+        }
+
+        private void bOMToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            BOMList view = new BOMList();
+            view.Show();
+        }
+
+        private void 新建ToolStripMenuItem1_Click(object sender, EventArgs e)
+        {
+            ProductionNew view = new ProductionNew();
             view.Show();
         }
     }

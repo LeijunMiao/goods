@@ -76,9 +76,13 @@ namespace goods.Controller
         public MessageModel add(object obj)
         {
             User u = (User)obj;
+            var dt = getUserbyName(u.UserName,-1);
+            if(dt.Rows.Count > 0)
+            {
+                return new MessageModel(20003, "用户名已被注册！");
+            }
             string sql = "";
             string hash = GetOf(u.Hashed_password);
-
             sql = "insert into user (userName,fullName,role,hashed_password,createdAt) values('"
                 + u.UserName + "','" + u.FullName + "','" + u.Role + "','"
                 + hash + "','" + DateTime.Now + "');";
@@ -92,6 +96,17 @@ namespace goods.Controller
             else msg = new MessageModel(10005, "新建失败");
             return msg;
         }
+        #endregion
+        #region 获取用户by Username
+        public DataTable getUserbyName(string userName, int Id)
+        {
+            string sql = "select id from user where userName = '" + userName + "' ";
+            if (Id > 0) sql += "and id != '" + Id + "'";
+            sql += "limit 1 ";
+            return h.ExecuteQuery(sql, CommandType.Text);
+        }
+        #endregion
+        #region 
         /// <summary>返回 MD5 值</summary>
         /// <param name="myString">要转换的 MD5 值的字符串</param>
         public string GetOf(string myString)
@@ -112,6 +127,11 @@ namespace goods.Controller
         public MessageModel set(object obj)
         {
             User u = (User)obj;
+            var dt = getUserbyName(u.UserName,u.Id);
+            if (dt.Rows.Count > 0)
+            {
+                return new MessageModel(20003, "用户名已被注册！");
+            }
             MessageModel msg = new MessageModel();
             string sql = "UPDATE user SET userName = '" + u.UserName + "' ,fullName  = '" + u.FullName + "',role = '" + u.Role + "' WHERE id = '" + u.Id + "' ";
             int res = h.ExecuteNonQuery(sql, CommandType.Text);

@@ -57,27 +57,35 @@ namespace goods.Controller
             int count = Convert.ToInt32(dt.Rows[0][0]);
             return count;
         }
-        public int getCount(string key, List<int> ids)
+        public int getCount(string key, MaterielLookUpArgs args)
         {
-            string sql = "SELECT Count(*) FROM materiel where isActive = 1 and type = '外购件' ";
+            string sql = "SELECT Count(*) FROM materiel where isActive = 1  ";
             string select = "";
             string filter = "";
             if (key != "")
             {
                 select += " and num like '%" + key + "%' or name like '%" + key + "%'";
             }
-            if (ids.Count > 0)
+            if (args.ids.Count > 0)
             {
                 filter += " and id not in (";
-                for (int i = 0; i < ids.Count; i++)
+                for (int i = 0; i < args.ids.Count; i++)
                 {
-                    if (i == 0) filter += ids[i];
-                    else filter += "," + ids[i];
+                    if (i == 0) filter += args.ids[i];
+                    else filter += "," + args.ids[i];
                 }
                 filter += ")";
                 sql += filter;
             }
             sql += select;
+            if (args.bom == false)
+            {
+                sql += " and bom = 0 ";
+            }
+            if (args.type != "" && args.type != null)
+            {
+                sql += " and type = '"+ args.type + "' ";
+            }
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             int count = Convert.ToInt32(dt.Rows[0][0]);
             return count;
@@ -157,26 +165,46 @@ namespace goods.Controller
             int count = Convert.ToInt32(dt.Rows[0][0]);
             return count;
         }
-        public DataTable getFilterListLimit(int pageIndex, int pageSize, string keyword, List<int> ids)
+        public DataTable getFilterListLimit(int pageIndex, int pageSize, string keyword, int category, MaterielLookUpArgs args)
         {
-            string sql = "SELECT * FROM materiel where isActive = 1 and type = '外购件' ";
+            string areaids = "";
+            if (category > 0)
+            {
+                string sqlarea = "select queryChildrenAreaInfo('" + category + "');";
+                DataTable dtarea = h.ExecuteQuery(sqlarea, CommandType.Text);
+                areaids = dtarea.Rows[0][0].ToString();
+            }
+
+            string sql = "SELECT * FROM materiel where isActive = 1  ";
             string select = "";
             string filter = "";
             if (keyword != "")
             {
                 select += " and (num like '%" + keyword + "%' or name like '%" + keyword + "%')";
             }
+            if (areaids != "")
+            {
+                select += " AND category in (" + areaids + ") ";
+            }
             sql += select;
-            if (ids.Count > 0)
+            if (args.ids.Count > 0)
             {
                 filter += " and id not in (";
-                for (int i = 0; i < ids.Count; i++)
+                for (int i = 0; i < args.ids.Count; i++)
                 {
-                    if (i == 0) filter += ids[i];
-                    else filter += "," + ids[i];
+                    if (i == 0) filter += args.ids[i];
+                    else filter += "," + args.ids[i];
                 }
                 filter += ")";
                 sql += filter;
+            }
+            if (args.bom == false)
+            {
+                sql += " and bom = 0";
+            }
+            if (args.type != "" && args.type != null)
+            {
+                sql += " and type = '" + args.type + "' ";
             }
             if (pageIndex < 1) pageIndex = 1;
             sql += " LIMIT " + (pageIndex - 1) * pageSize + "," + pageSize;
@@ -185,9 +213,9 @@ namespace goods.Controller
 
         }
         
-        public DataTable getByids(List<int> ids)
+        public DataTable getByids(List<int> ids, int supplier)
         {
-            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,meter.name metering,meter2.name subMetering,count(ms.id) attrnum " +
+            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,meter.name metering,meter2.name subMetering,count(ms.id) attrnum ,(select price from supmaterielprice where supplier = '"+ supplier + "' and materiel = m.id limit 1) price " +
                 "FROM metering meter,materiel m left join metering meter2 on m.subMetering = meter2.id left join materielsolidbacking ms on m.id = ms.materiel  where m.metering = meter.id";
             string select = " and m.id in (";
             for (int i = 0; i < ids.Count; i++)
@@ -201,10 +229,51 @@ namespace goods.Controller
             return dt;
         }
 
+        /// <summary>
+        /// 获取销售订单物料
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public DataTable getByids4sales(List<int> ids)
+        {
+            string sql = "SELECT m.id,m.num,m.name,m.tax,meter.name metering,(select count(ms.id) from materielsolidbacking ms where ms.materiel = m.id  ) attrnum ,sum(s.avaquantity) stockqty " +
+                "FROM metering meter,materiel m  left join stock s on m.id = s.materiel  where m.metering = meter.id";
+            string select = " and m.id in (";
+            for (int i = 0; i < ids.Count; i++)
+            {
+                if (i == 0) select += ids[i];
+                else select += "," + ids[i];
+            }
+            select += ")  group by m.id";
+            sql += select;
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            return dt;
+        }
+
+        /// <summary>
+        /// 获取BOM物料
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public DataTable getByids4BOM(List<int> ids)
+        {
+            string sql = "SELECT m.id,m.num,m.name,meter.name metering,m.specifications FROM metering meter,materiel m where m.metering = meter.id";
+            string select = " and m.id in (";
+            for (int i = 0; i < ids.Count; i++)
+            {
+                if (i == 0) select += ids[i];
+                else select += "," + ids[i];
+            }
+            select += ")  group by m.id";
+            sql += select;
+            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
+            return dt;
+        }
+
         #region 获取物料根据id
         public DataTable getByid(int id)
         {
-            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,m.metering,m.subMetering,m.isBatch,m.category,c.name categoryName FROM materiel m left join category c on m.category = c.id where m.id  = '" + id + "'";
+            string sql = "SELECT m.id,m.num,m.name,m.specifications,m.conversion,m.type,m.tax,m.metering,m.subMetering,m.isBatch,m.category,c.name categoryName,m.normprice FROM materiel m left join category c on m.category = c.id where m.id  = '" + id + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
@@ -224,9 +293,14 @@ namespace goods.Controller
         {
             MaterielModel s = (MaterielModel)obj;
             string sql = "";
-            if (s.Id > 0) sql = "UPDATE materiel SET num = '" + s.Num + "',name = '" + s.Name + "',specifications = '" + s.Specifications + "',metering = '" + s.Metering + "',subMetering = @subMetering,conversion = @conversion,type = '" + s.Type + "',tax = '" + s.Tax + "',isBatch = @isBatch,category = '"+s.Catgegory+"' WHERE id = '" + s.Id + "' ";
-            else sql = "insert into materiel (num,name,specifications,metering,subMetering,conversion,type,tax,isBatch,category) values('"
-                + s.Num + "','" + s.Name + "','" + s.Specifications + "','" + s.Metering + "',@subMetering,@conversion,'" + s.Type + "','" + s.Tax + "',@isBatch, '" + s.Catgegory + "');";
+            if (s.Id > 0)
+            {
+                sql = "UPDATE materiel SET num = '" + s.Num + "',name = '" + s.Name + "',specifications = '" + s.Specifications + "',metering = '" + s.Metering + "',subMetering = @subMetering,conversion = @conversion,type = '" + s.Type + "',tax = '" + s.Tax + "',isBatch = @isBatch,category = @catgegory ";
+                if (s.Type == "外购件" && s.NormPrice != null) sql += ",normprice = @normprice ";
+                sql += " WHERE id = '" + s.Id + "' ";
+            }
+            else sql = "insert into materiel (num,name,specifications,metering,subMetering,conversion,type,tax,isBatch,category,normprice) values('"
+                + s.Num + "','" + s.Name + "','" + s.Specifications + "','" + s.Metering + "',@subMetering,@conversion,'" + s.Type + "','" + s.Tax + "',@isBatch, @catgegory,@normprice);";
             MessageModel msg;
             try
             {
@@ -234,6 +308,8 @@ namespace goods.Controller
                 paras.Add("@isBatch", s.IsBatch);
                 paras.Add("@subMetering", s.SubMetering);
                 paras.Add("@conversion", s.Conversion);
+                paras.Add("@catgegory", s.Catgegory);
+                paras.Add("@normprice", s.NormPrice);
                 int res = h.ExecuteNonQuery(sql, paras, CommandType.Text);
                 if (res > 0)
                 {
@@ -243,9 +319,9 @@ namespace goods.Controller
             }
             catch (Exception e)
             {
-                string err = "服务器错误，请重试！";
+                string err = "服务器错误，请重试！" + e.ToString();
                 if (e.ToString().IndexOf("num_UNIQUE") != -1) err = "编码重复！";
-                msg = new MessageModel(10005, err);
+                msg = new MessageModel(10005, err );
             }
             return msg;
         }
@@ -254,11 +330,16 @@ namespace goods.Controller
         public MessageModel addstock(List<MaterielModel> list_m)
         {
             List<string> sqlList = new List<string>();
-
             string sql = "";
             for (int i = 0; i < list_m.Count; i++)
             {
-                sql = "insert into safetystock (materiel,safetystock,maxstock,stock) values "+
+                if(list_m[i].maxstock == null)
+                {
+                    sql = "insert into safetystock (materiel,safetystock,stock) values " +
+                      " ('" + list_m[i].Id + "','" + list_m[i].safetystock + "',(SELECT sum(avaquantity) FROM stock where materiel = '" + list_m[i].Id + "')) " +
+                      " ON DUPLICATE KEY UPDATE safetystock = '" + list_m[i].safetystock + "' ";
+                }
+                else sql = "insert into safetystock (materiel,safetystock,maxstock,stock) values "+
                       " ('" + list_m[i].Id + "','" + list_m[i].safetystock + "','" + list_m[i].maxstock + "',(SELECT sum(avaquantity) FROM stock where materiel = '"+ list_m[i].Id + "')) " +
                       " ON DUPLICATE KEY UPDATE safetystock = '" + list_m[i].safetystock + "',maxstock = '" + list_m[i].maxstock + "' ";
                 sqlList.Add(sql);

@@ -226,9 +226,16 @@ namespace goods
 
         private void 修改ToolStripMenuItem1_Click(object sender, EventArgs e)
         {
-            PositionModel p = new PositionModel(Convert.ToInt32(this.dataGridView2.Rows[this.dataGridView2.CurrentCell.RowIndex].Cells["id"].Value), this.dataGridView2.Rows[this.dataGridView2.CurrentCell.RowIndex].Cells["num"].Value.ToString(), this.dataGridView2.Rows[this.dataGridView2.CurrentCell.RowIndex].Cells["name"].Value.ToString());
-            WarehousePopup popup = new WarehousePopup(this, "cw", wId,p);
-            popup.Show();
+            if (this.dataGridView2.CurrentCell != null)
+            {
+                PositionModel p = new PositionModel(Convert.ToInt32(this.dataGridView2.Rows[this.dataGridView2.CurrentCell.RowIndex].Cells["id"].Value), this.dataGridView2.Rows[this.dataGridView2.CurrentCell.RowIndex].Cells["num"].Value.ToString(), this.dataGridView2.Rows[this.dataGridView2.CurrentCell.RowIndex].Cells["name"].Value.ToString());
+                WarehousePopup popup = new WarehousePopup(this, "cw", wId, p);
+                popup.Show();
+            }
+            else
+            {
+                MessageBox.Show("请选择一行。");
+            }
         }
 
         private void 注销ToolStripMenuItem1_Click(object sender, EventArgs e)

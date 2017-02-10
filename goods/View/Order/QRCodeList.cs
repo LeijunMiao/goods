@@ -40,10 +40,11 @@ namespace goods
                 Bitmap bm = util.GenByZXingNet(dtData.Rows[i]["num"].ToString());
                 picModel pm = new picModel();
                 pm.printBmp = bm;
-                pm.batch = "批次：" + dtData.Rows[i]["num"].ToString();
-                pm.name = "物料：" + dtData.Rows[i]["name"].ToString();
-                if (dtData.Rows[i]["spe"] != DBNull.Value) pm.spe = "规格：" + dtData.Rows[i]["spe"].ToString();
-                pm.meter = "单位：" + dtData.Rows[i]["meter"].ToString();
+                pm.batch = "批次号：" + dtData.Rows[i]["num"].ToString();
+                pm.num = "物料编码：" + dtData.Rows[i]["mnum"].ToString();
+                pm.name = "物料名称：" + dtData.Rows[i]["name"].ToString();
+                if (dtData.Rows[i]["spe"] != DBNull.Value) pm.spe = "规格型号：" + dtData.Rows[i]["spe"].ToString();
+                if (dtData.Rows[i]["attribute"] != DBNull.Value) pm.attribute = "物料属性：" + dtData.Rows[i]["attribute"].ToString();
                 pm.supplier = "供应商：" + dtData.Rows[i]["supplier"].ToString();
                 _printBmps.Add(pm);
 
@@ -102,12 +103,12 @@ namespace goods
             int fWidth = Convert.ToInt32(e.Graphics.MeasureString("测", f).Width);
             int maxWidth = (int)Math.Ceiling(Convert.ToDecimal(e.Graphics.MeasureString(getmax(_printBmps[count]), f).Width));
 
-            int pic_X = (e.PageBounds.Width - _printBmps[count].printBmp.Width - maxWidth) / 2;
+            int pic_X = (e.PageBounds.Width - _printBmps[count].printBmp.Width) / 2;
             if (pic_X < 0) pic_X = 0;
             int pic_Y = (e.PageBounds.Height - _printBmps[count].printBmp.Height) / 2;
             if (pic_Y < 0) pic_Y = 0;
-
-            e.Graphics.DrawImage(_printBmps[count].printBmp, pic_X, 0);//new Rectangle((int)Math.Ceiling(Chinese_OneWidth), 0 _printBmps[count].printBmp.Width, _printBmps[count].printBmp.Height)
+            int text_X = (e.PageBounds.Width - maxWidth) / 2;
+            if (text_X < 0) text_X = 0;
 
             var pm = _printBmps[count];
             int line = 0;
@@ -117,15 +118,17 @@ namespace goods
                 {
                     var attr = p.GetValue(pm,null).ToString();
                     decimal pWidth = Convert.ToDecimal(e.Graphics.MeasureString(attr, f).Width);
-                    List<string> list = util.GetMultiLineString(attr, e.PageBounds.Width - pic_X - pm.printBmp.Width - fWidth, gItem, f);
+                    List<string> list = util.GetMultiLineString(attr, e.PageBounds.Width - text_X - fWidth, gItem, f);
                     int i;
                     for (i = 0; i < list.Count; i++)
                     {
-                        e.Graphics.DrawString(list[i], f, bru, pic_X + pm.printBmp.Width, fHeight * (line + i) + fHeight/2);
+                        e.Graphics.DrawString(list[i], f, bru, text_X, fHeight * (line + i) + fHeight/2);
                     }
                     line += i;
                 }
             }
+
+            e.Graphics.DrawImage(_printBmps[count].printBmp, pic_X, fHeight * line + fHeight / 2);//new Rectangle((int)Math.Ceiling(Chinese_OneWidth), 0 _printBmps[count].printBmp.Width, _printBmps[count].printBmp.Height)
 
             //e.Graphics.DrawImage(imageList1.Images[count], new Rectangle((int)Math.Ceiling(Chinese_OneWidth), 0, imageList1.Images[count].Width, imageList1.Images[count].Height));
 
@@ -194,11 +197,14 @@ namespace goods
         private class picModel
         {
             public Bitmap printBmp { get; set; }
+            public string num { get; set; }
             public string name { get; set; }
             public string spe { get; set; }
-            public string batch { get; set; }
-            public string meter { get; set; }
             public string supplier { get; set; }
+            public string attribute { get; set; }
+            public string batch { get; set; }
+            
+            
         }
     }
 }

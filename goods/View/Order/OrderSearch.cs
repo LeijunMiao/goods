@@ -92,51 +92,52 @@ namespace goods
             DataColumn dccombination = new DataColumn("combination");
             DataColumn dcInGoods = new DataColumn("入库数量");
             DataColumn dcNotInGoods = new DataColumn("未入库数量");
-            DataColumn[] list_dc = { dcNum, dcDate, dcSup, dcMNum, dcMName, dcSep, dcMete, dcPrice,dcQuantity, dcTaxPrice,
-                dcAmount, dcTax, dcTaxAmount, dcAll, dcDeliveryDate, dcStatus,dcId,dcmId,dcInGoods,dcNotInGoods,dcpoId,dcclosed,dccombination };
+            DataColumn dcsupplier = new DataColumn("supplier");
+            DataColumn[] list_dc = { dcNum, dcDate, dcSup, dcMNum, dcMName, dcSep, dcMete, dcPrice,dcQuantity,dcInGoods,dcNotInGoods,  dcTaxPrice,dcAmount, dcTax, dcTaxAmount, dcAll, dcDeliveryDate, dcStatus,dcId,dcmId,dcpoId,dcclosed,dccombination,dcsupplier };
             dt.Columns.AddRange(list_dc);
 
             for (int i = 0; i < dtData.Rows.Count; i++)
             {
                 DataRow dr = dt.NewRow();
-                dr[0] = dtData.Rows[i]["ponum"].ToString();
-                dr[1] = DateTime.Parse(dtData.Rows[i]["date"].ToString()).ToString("yyyy/M/d"); 
-                dr[2] = dtData.Rows[i]["sname"].ToString();
-                dr[3] = dtData.Rows[i]["mnum"].ToString();
-                dr[4] = dtData.Rows[i]["mname"].ToString();
-                dr[5] = dtData.Rows[i]["specifications"].ToString();
-                dr[6] = dtData.Rows[i]["metering"].ToString();
-                dr[7] = dtData.Rows[i]["price"].ToString();
-                dr[8] = dtData.Rows[i]["quantity"].ToString();
-                dr[9] = Convert.ToDouble(dtData.Rows[i]["price"]) * (1+Convert.ToDouble(dtData.Rows[i]["tax"]));
-                dr[10] = dtData.Rows[i]["amount"].ToString();
-                dr[11] = dtData.Rows[i]["tax"].ToString();
-                dr[12] = Convert.ToDouble(dtData.Rows[i]["amount"])* Convert.ToDouble(dtData.Rows[i]["tax"]);
-                dr[13] = Convert.ToDouble(dtData.Rows[i]["amount"]) * (1 + Convert.ToDouble(dtData.Rows[i]["tax"]));
-                if (dtData.Rows[i]["deliveryDate"].ToString() == "") dr[14] = "";
-                else dr[14] = DateTime.Parse( dtData.Rows[i]["deliveryDate"].ToString()).ToString("yyyy/M/d");
+                dr["单据编码"] = dtData.Rows[i]["ponum"].ToString();
+                dr["日期"] = DateTime.Parse(dtData.Rows[i]["date"].ToString()).ToString("yyyy/M/d"); 
+                dr["供应商"] = dtData.Rows[i]["sname"].ToString();
+                dr["物料代码"] = dtData.Rows[i]["mnum"].ToString();
+                dr["物料名称"] = dtData.Rows[i]["mname"].ToString();
+                dr["规格型号"] = dtData.Rows[i]["specifications"].ToString();
+                dr["单位"] = dtData.Rows[i]["metering"].ToString();
+                dr["单价"] = dtData.Rows[i]["price"].ToString();
+                dr["数量"] = dtData.Rows[i]["quantity"].ToString();
+                dr["含税单价"] = Convert.ToDouble(dtData.Rows[i]["price"]) * (1+Convert.ToDouble(dtData.Rows[i]["tax"]));
+                dr["金额"] = dtData.Rows[i]["amount"].ToString();
+                dr["税率"] = dtData.Rows[i]["tax"].ToString();
+                dr["税额"] = Convert.ToDouble(dtData.Rows[i]["amount"])* Convert.ToDouble(dtData.Rows[i]["tax"]);
+                dr["价税合计"] = Convert.ToDouble(dtData.Rows[i]["amount"]) * (1 + Convert.ToDouble(dtData.Rows[i]["tax"]));
+                if (dtData.Rows[i]["deliveryDate"].ToString() == "") dr["交货日期"] = "";
+                else dr["交货日期"] = DateTime.Parse( dtData.Rows[i]["deliveryDate"].ToString()).ToString("yyyy/M/d");
                 if (dtData.Rows[i]["quantityAll"] == DBNull.Value) dtData.Rows[i]["quantityAll"] = 0;
                 var diff = Convert.ToDouble(dtData.Rows[i]["quantity"]) - Convert.ToDouble(dtData.Rows[i]["quantityAll"]);
-                if (diff <= 0 || Convert.ToBoolean(dtData.Rows[i]["closed"])) dr[15] = "关闭";
-                else dr[15] = "激活";
-                dr[16] = dtData.Rows[i]["id"].ToString();
-                dr[17] = dtData.Rows[i]["mid"].ToString();
-                dr[18] = dtData.Rows[i]["quantityAll"].ToString();
-                dr[19] = diff;
-                dr[20] = dtData.Rows[i]["poid"].ToString(); 
-                dr[21] = dtData.Rows[i]["closed"].ToString();
-                if (dtData.Rows[i]["combination"] == DBNull.Value) dr[22] = "";
-                else dr[22] = dtData.Rows[i]["combination"].ToString();
+                if (diff <= 0 || Convert.ToBoolean(dtData.Rows[i]["closed"])) dr["状态"] = "关闭";
+                else dr["状态"] = "激活";
+                dr["ID"] = dtData.Rows[i]["id"].ToString();
+                dr["mid"] = dtData.Rows[i]["mid"].ToString();
+                dr["入库数量"] = dtData.Rows[i]["quantityAll"].ToString();
+                dr["未入库数量"] = diff;
+                dr["poid"] = dtData.Rows[i]["poid"].ToString(); 
+                dr["closed"] = dtData.Rows[i]["closed"].ToString();
+                if (dtData.Rows[i]["combination"] == DBNull.Value) dr["combination"] = "";
+                else dr["combination"] = dtData.Rows[i]["combination"].ToString();
+                dr["supplier"] = dtData.Rows[i]["supplier"].ToString();
                 dt.Rows.Add(dr);
             }
 
-
             dataGridView1.DataSource = dt;
-            dataGridView1.Columns[16].Visible = false;
-            dataGridView1.Columns[17].Visible = false;
-            dataGridView1.Columns[20].Visible = false;
-            dataGridView1.Columns[21].Visible = false;
-            dataGridView1.Columns[22].Visible = false;
+            dataGridView1.Columns["ID"].Visible = false;
+            dataGridView1.Columns["mid"].Visible = false;
+            dataGridView1.Columns["poid"].Visible = false;
+            dataGridView1.Columns["closed"].Visible = false;
+            dataGridView1.Columns["combination"].Visible = false;
+            dataGridView1.Columns["supplier"].Visible = false;
 
             pagingCom1.RecordCount = ctrl.getCount(this.textBox3.Text, this.dateTimePicker1.Checked, dateTimePicker1.Value.Date, textBox1.Text, textBox2.Text);
             pagingCom1.reSet();
@@ -159,7 +160,8 @@ namespace goods
                     }
                     var p = new parmas(Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["id"].Value),
                         Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["mid"].Value),
-                        dataGridView1.SelectedRows[i].Cells["物料代码"].Value.ToString());
+                        dataGridView1.SelectedRows[i].Cells["物料代码"].Value.ToString(),
+                        Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["supplier"].Value));
                     if (dataGridView1.SelectedRows[i].Cells["combination"].Value.ToString() != "") p.combination = Convert.ToInt32(dataGridView1.SelectedRows[i].Cells["combination"].Value);
                     list_p.Add(p);
                 }

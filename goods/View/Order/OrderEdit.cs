@@ -17,14 +17,18 @@ namespace goods
     {
         materielCtrl mctrl = new materielCtrl();
         orderCtrl ctrl = new orderCtrl();
+        solidbackingCtrl sbctrl = new solidbackingCtrl();
+        string posummary = "";
         DataTable dt = new DataTable();
-
+        int supplier = -1;
         int orderid;
         List<int> allids = new List<int>();
 
         CommonPrintTools<object> cp;
         PrintDataModel<object> m;
         List<string> list_tableTitle = new List<string> { "物料编码", "名称", "规格参数", "计量单位", "数量","价税合计", "交货日期" };
+
+        Dictionary<int, Dictionary<int, attrClass>> mapAttr = new Dictionary<int, Dictionary<int, attrClass>>();
         public OrderEdit(int poid)
         {
             InitializeComponent();
@@ -40,7 +44,15 @@ namespace goods
             if (ids.Count > 0)
             {
                 allids.AddRange(ids);
-                var dtData = mctrl.getByids(ids);
+                var dtData = mctrl.getByids(ids, supplier);
+                DataColumn dc = new DataColumn();
+                dc.DataType = System.Type.GetType("System.DateTime");
+                dc.ColumnName = "deliveryDate";
+                dtData.Columns.Add(dc);
+                for (int i = 0; i < dtData.Rows.Count; i++)
+                {
+                    dtData.Rows[i]["deliveryDate"] = DateTime.Now.Date;
+                }
                 dt.Merge(dtData);
                 dataGridView1.DataSource = dt;
             }
@@ -51,10 +63,17 @@ namespace goods
             this.dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            dataGridViewCellStyle5.Format = "N4";
+            dataGridViewCellStyle5.NullValue = null;
+
+            this.dataGridView1.DataError += DataGridView1_DataError;
             this.dataGridView1.AutoGenerateColumns = false;
 
             this.dataGridView1.ShowCellToolTips = true;
             this.dataGridView1.CellMouseEnter += DataGridView1_CellMouseEnter;
+            this.dataGridView1.CellContentClick += dataGridView1_CellContentClick;
+            this.dataGridView1.RowPostPaint += DataGridView1_RowPostPaint;
 
             DataGridViewColumn colId = new DataGridViewTextBoxColumn();
             colId.DataPropertyName = "id";
@@ -65,6 +84,12 @@ namespace goods
             colOMId.DataPropertyName = "omid";
             colOMId.Visible = false;
             colOMId.Name = "omid";
+
+            DataGridViewColumn colNo = new DataGridViewTextBoxColumn();
+            colNo.DataPropertyName = "no";
+            colNo.Name = "no";
+            colNo.HeaderText = "序号";
+            colNo.ReadOnly = true;
 
             DataGridViewColumn colNum = new DataGridViewTextBoxColumn();
             colNum.DataPropertyName = "num";
@@ -87,7 +112,7 @@ namespace goods
             DataGridViewColumn price = new DataGridViewTextBoxColumn();
             dataGridViewCellStyle3.Format = "N2";
             dataGridViewCellStyle3.NullValue = null;
-            price.DefaultCellStyle = dataGridViewCellStyle3;
+            price.DefaultCellStyle = dataGridViewCellStyle5;
             price.DataPropertyName = "price";
             price.HeaderText = "单价";
             price.Name = "price";
@@ -99,11 +124,10 @@ namespace goods
 
 
             DataGridViewColumn amount = new DataGridViewTextBoxColumn();
-            amount.DefaultCellStyle = dataGridViewCellStyle3;
+            amount.DefaultCellStyle = dataGridViewCellStyle5;
             amount.HeaderText = "金额";
             amount.Name = "amount";
             amount.DataPropertyName = "amount";
-            amount.ReadOnly = true;
 
             DataGridViewColumn metering = new DataGridViewTextBoxColumn();
             metering.HeaderText = "单位";
@@ -121,20 +145,17 @@ namespace goods
             tax.HeaderText = "税率";
             tax.Name = "tax";
             tax.DataPropertyName = "tax";
-            tax.ReadOnly = true;
 
             DataGridViewColumn summary = new DataGridViewTextBoxColumn();
             summary.HeaderText = "备注";
             summary.Name = "summary";
             summary.DataPropertyName = "summary";
-            summary.ReadOnly = true;
 
             DataGridViewColumn colallamount = new DataGridViewTextBoxColumn();
+            colallamount.DefaultCellStyle = dataGridViewCellStyle5;
             colallamount.Name = "allamount";
             colallamount.HeaderText = "价税合计";
-            colallamount.ReadOnly = true;
             colallamount.DataPropertyName = "allamount";
-            colallamount.DefaultCellStyle = dataGridViewCellStyle3;
 
             dataGridViewCellStyle4.Format = "yyyy-MM-dd";
             dataGridViewCellStyle4.NullValue = null;
@@ -142,21 +163,85 @@ namespace goods
             this.deliveryDate.HeaderText = "交货日期";
             this.deliveryDate.Name = "deliveryDate";
             this.deliveryDate.DataPropertyName = "deliveryDate";
-            this.deliveryDate.ReadOnly = true;
             this.deliveryDate.Resizable = System.Windows.Forms.DataGridViewTriState.True;
             this.deliveryDate.SortMode = System.Windows.Forms.DataGridViewColumnSortMode.Automatic;
 
-            DataGridViewColumn colattbtn = new DataGridViewTextBoxColumn();
-            colattbtn.DataPropertyName = "solidbacking";
+            //DataGridViewColumn colattbtn = new DataGridViewTextBoxColumn();
+            //colattbtn.DataPropertyName = "solidbacking";
+            //colattbtn.Name = "solidbacking";
+            //colattbtn.HeaderText = "辅助属性";
+            //colattbtn.DefaultCellStyle.NullValue = "空";
+            //colattbtn.ReadOnly = true;
+
+            DataGridViewButtonColumn colattbtn = new DataGridViewButtonColumn();
             colattbtn.Name = "solidbacking";
             colattbtn.HeaderText = "辅助属性";
+            colattbtn.DataPropertyName = "solidbacking";
             colattbtn.DefaultCellStyle.NullValue = "空";
-            colattbtn.ReadOnly = true;
+
+            DataGridViewColumn colAttrNum = new DataGridViewTextBoxColumn();
+            colAttrNum.DataPropertyName = "attrnum";
+            colAttrNum.Name = "attrnum";
+            colAttrNum.Visible = false;
 
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
-                colId,colNum,colName,colSep,metering,quantity,conversion,price,tax, amount,summary,colallamount,this.deliveryDate,colOMId,colattbtn });
+                colId,colNo,colNum,colName,colSep,metering,quantity,conversion,price,tax, amount,summary,colallamount,this.deliveryDate,colOMId,colattbtn,colAttrNum });
 
             
+        }
+
+        private void DataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                row.Cells["no"].Value = row.Index + 1;
+            }
+        }
+
+        private void dataGridView1_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (dataGridView1.Columns[e.ColumnIndex].Name == "solidbacking" && Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["attrnum"].Value) > 0)
+            {
+                var id = Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value);
+                Dictionary<int, attrClass> map = new Dictionary<int, attrClass>();
+                if (mapAttr.Keys.Contains(id))
+                {
+                    map = mapAttr[id];
+                }
+                OrderSolidBacking view = new OrderSolidBacking(id, e.RowIndex, dataGridView1.Rows[e.RowIndex].Cells["name"].Value.ToString(), map);
+                view.SolidBackingSet += View_SolidBackingSet;
+                view.Show();
+            }
+        }
+
+        private void View_SolidBackingSet(object sender, SolidBackingEventArgs e)
+        {
+            if (!mapAttr.Keys.Contains(e.materiel))
+            {
+                mapAttr.Add(e.materiel, new Dictionary<int, attrClass>());
+                mapAttr[e.materiel].Add(e.id, e.ac);
+            }
+            else if (!mapAttr[e.materiel].Keys.Contains(e.id))
+            {
+                mapAttr[e.materiel].Add(e.id, e.ac);
+            }
+            else
+            {
+                mapAttr[e.materiel][e.id] = e.ac;
+
+            }
+
+            dataGridView1.CurrentCell.Value = "";
+            for (int i = 0; i < mapAttr[e.materiel].Values.Count; i++)
+            {
+                if (i != 0) dataGridView1.CurrentCell.Value += ",";
+                dataGridView1.CurrentCell.Value += mapAttr[e.materiel].Values.ToList()[i].valueName;
+            }
+        }
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            MessageBox.Show("数据格式不正确！");
+            e.Cancel = false;
         }
 
         private void DataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
@@ -170,38 +255,58 @@ namespace goods
             dt = ctrl.getbyId(orderid);
             if (dt.Rows.Count == 0)
             {
-                this.Hide();
+                this.Close();
                 return;
             }
             allids = new List<int>();
             List<int> lits_omid = new List<int>();
             dt.Columns.Add("allamount");
             dt.Columns.Add("solidbacking");
+            DataColumn dc = new DataColumn();
+            dc.DataType = System.Type.GetType("System.Int64");
+            dc.ColumnName = "attrnum";
+            dt.Columns.Add(dc);
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 allids.Add(Convert.ToInt32(dt.Rows[i]["id"]));
                 lits_omid.Add(Convert.ToInt32(dt.Rows[i]["omid"]));
-                dt.Rows[i]["allamount"] = Math.Round(Convert.ToDouble(dt.Rows[i]["quantity"]) * Convert.ToDouble(dt.Rows[i]["price"])*(1 + Convert.ToDouble(dt.Rows[i]["tax"])),2);
+                dt.Rows[i]["allamount"] = Math.Round(Convert.ToDouble(dt.Rows[i]["quantity"]) * Convert.ToDouble(dt.Rows[i]["price"])*(1 + Convert.ToDouble(dt.Rows[i]["tax"])),4);
             }
             this.label7.Text = DateTime.Parse(dt.Rows[0]["date"].ToString()).ToString("yyyy/M/d");
             this.label13.Text = dt.Rows[0]["ponum"].ToString();
             this.label10.Text = dt.Rows[0]["supplier"].ToString();
+            supplier = Convert.ToInt32(dt.Rows[0]["supplierId"]);
             this.label11.Text = dt.Rows[0]["user"].ToString();
             this.label8.Text = DateTime.Parse(dt.Rows[0]["podeliveryDate"].ToString()).ToString("yyyy/M/d"); 
             this.textBox1.Text = dt.Rows[0]["posummary"].ToString();
+            posummary = dt.Rows[0]["posummary"].ToString(); 
 
-            dataGridView1.DataSource = dt;
-            Dictionary<int, string> map = ctrl.getbyOMIds(lits_omid);
-            for (int i = 0; i < dataGridView1.RowCount; i++)
+
+            Dictionary<int, attrNumModel> map = ctrl.getbyOMIds(lits_omid);
+            for (int i = 0; i < dt.Rows.Count; i++)
             {
-                var omid = Convert.ToInt32(dataGridView1.Rows[i].Cells["omid"].Value);
-                
+                var omid = Convert.ToInt32(dt.Rows[i]["omid"]);
+                var mid = Convert.ToInt32(dt.Rows[i]["id"]);
                 if (map.Keys.Contains(omid))
                 {
-                    dataGridView1.Rows[i].Cells["solidbacking"].Value = map[omid];
+                    dt.Rows[i]["solidbacking"] = map[omid].value;
+                    dt.Rows[i]["attrnum"] = map[omid].num;
+                    if (!mapAttr.Keys.Contains(mid))
+                    {
+                        mapAttr.Add(mid, new Dictionary<int, attrClass>());
+                    }
+                    for (int j = 0; j < map[omid].list.Count; j++)
+                    {
+                        mapAttr[mid].Add(map[omid].list[j].solidbacking,new attrClass(map[omid].list[j].solidbacking,map[omid].list[j].key,map[omid].list[j].value));
+                    }
                 }
-                
+                else
+                {
+                    dt.Rows[i]["attrnum"] = 0;
+                    dt.Rows[i]["solidbacking"] = "无";
+                }
             }
+            dataGridView1.DataSource = dt;
             if (Convert.ToUInt32(dt.Rows[0]["pouser"]) != PropertyClass.UserId)
             {
                 toolStripButton1.Enabled = false;
@@ -242,34 +347,95 @@ namespace goods
                     return;
                 }
                 ListModel lm = new ListModel();
-                lm.price = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i].Cells["price"].Value), 2);
+                lm.name = this.dataGridView1.Rows[i].Cells["name"].Value.ToString();
+                lm.price = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i].Cells["price"].Value), 4);
                 lm.line = i;
                 lm.materiel = Convert.ToInt32(this.dataGridView1.Rows[i].Cells["id"].Value);
                 lm.quantity = Convert.ToDouble(this.dataGridView1.Rows[i].Cells["quantity"].Value);
                 lm.summary = this.dataGridView1.Rows[i].Cells["summary"].Value.ToString();
                 lm.tax = Convert.ToDouble(this.dataGridView1.Rows[i].Cells["tax"].Value);
                 if(this.dataGridView1.Rows[i].Cells["conversion"].Value != DBNull.Value) lm.conversion = Convert.ToDouble(this.dataGridView1.Rows[i].Cells["conversion"].Value);
+                lm.deliveryDate = Convert.ToDateTime(this.dataGridView1.Rows[i].Cells["deliveryDate"].Value);
+                var num = 0;
+                var attrnum = Convert.ToInt32(this.dataGridView1.Rows[i].Cells["attrnum"].Value);
+                if (mapAttr.Keys.Contains(lm.materiel)) num = mapAttr[lm.materiel].Keys.Count;
+                if (num < attrnum)
+                {
+                    MessageBox.Show("请添加辅助属性！");
+                    return;
+                }
+                if (attrnum > 0) lm.combination = sbctrl.getCombin(lm.materiel, mapAttr[lm.materiel]);
                 list.Add(lm);
             }
-            var msg = ctrl.setList(orderid, label13.Text, label10.Text, list);
+            OrderModel order = new OrderModel();
+            order.SupName = label10.Text;
+            order.Num = label13.Text;
+            order.Id = orderid;
+            if (posummary != this.textBox1.Text) order.Summary = this.textBox1.Text;
+            var msg = ctrl.setList(order, list);
             MessageBox.Show(msg.Msg);
         }
         private void DataGridView1_CellEndEdit(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
         {
-            if ((this.dataGridView1.Columns[e.ColumnIndex].Name == "quantity" || this.dataGridView1.Columns[e.ColumnIndex].Name == "price") 
-                && this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value != DBNull.Value 
-                && this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value != DBNull.Value)
+            //if ((this.dataGridView1.Columns[e.ColumnIndex].Name == "quantity" || this.dataGridView1.Columns[e.ColumnIndex].Name == "price") 
+            //    && this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value != DBNull.Value 
+            //    && this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value != DBNull.Value)
+            //{
+            //    this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value
+            //        = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value) *
+            //        Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
+            //    this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)),2);
+            //}
+            if(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value != DBNull.Value && this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value != DBNull.Value)
+            switch (this.dataGridView1.Columns[e.ColumnIndex].Name)
             {
-                this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value
-                    = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value) *
-                    Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
-                this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)),2);
+                case "price":
+                    this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value
+                        = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value) *
+                        Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
+                    this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value
+                        = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)), 4);
+                    break;
+                case "tax":
+                    this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value
+                        = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)), 4);
+                    break;
+              
+                case "quantity":
+                    this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value
+                        = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value) *
+                        Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
+                    this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value
+                        = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)), 4);
+
+                    break;
+                case "amount":
+                        if (this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value != DBNull.Value)
+                        {
+                            if (this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value != null)
+                                this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value
+                                = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) /
+                                Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
+                            this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value
+                                = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) * (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value)), 4);
+                        }
+                    break;
+                case "allamount":
+                    if (this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value != DBNull.Value && this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value != DBNull.Value)
+                        this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["allamount"].Value) / (1 + Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["tax"].Value));
+                    this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value) /
+                        Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
+                    break;
+                default:
+                    break;
             }
         }
 
         private void toolStripButton1_Click(object sender, EventArgs e)
         {
-            OrderMaterielPopup popup = new OrderMaterielPopup(allids);
+            MaterielLookUpArgs args = new MaterielLookUpArgs();
+            args.ids = allids;
+            OrderMaterielPopup popup = new OrderMaterielPopup(args);
             popup.Show();
         }
 
@@ -378,6 +544,5 @@ namespace goods
             }
             
         }
-
     }
 }

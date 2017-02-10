@@ -44,10 +44,16 @@ namespace goods
             colNum.ReadOnly = true;
             this.dataGridView1.Columns.Add(colNum);
 
+            DataGridViewColumn colMNum = new DataGridViewTextBoxColumn();
+            colMNum.DataPropertyName = "mnum";
+            colMNum.Name = "mnum";
+            colMNum.Visible = false;
+            this.dataGridView1.Columns.Add(colMNum);
+
             DataGridViewColumn colName = new DataGridViewTextBoxColumn();
             colName.DataPropertyName = "name";
             colName.Name = "name";
-            colName.Visible = false;
+            colName.HeaderText = "名称";
             this.dataGridView1.Columns.Add(colName);
 
             DataGridViewColumn colSpe = new DataGridViewTextBoxColumn();
@@ -56,11 +62,11 @@ namespace goods
             colSpe.Visible = false;
             this.dataGridView1.Columns.Add(colSpe);
 
-            DataGridViewColumn colMeter = new DataGridViewTextBoxColumn();
-            colMeter.DataPropertyName = "meter";
-            colMeter.Name = "meter";
-            colMeter.Visible = false;
-            this.dataGridView1.Columns.Add(colMeter);
+            DataGridViewColumn colAttrbute = new DataGridViewTextBoxColumn();
+            colAttrbute.DataPropertyName = "attribute";
+            colAttrbute.Name = "attribute";
+            colAttrbute.HeaderText = "属性";
+            this.dataGridView1.Columns.Add(colAttrbute);
 
             DataGridViewColumn colSupplier = new DataGridViewTextBoxColumn();
             colSupplier.DataPropertyName = "supplier";
@@ -151,12 +157,12 @@ namespace goods
             int fWidth = Convert.ToInt32(e.Graphics.MeasureString("测", f).Width);
             int maxWidth = (int)Math.Ceiling(Convert.ToDecimal(e.Graphics.MeasureString(getmax(_printBmps[count]), f).Width));
 
-            int pic_X = (e.PageBounds.Width - _printBmps[count].printBmp.Width - maxWidth) / 2;
+            int pic_X = (e.PageBounds.Width - _printBmps[count].printBmp.Width ) / 2;
             if (pic_X < 0) pic_X = 0;
             int pic_Y = (e.PageBounds.Height - _printBmps[count].printBmp.Height) / 2;
             if (pic_Y < 0) pic_Y = 0;
-
-            e.Graphics.DrawImage(_printBmps[count].printBmp, pic_X, 0);//new Rectangle((int)Math.Ceiling(Chinese_OneWidth), 0 _printBmps[count].printBmp.Width, _printBmps[count].printBmp.Height)
+            int text_X = (e.PageBounds.Width - maxWidth) / 2;
+            if (text_X < 0) text_X = 0;
 
             var pm = _printBmps[count];
             int line = 0;
@@ -164,17 +170,19 @@ namespace goods
             {
                 if (p.Name != "printBmp")
                 {
-                    var attr = p.GetValue(pm,null).ToString();
+                    var attr = p.GetValue(pm, null).ToString();
                     decimal pWidth = Convert.ToDecimal(e.Graphics.MeasureString(attr, f).Width);
-                    List<string> list = util.GetMultiLineString(attr, e.PageBounds.Width - pic_X - pm.printBmp.Width - fWidth, gItem, f);
+                    List<string> list = util.GetMultiLineString(attr, e.PageBounds.Width - text_X - fWidth, gItem, f);
                     int i;
                     for (i = 0; i < list.Count; i++)
                     {
-                        e.Graphics.DrawString(list[i], f, bru, pic_X + pm.printBmp.Width, fHeight * (line + i) + fHeight/2);
+                        e.Graphics.DrawString(list[i], f, bru, text_X, fHeight * (line + i) + fHeight / 2);
                     }
                     line += i;
                 }
             }
+
+            e.Graphics.DrawImage(_printBmps[count].printBmp, pic_X, fHeight * line + fHeight / 2);//new Rectangle((int)Math.Ceiling(Chinese_OneWidth), 0 _printBmps[count].printBmp.Width, _printBmps[count].printBmp.Height)
 
             //decimal ckWidth = Convert.ToDecimal(e.Graphics.MeasureString(ck, f).Width);
             //decimal cwWidth = Convert.ToDecimal(e.Graphics.MeasureString(cw, f).Width);
@@ -250,10 +258,11 @@ namespace goods
                 {
                     picModel pm = new picModel();
                     pm.printBmp = util.GenByZXingNet(this.dataGridView1.SelectedRows[i].Cells["num"].Value.ToString());
-                    pm.batch = "批次：" + this.dataGridView1.SelectedRows[i].Cells["num"].Value.ToString();
-                    pm.name = "物料：" + this.dataGridView1.SelectedRows[i].Cells["name"].Value.ToString();
-                    if(this.dataGridView1.SelectedRows[i].Cells["spe"].Value != DBNull.Value) pm.spe = "规格：" + this.dataGridView1.SelectedRows[i].Cells["spe"].Value.ToString();
-                    pm.meter = "单位：" + this.dataGridView1.SelectedRows[i].Cells["meter"].Value.ToString();
+                    pm.batch = "批次号：" + this.dataGridView1.SelectedRows[i].Cells["num"].Value.ToString();
+                    pm.num = "物料编码：" + this.dataGridView1.SelectedRows[i].Cells["mnum"].Value.ToString();
+                    pm.name = "物料名称：" + this.dataGridView1.SelectedRows[i].Cells["name"].Value.ToString();
+                    if(this.dataGridView1.SelectedRows[i].Cells["spe"].Value != DBNull.Value) pm.spe = "规格型号：" + this.dataGridView1.SelectedRows[i].Cells["spe"].Value.ToString();
+                    pm.attribute = "物料属性：" + this.dataGridView1.SelectedRows[i].Cells["attribute"].Value.ToString();
                     pm.supplier = "供应商：" + this.dataGridView1.SelectedRows[i].Cells["supplier"].Value.ToString();
                     _printBmps.Add(pm);
                     //(Bitmap)this.dataGridView1.SelectedRows[i].Cells["image"].Value
@@ -273,11 +282,12 @@ namespace goods
         private class picModel
         {
             public Bitmap printBmp { get; set; }
+            public string num { get; set; }
             public string name { get; set; }
             public string spe { get; set; }
-            public string batch { get; set; }
-            public string meter { get; set; }
             public string supplier { get; set; }
+            public string attribute { get; set; }
+            public string batch { get; set; }
         }
     }
 }

@@ -33,6 +33,7 @@ namespace goods
             if (textBox1.Text == "" || textBox2.Text == "")
             {
                 MessageBox.Show("字段必填！");
+                return;
             }
             MeteringModel m;
             if (olds != null && olds.Id > 0) m = new MeteringModel(olds.Id, textBox1.Text, textBox2.Text);

@@ -66,7 +66,7 @@
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.ReadOnly = true;
             this.dataGridView1.RowTemplate.Height = 23;
-            this.dataGridView1.Size = new System.Drawing.Size(1005, 402);
+            this.dataGridView1.Size = new System.Drawing.Size(1118, 436);
             this.dataGridView1.TabIndex = 0;
             // 
             // contextMenuStrip1
@@ -90,7 +90,7 @@
             this.toolStripButton2});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1029, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(1142, 25);
             this.toolStrip1.TabIndex = 1;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -208,17 +208,17 @@
             this.pagingCom1.BtnTextPrevious = "上页";
             this.pagingCom1.DisplayStyle = goods.pagingCom.DisplayStyleEnum.文字;
             this.pagingCom1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.pagingCom1.Location = new System.Drawing.Point(0, 508);
+            this.pagingCom1.Location = new System.Drawing.Point(0, 542);
             this.pagingCom1.Name = "pagingCom1";
             this.pagingCom1.RecordCount = 0;
-            this.pagingCom1.Size = new System.Drawing.Size(1029, 38);
+            this.pagingCom1.Size = new System.Drawing.Size(1142, 38);
             this.pagingCom1.TabIndex = 12;
             // 
             // OrderSearch
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1029, 546);
+            this.ClientSize = new System.Drawing.Size(1142, 580);
             this.Controls.Add(this.textBox3);
             this.Controls.Add(this.pagingCom1);
             this.Controls.Add(this.label4);

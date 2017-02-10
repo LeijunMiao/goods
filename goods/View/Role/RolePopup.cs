@@ -48,8 +48,13 @@ namespace goods.Role
 
         private void button2_Click(object sender, EventArgs e)
         {
+            if (textBox1.Text.Trim() == "")
+            {
+                MessageBox.Show("请输入角色名！");
+                return;
+            }
             int value = Convert.ToInt32(this.comboBox1.SelectedValue.ToString());
-            RoleModel rm = new RoleModel(textBox1.Text, value);
+            RoleModel rm = new RoleModel(textBox1.Text.Trim(), value);
             MessageModel msg = rctrl.add(rm);
             if (msg.Code == 0)
             {

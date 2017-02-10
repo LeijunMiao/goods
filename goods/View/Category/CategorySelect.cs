@@ -77,8 +77,6 @@ namespace goods
 
         private void button1_Click(object sender, EventArgs e)
         {
-            
-
             if (treeView1.SelectedNode != null)
             {
                 innerTag it = (innerTag) treeView1.SelectedNode.Tag;

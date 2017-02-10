@@ -45,6 +45,7 @@ namespace goods
             this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
             this.dataGridView1.AutoGenerateColumns = false;
             this.dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
+            this.dataGridView1.CellDoubleClick += DataGridView1_CellDoubleClick;
             DataGridViewColumn colNum = new DataGridViewTextBoxColumn();
             colNum.DataPropertyName = "num";//字段
             colNum.HeaderText = "编号";
@@ -57,6 +58,10 @@ namespace goods
             colName.Name = "name";
             dataGridView1.Columns.Add(colName);
 
+        }
+        private void DataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            edit();
         }
         private void BindDataWithPage(int Index)
         {
@@ -81,20 +86,7 @@ namespace goods
             if (dataGridView1.SelectedRows.Count == 0) MessageBox.Show("请选中一行");
             else
             {
-                string str = Interaction.InputBox("请输入名称", "输入名称", dataGridView1.SelectedRows[0].Cells["name"].Value.ToString());
-                if (str.Count() != 0)
-                {
-                    CustomerModel cm = new CustomerModel(dataGridView1.SelectedRows[0].Cells["num"].Value.ToString(), str);
-                    MessageModel msg = ctrl.set(cm);
-                    if (msg.Code == 0)
-                    {
-                        dataGridView1.SelectedRows[0].Cells["name"].Value = str;
-                    }
-                    else
-                    {
-                        MessageBox.Show(msg.Msg);
-                    }
-                }
+                edit();
             }
         }
 
@@ -109,6 +101,23 @@ namespace goods
                     DataRow[] dr = dt.Select("num='" + dataGridView1.SelectedRows[0].Cells["num"].Value.ToString() + "'");
                     dt.Rows.Remove(dr[0]);
                     this.dataGridView1.DataSource = dt;
+                }
+                else
+                {
+                    MessageBox.Show(msg.Msg);
+                }
+            }
+        }
+        private void edit()
+        {
+            string str = Interaction.InputBox("请输入名称", "输入名称", dataGridView1.SelectedRows[0].Cells["name"].Value.ToString());
+            if (str.Count() != 0)
+            {
+                CustomerModel cm = new CustomerModel(dataGridView1.SelectedRows[0].Cells["num"].Value.ToString(), str);
+                MessageModel msg = ctrl.set(cm);
+                if (msg.Code == 0)
+                {
+                    dataGridView1.SelectedRows[0].Cells["name"].Value = str;
                 }
                 else
                 {

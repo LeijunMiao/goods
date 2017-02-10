@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using goods.Model;
 using goods.Controller;
 using Observer;
 namespace goods
@@ -14,12 +15,18 @@ namespace goods
     public partial class OrderMaterielPopup : Form
     {
         materielCtrl mctrl = new materielCtrl();
-        //CreateOrderView parentForm;
-        List<int> parentIds;
+        //List<int> parentIds;
+        MaterielLookUpArgs args;
+        public int category;
         List<int> list_selected = new List<int>();
-        public OrderMaterielPopup(List<int> ids)
+
+        public delegate void MaterielEventHandler(object sender, MaterielEventArgs e);
+        public event MaterielEventHandler AddMateriel;
+
+        public OrderMaterielPopup(MaterielLookUpArgs args)
         {
-            parentIds = ids;
+            this.args = args;
+            //parentIds = args.ids;
             InitializeComponent();
             loadTabel();
             loadData(1);
@@ -49,34 +56,29 @@ namespace goods
             nameColumn.DataPropertyName = "name";
             nameColumn.HeaderText = "名称";
             dataGridView1.Columns.Add(nameColumn);
-            
+
+            DataGridViewTextBoxColumn speColumn = new DataGridViewTextBoxColumn();
+            speColumn.DataPropertyName = "specifications";
+            speColumn.HeaderText = "规格参数";
+            dataGridView1.Columns.Add(speColumn);
+            if (!args.multi)
+            {
+                this.dataGridView1.MultiSelect = args.multi;
+                newColumn.Visible = false;
+            }
         }
         private void loadData(int index)
         {
             pagingCom1.PageIndex = index;
             pagingCom1.PageSize = 10;
-            var dtData = mctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, parentIds);
-            //var dt = new DataTable();
-            //DataColumn dcId = new DataColumn("ID");
-            //DataColumn dcNO = new DataColumn("编号");
-            //DataColumn dcUName = new DataColumn("名称");
-            //DataColumn[] list_dc = { dcId, dcNO, dcUName };
-            //dt.Columns.AddRange(list_dc);
-            //for (int i = 0; i < dtData.Rows.Count; i++)
-            //{
-            //    DataRow dr = dt.NewRow();
-            //    dr[0] = dtData.Rows[i]["id"].ToString();
-            //    dr[1] = dtData.Rows[i]["num"].ToString();
-            //    dr[2] = dtData.Rows[i]["name"].ToString();
-            //    dt.Rows.Add(dr);
-            //}
+            var dtData = mctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, category, args);
             dataGridView1.DataSource = dtData;
             for (int i = 0; i < dataGridView1.RowCount; i++)
             {
                 if(list_selected.Contains(Convert.ToInt32(dataGridView1.Rows[i].Cells["id"].Value)))
                     dataGridView1.Rows[i].Cells["ck"].Value = true;
             }
-            pagingCom1.RecordCount = mctrl.getCount(textBox1.Text, parentIds);
+            pagingCom1.RecordCount = mctrl.getCount(textBox1.Text, args);
             pagingCom1.reSet();
 
         }
@@ -96,8 +98,16 @@ namespace goods
             {
                 //List<int> ids = new List<int> { Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value) };
                 //parentForm.renderMateriel(ids);
-                list_selected.Add(Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value));
-                MidModule.SendIds(this, list_selected);//发送参数值
+                if (!args.multi)
+                {
+                    AddMateriel(this, new MaterielEventArgs(new List<int> { Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value)}));
+                }
+                else
+                {
+                    list_selected.Add(Convert.ToInt32(dataGridView1.Rows[e.RowIndex].Cells["id"].Value));
+                    MidModule.SendIds(this, list_selected);//发送参数值
+                    if (AddMateriel != null) AddMateriel(this, new MaterielEventArgs(list_selected));
+                }
                 this.Close();
             }
 
@@ -140,6 +150,7 @@ namespace goods
             {
                 //parentForm.renderMateriel(ids);
                 MidModule.SendIds(this, list_selected);//发送参数值
+                if (AddMateriel != null) AddMateriel(this, new MaterielEventArgs(list_selected));
                 this.Close();
             }
         }
@@ -152,6 +163,42 @@ namespace goods
             loadData(pagingCom1.PageIndex);
         }
 
+        private void button5_Click(object sender, EventArgs e)
+        {
+            CategorySelect view = new CategorySelect();
+            view.CategorySet += View_CategorySet;
+            view.Show();
+        }
+        private void View_CategorySet(object sender, CategoryEventArgs e)
+        {
+            this.textBox5.Text = e.name;
+            this.category = e.id;
+        }
 
+        private void button6_Click(object sender, EventArgs e)
+        {
+            this.textBox1.Text = "";
+            this.textBox5.Text = "";
+            this.category = -1;
+        }
+    }
+
+    public class MaterielLookUpArgs
+    {
+        public bool multi { get; set; }
+        public List<int> ids { get; set; }
+        public string type { get; set; }
+        public bool? bom { get; set; }
+        public MaterielLookUpArgs()
+        {
+            this.multi = true;
+            this.ids = new List<int>();
+
+        }
+        public MaterielLookUpArgs(bool multi, List<int> ids)
+        {
+            this.multi = multi;
+            this.ids = ids;
+        }
     }
 }

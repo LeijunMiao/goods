@@ -23,6 +23,11 @@ namespace goods
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (textBox1.Text.Trim() == "" || textBox2.Text.Trim() == "")
+            {
+                MessageBox.Show("编码名称不得为空！");
+                return;
+            }
             CustomerModel model = new CustomerModel(textBox1.Text, textBox2.Text);
             MessageModel msg = ctrl.add(model);
             if (msg.Code == 0)

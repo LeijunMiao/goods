@@ -14,17 +14,23 @@ namespace goods
     {
         solidbackingCtrl ctrl = new solidbackingCtrl();
         int mid = -1;
+        int line = -1;
         // 定义下拉列表框
         private ComboBox cmb_Temp = new ComboBox();
         Dictionary<int, DataTable> map = new Dictionary<int, DataTable>();
         Dictionary<int, int> map_attr_sb = new Dictionary<int, int>();
         Dictionary<int, attrClass> mapAttr;
-        CreateOrderView parentForm;
-        public OrderSolidBacking(CreateOrderView form,int id, string name, Dictionary<int, attrClass> map)
+        //CreateOrderView parentForm;
+
+        public delegate void SolidBackingEventHandler(object sender, SolidBackingEventArgs e);
+        public event SolidBackingEventHandler SolidBackingSet;
+
+        public OrderSolidBacking(int id,int line, string name, Dictionary<int, attrClass> map)
         {
             InitializeComponent();
-            parentForm = form;
+            //parentForm = form;
             mid = id;
+            this.line = line;
             this.label1.Text = name;
             mapAttr = map;
             initPage();
@@ -108,7 +114,7 @@ namespace goods
             dataGridView1.CurrentCell.Value = name;
             dataGridView1.CurrentCell.Tag = id;
 
-            parentForm.setSolidBacking(mid, map_attr_sb[id],new attrClass(map_attr_sb[id],id, name));
+            SolidBackingSet(this, new SolidBackingEventArgs(line,mid, map_attr_sb[id],new attrClass(map_attr_sb[id],id, name)));
         }
 
         private void loadData()
@@ -147,8 +153,8 @@ namespace goods
             dataGridView1.DataSource = dtSB;
         }
         /// <summary>
-        /// 绑定性别下拉列表框
-                /// </summary>
+        /// 绑定下拉列表框
+        /// </summary>
         private void BindAttrValue(int id)
         {
             cmb_Temp.DataSource = map[id];

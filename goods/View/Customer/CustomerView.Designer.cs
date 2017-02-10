@@ -46,6 +46,9 @@
             // 
             this.dataGridView1.AllowUserToAddRows = false;
             this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.dataGridView1.AutoSizeColumnsMode = System.Windows.Forms.DataGridViewAutoSizeColumnsMode.Fill;
             this.dataGridView1.BackgroundColor = System.Drawing.SystemColors.ControlLightLight;
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
@@ -87,10 +90,11 @@
             this.pagingCom1.BtnTextNext = "下页";
             this.pagingCom1.BtnTextPrevious = "上页";
             this.pagingCom1.DisplayStyle = goods.pagingCom.DisplayStyleEnum.文字;
-            this.pagingCom1.Location = new System.Drawing.Point(12, 439);
+            this.pagingCom1.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.pagingCom1.Location = new System.Drawing.Point(0, 440);
             this.pagingCom1.Name = "pagingCom1";
             this.pagingCom1.RecordCount = 0;
-            this.pagingCom1.Size = new System.Drawing.Size(860, 49);
+            this.pagingCom1.Size = new System.Drawing.Size(823, 49);
             this.pagingCom1.TabIndex = 1;
             // 
             // toolStrip1

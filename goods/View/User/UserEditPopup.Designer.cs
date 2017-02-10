@@ -61,7 +61,7 @@
             this.button1.Location = new System.Drawing.Point(35, 200);
             this.button1.Name = "button1";
             this.button1.Size = new System.Drawing.Size(75, 23);
-            this.button1.TabIndex = 2;
+            this.button1.TabIndex = 6;
             this.button1.Text = "保存";
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
@@ -72,7 +72,7 @@
             this.label2.Location = new System.Drawing.Point(45, 100);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(41, 12);
-            this.label2.TabIndex = 4;
+            this.label2.TabIndex = 2;
             this.label2.Text = "新密码";
             // 
             // textBox2
@@ -81,14 +81,14 @@
             this.textBox2.Name = "textBox2";
             this.textBox2.PasswordChar = '*';
             this.textBox2.Size = new System.Drawing.Size(141, 21);
-            this.textBox2.TabIndex = 5;
+            this.textBox2.TabIndex = 3;
             // 
             // button2
             // 
             this.button2.Location = new System.Drawing.Point(162, 200);
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 23);
-            this.button2.TabIndex = 6;
+            this.button2.TabIndex = 7;
             this.button2.Text = "取消";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
@@ -99,7 +99,7 @@
             this.label4.Location = new System.Drawing.Point(33, 146);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(53, 12);
-            this.label4.TabIndex = 8;
+            this.label4.TabIndex = 4;
             this.label4.Text = "重复密码";
             // 
             // textBox3
@@ -108,7 +108,7 @@
             this.textBox3.Name = "textBox3";
             this.textBox3.PasswordChar = '*';
             this.textBox3.Size = new System.Drawing.Size(141, 21);
-            this.textBox3.TabIndex = 9;
+            this.textBox3.TabIndex = 5;
             // 
             // UserEditPopup
             // 
@@ -124,6 +124,7 @@
             this.Controls.Add(this.textBox1);
             this.Controls.Add(this.label1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "UserEditPopup";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "修改密码";

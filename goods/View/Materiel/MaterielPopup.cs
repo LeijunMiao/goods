@@ -34,6 +34,9 @@ namespace goods
 
         private void loadData()
         {
+            numberbox11.Enabled = false;
+            numberbox11.style(181, 21);
+
             var depdt = mctrl.get();
 
             DataRow dr = depdt.NewRow();
@@ -75,6 +78,12 @@ namespace goods
                         this.category = Convert.ToInt32(dt.Rows[0]["category"]);
 
                     }
+
+                    if (dt.Rows[0]["type"].ToString() == "外购件")
+                    {
+                        numberbox11.TextNumber = dt.Rows[0]["normprice"].ToString();
+                        numberbox11.Enabled = true;
+                    }
                 }
                 else
                 {
@@ -99,8 +108,24 @@ namespace goods
                 setConversion(false);
                 this.checkBox1.Enabled = false;
             }
-
+            comboBox3.SelectedValueChanged += ComboBox3_SelectedValueChanged;
+            
+            
         }
+
+        private void ComboBox3_SelectedValueChanged(object sender, EventArgs e)
+        {
+            if (comboBox3.SelectedItem.ToString() == "外购件")
+            {
+                numberbox11.Enabled = true;
+            }
+            else
+            {
+                numberbox11.TextNumber = "";
+                numberbox11.Enabled = false;
+            }
+        }
+
         private void setConversion(bool showConversion)
         {
             this.label13.Visible = showConversion;
@@ -129,7 +154,12 @@ namespace goods
             {
                 mm.Catgegory = this.category;
             }
-            if(type != "") mm.Type = type;
+            if (type == "外购件")
+            {
+                mm.Type = type;
+                mm.NormPrice = Convert.ToDouble(numberbox11.TextNumber);
+            }
+            else mm.Type = "自制件";
             if (id>0)
             {
                 mm.Id = id;

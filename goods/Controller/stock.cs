@@ -20,9 +20,19 @@ namespace goods.Controller
         }
         #endregion
         #region 按条件获取批次库存
-        public DataTable getFilterListLimit(int pageIndex, int pageSize, string materirl,string warehouse,string position, List<int> ids)
+        public DataTable[] getFilterListLimit(int pageIndex, int pageSize, string materirl,string warehouse,string position, string supplier, int category, List<int> ids)
         {
-            string sql = " SELECT s.id,s.avaquantity,s.batchnum,bm.num batchTNum,sup.name supplier,m.name,w.name wname,p.name pname, s.combination FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id  left join supplier sup on s.supplier = sup.id ";
+            DataTable[] dts = new DataTable[2];
+
+            string areaids = "";
+            if (category > 0)
+            {
+                string sqlarea = "select queryChildrenAreaInfo('" + category + "');";
+                DataTable dtarea = h.ExecuteQuery(sqlarea, CommandType.Text);
+                areaids = dtarea.Rows[0][0].ToString();
+            }
+
+            string sql = " SELECT s.id,s.avaquantity,s.batchnum,bm.num batchTNum,sup.name supplier,m.num,m.name,w.name wname,p.name pname, s.combination,c.name category FROM materiel m left join category c on m.category = c.id, warehouse w,stock s left join position p on s.position = p.id left join batchmateriel bm on s.batchnum = bm.id  left join supplier sup on s.supplier = sup.id ";
             string select = " Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0 ";
             string filter = "";
             if (materirl != "")
@@ -37,7 +47,14 @@ namespace goods.Controller
             {
                 select += " AND (p.num like '%" + position + "%' or p.name like '%" + position + "%')";
             }
-
+            if (supplier != "")
+            {
+                select += " AND (sup.name like '%" + supplier + "%')";
+            }
+            if (areaids != "")
+            {
+                select += " AND m.category in (" + areaids + ") ";
+            }
             sql += select;
             if (ids.Count > 0)
             {
@@ -53,8 +70,46 @@ namespace goods.Controller
             sql += " order by s.id desc ";
             if (pageIndex < 1) pageIndex = 1;
             sql += " LIMIT " + (pageIndex - 1) * pageSize + "," + pageSize;
-            DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
-            return dt;
+            dts[0] = h.ExecuteQuery(sql, CommandType.Text);
+
+            string sqlCount = " SELECT Count(s.id) FROM materiel m, warehouse w,stock s left join position p on s.position = p.id left join supplier sup on s.supplier = sup.id ";
+            string selectCount = " Where m.id = s.materiel AND w.id = s.warehouse AND s.avaquantity > 0 ";
+            string filterCount = "";
+            if (materirl != "")
+            {
+                selectCount += " AND (m.num like '%" + materirl + "%' or m.name like '%" + materirl + "%')";
+            }
+            if (warehouse != "")
+            {
+                selectCount += " AND (w.num like '%" + warehouse + "%' or w.name like '%" + warehouse + "%')";
+            }
+            if (position != "")
+            {
+                selectCount += " AND (p.num like '%" + position + "%' or p.name like '%" + position + "%')";
+            }
+            if (supplier != "")
+            {
+                selectCount += " AND (sup.name like '%" + supplier + "%')";
+            }
+            if (areaids != "")
+            {
+                selectCount += " AND m.category in (" + areaids + ") ";
+            }
+            sqlCount += selectCount;
+            if (ids.Count > 0)
+            {
+                filterCount += " AND s.id not in (";
+                for (int i = 0; i < ids.Count; i++)
+                {
+                    if (i == 0) filterCount += ids[i];
+                    else filterCount += "," + ids[i];
+                }
+                filterCount += ")";
+                sqlCount += filterCount;
+            }
+            dts[1] = h.ExecuteQuery(sqlCount, CommandType.Text);
+
+            return dts;
         }
         #endregion
         #region 按条件获取盘点单

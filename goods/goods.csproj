@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
     <IsWebBootstrapper>false</IsWebBootstrapper>
+    <TargetFrameworkProfile />
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -27,7 +28,6 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -95,6 +95,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controller\bom.cs" />
     <Compile Include="Controller\category.cs" />
     <Compile Include="Controller\customer.cs" />
     <Compile Include="Controller\department.cs" />
@@ -106,25 +107,27 @@
     <Compile Include="Controller\policy.cs" />
     <Compile Include="Controller\position.cs" />
     <Compile Include="Controller\role.cs" />
+    <Compile Include="Controller\salesorder.cs" />
     <Compile Include="Controller\solidbacking.cs" />
     <Compile Include="Controller\stock.cs" />
     <Compile Include="Controller\supplier.cs" />
     <Compile Include="Controller\user.cs" />
     <Compile Include="Controller\warehouse.cs" />
     <Compile Include="Model\AttrValue.cs" />
+    <Compile Include="Model\BOM.cs" />
     <Compile Include="Model\CallSlip.cs" />
     <Compile Include="Model\Category.cs" />
     <Compile Include="Model\Customer.cs" />
     <Compile Include="Model\GoDownEntry.cs" />
     <Compile Include="Model\Image.cs" />
     <Compile Include="Model\Information.cs" />
-    <Compile Include="Model\List.cs" />
     <Compile Include="Model\Materiel.cs" />
     <Compile Include="Model\MaterielSolidBacking.cs" />
     <Compile Include="Model\Metering.cs" />
     <Compile Include="Model\Order.cs" />
     <Compile Include="Model\Policy.cs" />
     <Compile Include="Model\Position.cs" />
+    <Compile Include="Model\SalesOrder.cs" />
     <Compile Include="Model\SolidBacking.cs" />
     <Compile Include="Model\Stock.cs" />
     <Compile Include="Model\Supplier.cs" />
@@ -146,8 +149,38 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Util\MD5.cs" />
+    <Compile Include="Util\numberbox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Util\numberbox.Designer.cs">
+      <DependentUpon>numberbox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Util\print.cs" />
     <Compile Include="Util\util.cs" />
+    <Compile Include="View\BOM\BOMEdit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\BOM\BOMEdit.Designer.cs">
+      <DependentUpon>BOMEdit.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\BOM\BOMList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\BOM\BOMList.Designer.cs">
+      <DependentUpon>BOMList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\BOM\BOMView..cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\BOM\BOMView..Designer.cs">
+      <DependentUpon>BOMView..cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\BOM\CreateBOM.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\BOM\CreateBOM.Designer.cs">
+      <DependentUpon>CreateBOM.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Category\CategoryList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -165,6 +198,12 @@
     </Compile>
     <Compile Include="View\Customer\CustomerPopup.Designer.cs">
       <DependentUpon>CustomerPopup.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Customer\CustomerSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Customer\CustomerSelect.Designer.cs">
+      <DependentUpon>CustomerSelect.cs</DependentUpon>
     </Compile>
     <Compile Include="View\Customer\CustomerView.cs">
       <SubType>Form</SubType>
@@ -317,6 +356,12 @@
     <Compile Include="View\Order\QRCodeList.Designer.cs">
       <DependentUpon>QRCodeList.cs</DependentUpon>
     </Compile>
+    <Compile Include="View\Production\ProductionNew.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Production\ProductionNew.Designer.cs">
+      <DependentUpon>ProductionNew.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\Role\RolePopup.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -330,6 +375,30 @@
       <DependentUpon>RoleView.cs</DependentUpon>
     </Compile>
     <Compile Include="Service\ServerInfo.cs" />
+    <Compile Include="View\Sale\CreateSalesOrder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Sale\CreateSalesOrder.Designer.cs">
+      <DependentUpon>CreateSalesOrder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Sale\SalesMaterielSelect.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Sale\SalesMaterielSelect.Designer.cs">
+      <DependentUpon>SalesMaterielSelect.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Sale\SalesOrderList.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Sale\SalesOrderList.Designer.cs">
+      <DependentUpon>SalesOrderList.cs</DependentUpon>
+    </Compile>
+    <Compile Include="View\Sale\SalesOrderView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="View\Sale\SalesOrderView.Designer.cs">
+      <DependentUpon>SalesOrderView.cs</DependentUpon>
+    </Compile>
     <Compile Include="View\SolidBacking\SolidBackingList.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -498,8 +567,24 @@
     <EmbeddedResource Include="Service\Setting.resx">
       <DependentUpon>Setting.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Util\numberbox.resx">
+      <DependentUpon>numberbox.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Util\pagingCom.resx">
       <DependentUpon>pagingCom.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\BOM\BOMEdit.resx">
+      <DependentUpon>BOMEdit.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\BOM\BOMList.resx">
+      <DependentUpon>BOMList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\BOM\BOMView..resx">
+      <DependentUpon>BOMView..cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\BOM\CreateBOM.resx">
+      <DependentUpon>CreateBOM.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Category\CategoryList.resx">
       <DependentUpon>CategoryList.cs</DependentUpon>
@@ -509,6 +594,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Customer\CustomerPopup.resx">
       <DependentUpon>CustomerPopup.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Customer\CustomerSelect.resx">
+      <DependentUpon>CustomerSelect.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Customer\CustomerView.resx">
       <DependentUpon>CustomerView.cs</DependentUpon>
@@ -540,6 +628,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="View\Materiel\MaterileImages.resx">
       <DependentUpon>MaterileImages.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Materiel\SafetyStockList.resx">
       <DependentUpon>SafetyStockList.cs</DependentUpon>
@@ -590,11 +679,26 @@
       <DependentUpon>QRCodeList.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
+    <EmbeddedResource Include="View\Production\ProductionNew.resx">
+      <DependentUpon>ProductionNew.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\Role\RolePopup.resx">
       <DependentUpon>RolePopup.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\Role\RoleView.resx">
       <DependentUpon>RoleView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Sale\CreateSalesOrder.resx">
+      <DependentUpon>CreateSalesOrder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Sale\SalesMaterielSelect.resx">
+      <DependentUpon>SalesMaterielSelect.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Sale\SalesOrderList.resx">
+      <DependentUpon>SalesOrderList.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="View\Sale\SalesOrderView.resx">
+      <DependentUpon>SalesOrderView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="View\SolidBacking\SolidBackingList.resx">
       <DependentUpon>SolidBackingList.cs</DependentUpon>

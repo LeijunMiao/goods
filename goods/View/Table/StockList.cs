@@ -8,18 +8,29 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using goods.Controller;
-
+using Observer;
+using goods.Model;
 namespace goods
 {
     public partial class StockList : Form
     {
         stockCtrl ctrl = new stockCtrl();
         solidbackingCtrl sbCtrl = new solidbackingCtrl();
+        public int category;
         public StockList()
         {
             InitializeComponent();
+            MidModule.EventSend += new MsgDlg(MidModule_EventSend);
             loadTabel();
             loadData(1);
+        }
+        private void MidModule_EventSend(object sender, object msg)
+        {
+            if (sender != null)
+            {
+                SupplierModel sm = (SupplierModel)msg;
+                this.textBox4.Text = sm.Name;
+            }
         }
         private void loadTabel()
         {
@@ -42,6 +53,11 @@ namespace goods
             idColumn.Visible = false;
             idColumn.Name = "id";
             dataGridView1.Columns.Add(idColumn);
+
+            DataGridViewTextBoxColumn mnumColumn = new DataGridViewTextBoxColumn();
+            mnumColumn.DataPropertyName = "num";
+            mnumColumn.HeaderText = "物料编码";
+            dataGridView1.Columns.Add(mnumColumn);
 
             DataGridViewTextBoxColumn nameColumn = new DataGridViewTextBoxColumn();
             nameColumn.DataPropertyName = "name";
@@ -75,14 +91,20 @@ namespace goods
             avColumn.Name = "attrvalue";
             dataGridView1.Columns.Add(avColumn);
 
+            DataGridViewTextBoxColumn ctgyColumn = new DataGridViewTextBoxColumn();
+            ctgyColumn.DataPropertyName = "category";
+            ctgyColumn.HeaderText = "分类";
+            ctgyColumn.Name = "category";
+            dataGridView1.Columns.Add(ctgyColumn);
 
             this.textBox1.KeyDown += button1_KeyDown;
             this.textBox2.KeyDown += button1_KeyDown;
             this.textBox3.KeyDown += button1_KeyDown;
+            this.textBox4.KeyDown += button1_KeyDown;
 
             dataGridView1.SelectionMode = DataGridViewSelectionMode.FullRowSelect;
 
-            this.pagingCom1.PageIndexChanged += new goods.pagingCom.EventHandler(this.pageIndexChanged);
+            this.pagingCom1.PageIndexChanged += new pagingCom.EventHandler(this.pageIndexChanged);
 
         } 
         private void DataGridView1_CellMouseEnter(object sender, DataGridViewCellEventArgs e)
@@ -102,8 +124,9 @@ namespace goods
         private void loadData(int index)
         {
             pagingCom1.PageIndex = index;
-            pagingCom1.PageSize = 10;
-            var dtData = ctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, textBox2.Text, textBox3.Text, new List<int>());
+            pagingCom1.PageSize = 20;
+            var dts = ctrl.getFilterListLimit(pagingCom1.PageIndex, pagingCom1.PageSize, textBox1.Text, textBox2.Text, textBox3.Text, this.textBox4.Text, category, new List<int>());
+            var dtData = dts[0];
             dtData.Columns.Add("attrvalue");
             List<int> ids = new List<int>();
             for (int i = 0; i < dtData.Rows.Count; i++)
@@ -125,7 +148,8 @@ namespace goods
                     }
                 }
             }
-            pagingCom1.RecordCount = ctrl.getCount(textBox1.Text, textBox2.Text, textBox3.Text, new List<int>());
+            if (dts[1].Rows[0][0] != DBNull.Value) pagingCom1.RecordCount = Convert.ToInt32(dts[1].Rows[0][0]);
+            else pagingCom1.RecordCount = 0;
             pagingCom1.reSet();
 
         }
@@ -133,6 +157,34 @@ namespace goods
         private void button1_Click(object sender, EventArgs e)
         {
             loadData(1);
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            SupplierSelect ss = new SupplierSelect();
+            ss.Show();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            CategorySelect view = new CategorySelect();
+            view.CategorySet += View_CategorySet;
+            view.Show();
+        }
+        private void View_CategorySet(object sender, CategoryEventArgs e)
+        {
+            this.textBox5.Text = e.name;
+            this.category = e.id;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            this.textBox1.Text = "";
+            this.textBox2.Text = "";
+            this.textBox3.Text = "";
+            this.textBox4.Text = "";
+            this.textBox5.Text = "";
+            this.category = -1;
         }
     }
 }

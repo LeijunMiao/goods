@@ -8,7 +8,6 @@ using System.Drawing.Printing;
 using ZXing;
 using System.IO;
 using System.Net;
-
 namespace goods
 {
     class utilCls

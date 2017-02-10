@@ -30,15 +30,32 @@ namespace goods
         private void loadTable()
         {
             this.dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
-            System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
-            DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
+            this.dataGridView1.RowPostPaint += DataGridView1_RowPostPaint;
+
+            DataGridViewCellStyle dataGridViewCellStyle3 = new DataGridViewCellStyle();
+            dataGridViewCellStyle3.Format = "N2";
+            dataGridViewCellStyle3.NullValue = null;
+
+            DataGridViewCellStyle dataGridViewCellStyle4 = new DataGridViewCellStyle();
+            DataGridViewCellStyle dataGridViewCellStyle5 = new DataGridViewCellStyle();
+            dataGridViewCellStyle5.Format = "N4";
+            dataGridViewCellStyle5.NullValue = null;
+
             this.dataGridView1.AutoGenerateColumns = false;
+            this.dataGridView1.DataError += DataGridView1_DataError;
 
             DataGridViewColumn colId = new DataGridViewTextBoxColumn();
             colId.DataPropertyName = "id";
             colId.Visible = false;
             colId.Name = "id";
             dataGridView1.Columns.Add(colId);
+
+            DataGridViewColumn colNo = new DataGridViewTextBoxColumn();
+            colNo.DataPropertyName = "no";
+            colNo.Name = "no";
+            colNo.HeaderText = "序号";
+            colNo.ReadOnly = true;
+            dataGridView1.Columns.Add(colNo);
 
             DataGridViewColumn colNum = new DataGridViewTextBoxColumn();
             colNum.DataPropertyName = "MNum";
@@ -62,12 +79,9 @@ namespace goods
             dataGridView1.Columns.Add(colSep);
 
             DataGridViewColumn price = new DataGridViewTextBoxColumn();
-            dataGridViewCellStyle3.Format = "N2";
-            dataGridViewCellStyle3.NullValue = null;
-            price.DefaultCellStyle = dataGridViewCellStyle3;
+            price.DefaultCellStyle = dataGridViewCellStyle5;
             price.DataPropertyName = "price";
             price.HeaderText = "单价";
-            price.ReadOnly = true;
             price.Name = "price";
 
             DataGridViewColumn quantity = new DataGridViewTextBoxColumn();
@@ -90,11 +104,10 @@ namespace goods
             subquantity.ReadOnly = true;
 
             DataGridViewColumn amount = new DataGridViewTextBoxColumn();
-            amount.DefaultCellStyle = dataGridViewCellStyle3;
+            amount.DefaultCellStyle = dataGridViewCellStyle5;
             amount.HeaderText = "金额";
             amount.Name = "amount";
             amount.DataPropertyName = "amount";
-            amount.ReadOnly = true;
 
             DataGridViewColumn metering = new DataGridViewTextBoxColumn();
             metering.HeaderText = "单位";
@@ -108,6 +121,22 @@ namespace goods
             submetering.DataPropertyName = "subMeterName";
             submetering.ReadOnly = true;
 
+            DataGridViewColumn dcIsBatch = new DataGridViewTextBoxColumn();
+            dcIsBatch.Name = "isBatch";
+            dcIsBatch.DataPropertyName = "isBatch";
+            dcIsBatch.Visible = false;
+
+            DataGridViewColumn dcCombination = new DataGridViewTextBoxColumn();
+            dcCombination.Name = "combination";
+            dcCombination.DataPropertyName = "combination";
+            dcCombination.Visible = false;
+
+            DataGridViewColumn dcBatch = new DataGridViewTextBoxColumn();
+            dcBatch.Name = "batch";
+            dcBatch.DataPropertyName = "batch";
+            dcBatch.Visible = false;
+
+
             this.dataGridView1.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
             metering,
             submetering,
@@ -115,8 +144,25 @@ namespace goods
             conversion,
             subquantity,
             price,
-            amount});
+            amount,
+            dcIsBatch,
+            dcCombination,
+            dcBatch});
         }
+
+        private void DataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                row.Cells["no"].Value = row.Index + 1;
+            }
+        }
+        private void DataGridView1_DataError(object sender, DataGridViewDataErrorEventArgs e)
+        {
+            MessageBox.Show("数据格式错误！");
+            e.Cancel = false;
+        }
+
         private void initDate(string num)
         {
             dt = ctrl.getbyNum(num);
@@ -174,15 +220,18 @@ namespace goods
             for (int i = this.dataGridView1.RowCount; i > 0; i--)
             {
                 ListModel lm = new ListModel();
-                lm.conversion = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["conversion"].Value), 2);
+                if(this.dataGridView1.Rows[i - 1].Cells["conversion"].Value != DBNull.Value) lm.conversion = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["conversion"].Value), 2);
                 lm.id = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["id"].Value);
-                lm.quantity = Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["quantity"].Value);
-                if (lm.quantity == 0 )
+                if(this.dataGridView1.Rows[i - 1].Cells["quantity"].Value == DBNull.Value || this.dataGridView1.Rows[i - 1].Cells["price"].Value == DBNull.Value)
                 {
-                    MessageBox.Show("物料缺失数量！");
+                    MessageBox.Show("物料缺失数量,价格！");
                     return;
                 }
-                else if (lm.id == 0)
+                lm.quantity = Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["quantity"].Value);
+                lm.price = Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["price"].Value);
+                lm.isBatch = Convert.ToBoolean(this.dataGridView1.Rows[i - 1].Cells["isBatch"].Value);
+                if(this.dataGridView1.Rows[i - 1].Cells["combination"].Value != DBNull.Value) lm.combination = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["combination"].Value); 
+                if (lm.id == 0)
                 {
                     MessageBox.Show("错误，请重新加载窗口！");
                     return;
@@ -213,6 +262,8 @@ namespace goods
                     lm.materiel = Convert.ToInt32(dt.Rows[i - 1]["materiel"]);
                     lm.quantity = Convert.ToDouble(dt.Rows[i - 1]["quantity"]);
                     lm.isBatch = Convert.ToBoolean(dt.Rows[i - 1]["isBatch"]);
+                    lm.batch = Convert.ToInt32(dt.Rows[i - 1]["batch"]);
+                    if (dt.Rows[i - 1]["combination"] != DBNull.Value) lm.combination = Convert.ToInt32(dt.Rows[i - 1]["combination"]);
                     listM.Add(lm);
                 }
 
@@ -280,12 +331,37 @@ namespace goods
         {
             if(this.dataGridView1.Columns[e.ColumnIndex].Name == "quantity")
             {
-                this.dataGridView1.Rows[e.RowIndex].Cells["subquantity"].Value
-                    = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value) *
-                    Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["conversion"].Value);
-                this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value
-                    = Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value) *
-                    Convert.ToDouble(this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value);
+                var quantity = this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value;
+                if(quantity != DBNull.Value)
+                {
+                    var conversion = this.dataGridView1.Rows[e.RowIndex].Cells["conversion"].Value;
+                    if (conversion != DBNull.Value)
+                        this.dataGridView1.Rows[e.RowIndex].Cells["subquantity"].Value
+                            = Convert.ToDouble(conversion) * Convert.ToDouble(quantity);
+                    var price = this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value;
+                    if(price  != DBNull.Value)
+                        this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value = Convert.ToDouble(price) *Convert.ToDouble(quantity);
+                }
+            }
+            if (this.dataGridView1.Columns[e.ColumnIndex].Name == "price")
+            {
+                var price = this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value;
+                if (price != DBNull.Value)
+                {
+                    var quantity = this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value;
+                    if (quantity != DBNull.Value)
+                        this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value = Convert.ToDouble(price) * Convert.ToDouble(quantity);
+                }
+            }
+            if (this.dataGridView1.Columns[e.ColumnIndex].Name == "amount")
+            {
+                var amount = this.dataGridView1.Rows[e.RowIndex].Cells["amount"].Value;
+                if (amount != DBNull.Value)
+                {
+                    var quantity = this.dataGridView1.Rows[e.RowIndex].Cells["quantity"].Value;
+                    if (quantity != DBNull.Value)
+                        this.dataGridView1.Rows[e.RowIndex].Cells["price"].Value = Convert.ToDouble(amount) / Convert.ToDouble(quantity);
+                }
             }
             //switch (this.dataGridView1.Columns[e.ColumnIndex].Name)
             //{

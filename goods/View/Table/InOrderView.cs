@@ -32,12 +32,20 @@ namespace goods
             System.Windows.Forms.DataGridViewCellStyle dataGridViewCellStyle3 = new System.Windows.Forms.DataGridViewCellStyle();
             DataGridViewCellStyle dataGridViewCellStyle4 = new System.Windows.Forms.DataGridViewCellStyle();
             this.dataGridView1.AutoGenerateColumns = false;
+            this.dataGridView1.RowPostPaint += DataGridView1_RowPostPaint;
 
             DataGridViewColumn colId = new DataGridViewTextBoxColumn();
             colId.DataPropertyName = "id";
             colId.Visible = false;
             colId.Name = "id";
             dataGridView1.Columns.Add(colId);
+
+            DataGridViewColumn colNo = new DataGridViewTextBoxColumn();
+            colNo.DataPropertyName = "no";
+            colNo.Name = "no";
+            colNo.HeaderText = "序号";
+            colNo.ReadOnly = true;
+            dataGridView1.Columns.Add(colNo);
 
             DataGridViewColumn colNum = new DataGridViewTextBoxColumn();
             colNum.DataPropertyName = "MNum";
@@ -99,6 +107,13 @@ namespace goods
             conversion,
             subquantity});
         }
+        private void DataGridView1_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
+        {
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+                row.Cells["no"].Value = row.Index + 1;
+            }
+        }
         private void initData(string num)
         {
             dt = ctrl.getInOrderbyNum(num);
@@ -146,7 +161,10 @@ namespace goods
                     lm.materiel = Convert.ToInt32(dt.Rows[i - 1]["materiel"]);
                     lm.quantity = Convert.ToDouble(dt.Rows[i - 1]["quantity"]);
                     lm.isBatch = Convert.ToBoolean(dt.Rows[i - 1]["isBatch"]);
-                    lm.batch = Convert.ToInt32(dt.Rows[i - 1]["batch"]);
+                    if (dt.Rows[i - 1]["batch"] != DBNull.Value) lm.batch = Convert.ToInt32(dt.Rows[i - 1]["batch"]);
+                    lm.supplier = Convert.ToInt32(dt.Rows[i - 1]["supplier"]);
+                    if (dt.Rows[i - 1]["combination"] != DBNull.Value) lm.combination = Convert.ToInt32(dt.Rows[i - 1]["combination"]);
+                    
                     listM.Add(lm);
                 }
 

@@ -79,12 +79,14 @@ namespace goods
                 List<MaterielModel> list_m = new List<MaterielModel>();
                 for (int i = this.dataGridView1.RowCount; i > 0; i--)
                 {
-                    MaterielModel model = new MaterielModel(Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["id"].Value),
-                        Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["safetystock"].Value), 2),
-                        Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["maxstock"].Value), 2));
-                    if (model.safetystock == 0 || model.maxstock == 0)
+                    MaterielModel model = new MaterielModel();
+                    model.Id = Convert.ToInt32(this.dataGridView1.Rows[i - 1].Cells["id"].Value);
+                    if (this.dataGridView1.Rows[i - 1].Cells["safetystock"].Value != DBNull.Value) model.safetystock = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["safetystock"].Value), 2);
+                    if (this.dataGridView1.Rows[i - 1].Cells["maxstock"].Value != DBNull.Value)
+                        model.maxstock = Math.Round(Convert.ToDouble(this.dataGridView1.Rows[i - 1].Cells["maxstock"].Value), 2);
+                    if (model.safetystock == null)
                     {
-                        MessageBox.Show("物料缺失数量！");
+                        MessageBox.Show("物料缺失安全数量！");
                         return;
                     }
 

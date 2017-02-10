@@ -292,7 +292,8 @@ namespace goods
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create(address + "?name="+delName);
                 request.Timeout = millisecond;
-                request.Method = "DELETE";
+                request.Method = "POST";
+                request.ContentLength = 0;
                 request.ServicePoint.Expect100Continue = false;
                 WebResponse response = (WebResponse)request.GetResponse();
                 StreamReader reader = new StreamReader(response.GetResponseStream());

@@ -22,15 +22,15 @@ namespace goods.Controller
 
         public DataTable getbyId(int id)
         {
-            string sql = "SELECT po.id poid,po.num ponum,po.date,s.name supplier,po.summary posummary,u.fullName user,po.user   pouser,po.deliveryDate podeliveryDate,m.id id,m.num,m.name,me.name metering,m.specifications,om.price,om.quantity,om.amount ,om.conversion,om.tax,om.summary, om.deliveryDate,om.id omid " +
+            string sql = "SELECT po.id poid,po.num ponum,po.date,po.supplier supplierId,s.name supplier,po.summary posummary,u.fullName user,po.user   pouser,po.deliveryDate podeliveryDate,m.id id,m.num,m.name,me.name metering,m.specifications,om.price,om.quantity,om.amount ,om.conversion,om.tax,om.summary, om.deliveryDate,om.id omid " +
             " FROM metering me,materiel m,supplier s,user u,ordermateriel om,purchaseorder po "+
             " WHERE me.id = m.metering AND om.materiel = m.id AND po.supplier = s.id AND po.user = u.id AND om.purchaseorder = po.id AND po.id = " + id;
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
             return dt;
         }
-        public Dictionary<int, string> getbyOMIds(List<int> ids)
+        public Dictionary<int, attrNumModel> getbyOMIds(List<int> ids)
         {
-            string sql = "SELECT om.id,av.name FROM ordermateriel om inner join attrcombination c on om.combination = c.id inner join combinationitem ci on c.id = ci.combination inner join attrvalue av on ci.attrvalue = av.id  where om.id in (";
+            string sql = "SELECT om.id,av.name,av.solidbacking,av.id avid FROM ordermateriel om inner join attrcombination c on om.combination = c.id inner join combinationitem ci on c.id = ci.combination inner join attrvalue av on ci.attrvalue = av.id  where om.id in (";
             for (int i = 0; i < ids.Count; i++)
             {
                 if (i != 0) sql += ",";
@@ -38,23 +38,27 @@ namespace goods.Controller
             }
             sql += ")";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
-            Dictionary<int, string> map = new Dictionary<int, string>();
+            Dictionary<int, attrNumModel> map = new Dictionary<int, attrNumModel>();
             for (int i = 0; i < dt.Rows.Count; i++)
             {
                 var id = Convert.ToInt32(dt.Rows[i]["id"]);
                 if (!map.Keys.Contains(id))
                 {
-                    map.Add(id,"");
+                    map.Add(id,new attrNumModel(0,""));
+                    map[id].list = new List<sbKeyValueModel>();
                 }
-                if (map[id] != "") map[id] += ",";
-                map[id] += dt.Rows[i]["name"].ToString();
+                if (map[id].value != "") map[id].value += ",";
+                map[id].value += dt.Rows[i]["name"].ToString();
+                map[id].num++;
+                sbKeyValueModel skv = new sbKeyValueModel(Convert.ToInt32(dt.Rows[i]["solidbacking"]), Convert.ToInt32(dt.Rows[i]["avid"]), dt.Rows[i]["name"].ToString());
+                map[id].list.Add(skv);
             }
             return map;
         }
             
         public DataTable getFilterOrderMateriel(int pageIndex, int pageSize, string supplier,bool isDate ,DateTime date, string orderNum, string materielNum)
         {
-            string sql = " SELECT om.id,po.id poid,po.num ponum, m.num mnum,m.id mid,po.date date,s.name sname,m.name mname,m.specifications specifications, meter.name metering,om.price,om.quantity,om.amount,om.tax,om.deliveryDate,om.closed,om.combination," +
+            string sql = " SELECT om.id,po.id poid,po.num ponum, m.num mnum,m.id mid,po.date date,s.name sname,s.id supplier,m.name mname,m.specifications specifications, meter.name metering,om.price,om.quantity,om.amount,om.tax,om.deliveryDate,om.closed,om.combination," +
                 "(SELECT SUM(quantity) FROM entrymateriel e, godownentry g WHERE e.entry = g.id and g.purchaseOrder = po.id and e.materiel = m.id and g.isDeficit = 0) quantityAll" +
                 " FROM ordermateriel om ,purchaseorder po,materiel m,supplier s,metering meter where om.purchaseorder = po.id and om.materiel = m.id and po.supplier = s.id and m.metering = meter.id";
             string select = "";
@@ -107,7 +111,17 @@ namespace goods.Controller
             int count = Convert.ToInt32(dt.Rows[0][0]);
             return count;
         }
-
+        /// <summary>
+        /// 供应商订单入库情况
+        /// </summary>
+        /// <param name="pageIndex"></param>
+        /// <param name="pageSize"></param>
+        /// <param name="isStart"></param>
+        /// <param name="start"></param>
+        /// <param name="isEnd"></param>
+        /// <param name="end"></param>
+        /// <param name="supplier"></param>
+        /// <returns></returns>
         public DataTable getSupplierOrder(int pageIndex, int pageSize, bool isStart,DateTime start,bool isEnd,DateTime end,string supplier)
         {
             string dateStr = "";
@@ -179,7 +193,7 @@ namespace goods.Controller
             for (int i = 0; i < ids.Count; i++)
             {
                 var uuid = tempCartId.ToString() + i;
-                sqlbatch = "insert into batchmateriel (date,ordermateriel,materiel,num,uuid,combination) values (now(), '" + ids[i].id + "','" + ids[i].mid + "', concat('" + dateStr + "','" + ids[i].num + "',LPAD(" + num + ",9,'0')),'" + uuid + "'";
+                sqlbatch = "insert into batchmateriel (date,ordermateriel,materiel,num,uuid,supplier,combination) values (now(), '" + ids[i].id + "','" + ids[i].mid + "', concat('" + dateStr + "','" + ids[i].num + "',LPAD(" + num + ",9,'0')),'" + uuid + "','" + ids[i].supplier + "'";
                 if (ids[i].combination != null) sqlbatch += ",'" + ids[i].combination + "')";
                 else sqlbatch += ",null)";
                 sqlList.Add(sqlbatch);
@@ -191,7 +205,7 @@ namespace goods.Controller
         }
         public DataTable getqrcode(List<string> ids)
         {
-            var sql = " SELECT bm.num,bm.date,m.name,m.specifications spe, me.name meter,s.name supplier FROM batchmateriel bm inner join ordermateriel om on bm.ordermateriel = om.id inner join materiel m on bm.materiel = m.id inner join metering me on m.metering = me.id inner join purchaseorder po on om.purchaseorder = po.id inner join supplier s on po.supplier = s.id where bm.uuid in ( ";
+            var sql = " SELECT bm.num,bm.date,m.num mnum,m.name,m.specifications spe,s.name supplier,av.name avname FROM batchmateriel bm inner join materiel m on bm.materiel = m.id inner join supplier s on bm.supplier = s.id left join attrcombination c on bm.combination = c.id left join combinationitem ci on c.id = ci.combination left join attrvalue av on ci.attrvalue = av.id where bm.uuid in ( ";
             for (int i = 0; i < ids.Count; i++)
             {
                 if (i == 0) sql += "'" + ids[i] + "'";
@@ -199,7 +213,39 @@ namespace goods.Controller
             }
             sql += ")";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
-            return dt;
+            DataTable dtNew = new DataTable();
+            dtNew.Columns.Add("num");
+            dtNew.Columns.Add("date");
+            dtNew.Columns.Add("mnum");
+            dtNew.Columns.Add("name");
+            dtNew.Columns.Add("spe");
+            dtNew.Columns.Add("supplier");
+            dtNew.Columns.Add("attribute");
+            
+            Dictionary<string, DataRow> map = new Dictionary<string, DataRow>();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                var id = dt.Rows[i]["num"].ToString();
+                if (!map.Keys.Contains(id))
+                {
+                    DataRow dr = dtNew.NewRow();
+                    dr["num"] = dt.Rows[i]["num"];
+                    dr["date"] = dt.Rows[i]["date"];
+                    dr["mnum"] = dt.Rows[i]["mnum"];
+                    dr["name"] = dt.Rows[i]["name"];
+                    dr["spe"] = dt.Rows[i]["spe"];
+                    dr["supplier"] = dt.Rows[i]["supplier"];
+                    dr["attribute"] = "";
+                    map.Add(id, dr);
+                }
+                if (map[id]["attribute"].ToString() != "") map[id]["attribute"] += ",";
+                map[id]["attribute"] += dt.Rows[i]["avname"].ToString();
+            }
+            foreach (var item in map.Values)
+            {
+                dtNew.Rows.Add(item);
+            }
+            return dtNew;
         }
         #region 新建
         public MessageModel add(orderParmas gm)
@@ -210,10 +256,16 @@ namespace goods.Controller
             string sqlOrder = "insert into purchaseorder (date,supplier,summary,user,deliveryDate,num) " +
                 " values(@date, @supplier, @summary,@user,@deliveryDate, concat('PO',LPAD(" + num + ",9,'0')));";
             string sqlMat = "insert into ordermateriel (purchaseorder,line,materiel,quantity,price,tax,amount,summary,deliveryDate,conversion,subquantity,combination) values ";
+            string sqlTemp = "insert into supmaterielprice (supplier,materiel,price) values ";
             for (int i = 0; i < gm.listM.Count; i++)
             {
-                if (i != 0) sqlMat += ",";
+                if (i != 0)
+                {
+                    sqlMat += ",";
+                    sqlTemp += ",";
+                }
                 sqlMat += " (last_insert_id(),'" + gm.listM[i].line + "','" + gm.listM[i].materiel + "' ,'" + gm.listM[i].quantity + "','" + gm.listM[i].price + "','" + gm.listM[i].tax + "','" + gm.listM[i].price * gm.listM[i].quantity + "','" + gm.listM[i].summary + "','" + gm.listM[i].deliveryDate + "'";
+                sqlTemp += "(@supplier,'" + gm.listM[i].materiel + "','" + gm.listM[i].price + "')";
                 if (gm.listM[i].conversion != null) sqlMat += ",'" + gm.listM[i].conversion + "','" + gm.listM[i].conversion * gm.listM[i].quantity + "'";
                 else sqlMat += ", null,null";
                 if (gm.listM[i].combination != null && gm.listM[i].combination >0) sqlMat += ",'"+ gm.listM[i].combination + "'";
@@ -222,6 +274,7 @@ namespace goods.Controller
             }
             sqlList.Add(sqlOrder);
             sqlList.Add(sqlMat);
+            sqlList.Add(sqlTemp);
             Dictionary<string, object> paras = new Dictionary<string, object>();
             paras.Add("@date", gm.date);
             paras.Add("@supplier", gm.supplier);
@@ -261,7 +314,7 @@ namespace goods.Controller
             //h.ExecuteNonQuery(sqlMsg,CommandType.Text);
         }
         #endregion
-        public MessageModel setList(int orderid,string num,string supplier, List<ListModel> list)
+        public MessageModel setList(OrderModel order, List<ListModel> list)
         {
             MessageModel msg = new MessageModel();
             List<int> list_del = new List<int>();
@@ -269,13 +322,13 @@ namespace goods.Controller
             {
                 list_del.Add(list[i].materiel);
             }
-            string oldsql = "SELECT om.materiel, om.price,om.quantity,m.name FROM ordermateriel om inner join materiel m on om.materiel = m.id WHERE om.purchaseorder = '" + orderid + "'";
+            string oldsql = "SELECT om.materiel, om.price,om.quantity,m.name FROM ordermateriel om inner join materiel m on om.materiel = m.id WHERE om.purchaseorder = '" + order.Id + "'";
             DataTable dtold = h.ExecuteQuery(oldsql, CommandType.Text);
 
             List<OrderMaterielChange> list_change = new List<OrderMaterielChange>();
 
             List<string> list_changeMsg = new List<string>();
-            var textpre = "订单修改，订单号" + num + "，供应商" + supplier+",";
+            var textpre = "订单修改，订单号" + order.Num + "，供应商" + order.SupName+",";
             var textNew = "新增物料名称:{0}，单价：{1}，数量：{2}。";
             //var textUP1 = "修改物料名称:{0}，{1}由{2}修改为{3}。";
             var textDel = "删除物料名称:{0}。";
@@ -288,7 +341,7 @@ namespace goods.Controller
                 map_old.Add(materiel, new ListModel(dtold.Rows[i]));
                 if(!list_del.Contains(materiel))
                 {
-                    change = new OrderMaterielChange(materiel, orderid, "delete");
+                    change = new OrderMaterielChange(materiel, order.Id, "delete");
                     list_change.Add(change);
 
                     list_changeMsg.Add(textpre + string.Format(textDel, dtold.Rows[i]["name"].ToString()));
@@ -307,57 +360,68 @@ namespace goods.Controller
                     {
                         if(list[i].price == price)
                         {
-                            change = new OrderMaterielChange(list[i].materiel, orderid, "update", -1, list[i].quantity);
+                            change = new OrderMaterielChange(list[i].materiel, order.Id, "update", -1, list[i].quantity);
 
                             text = "修改物料名称:"+ name + ",数量由"+ quantity + "修改为"+ list[i].quantity + "。";
                         }
                         else if (list[i].quantity == quantity)
                         {
-                            change = new OrderMaterielChange(list[i].materiel, orderid, "update", list[i].price, -1);
+                            change = new OrderMaterielChange(list[i].materiel, order.Id, "update", list[i].price, -1);
 
                             text = "修改物料名称:" + name + ",单价由" + price + "修改为" + list[i].price + "。";
                         }
                         else
                         {
-                            change = new OrderMaterielChange(list[i].materiel, orderid, "update", list[i].price, list[i].quantity);
+                            change = new OrderMaterielChange(list[i].materiel, order.Id, "update", list[i].price, list[i].quantity);
 
                             text = "修改物料名称:" + name + ",单价由" + price + "修改为" + list[i].price + "，数量由" + quantity + "修改为" + list[i].quantity + "。";
                         }
-                        list_change.Add(change);
-
+             
                         list_changeMsg.Add(textpre + text);
                     }
+                    else
+                    {
+                        change = new OrderMaterielChange(list[i].materiel, order.Id, "update", -1, -1);
+                    }
+                    change.line = list[i].line;
+                    change.combination = list[i].combination;
+                    change.deliveryDate = list[i].deliveryDate;
+                    change.summary = list[i].summary;
+                    change.tax = list[i].tax;
+                    list_change.Add(change);
                     //list_del.Add(list[i].materiel);
                 }
                 else
                 {
-                    change = new OrderMaterielChange(list[i].materiel, orderid,"new",list[i].price, list[i].quantity, list[i].conversion, list[i].tax, list[i].summary);
+                    change = new OrderMaterielChange(list[i].materiel, order.Id, "new",list[i].price, list[i].quantity, list[i].conversion, list[i].tax, list[i].summary, list[i].deliveryDate, list[i].combination, list[i].line);
                     list_change.Add(change);
 
-                    list_changeMsg.Add(textpre + string.Format(textNew, dtold.Rows[i]["name"].ToString(), list[i].price, list[i].quantity));
+                    list_changeMsg.Add(textpre + string.Format(textNew, list[i].name, list[i].price, list[i].quantity));
                 }
             }
 
             List<string> sqlList = new List<string>();
-            var sqlchange = "insert into ordermaterielchange(materiel, purchaseorder, type, price, quantity) values ";
+            if (order.Summary != null) sqlList.Add("update purchaseorder set summary = '"+ order.Summary + "' where id = '"+ order .Id+ "'");
+            var sqlchange = "";
             var sqlnew = "";
             var sqlupdate = "";
             var sqldel = "";
 
-            if (list_change.Count == 0)
-            {
-                return new MessageModel(0, "无保存项");
-            }
             for (int i = 0; i < list_change.Count; i++)
             {
-                if(i != 0)sqlchange += ",";
-                sqlchange += " ('" + list_change[i].materiel+ "', '" + list_change[i].purchaseorder + "',  '" + list_change[i].type + "', '" + list_change[i].price + "', '" + list_change[i].quantity + "') ";
+                if(list_change[i].type != "update" || list_change[i].price != -1 || list_change[i].quantity != -1)
+                {
+                    if (sqlchange == "") sqlchange = "insert into ordermaterielchange(materiel, purchaseorder, type, price, quantity) values ";
+                    else sqlchange += ",";
+
+                    sqlchange += " ('" + list_change[i].materiel + "', '" + list_change[i].purchaseorder + "',  '" + list_change[i].type + "', '" + list_change[i].price + "', '" + list_change[i].quantity + "') ";
+                }
 
                 if(list_change[i].type == "new")
                 {
                     if (sqlnew == "")
                     {
-                        sqlnew += "insert into ordermateriel(materiel, purchaseorder, conversion,subquantity,tax, price, quantity,summary,amount) values ";
+                        sqlnew += "insert into ordermateriel(materiel, purchaseorder, conversion,subquantity,tax, price, quantity,summary,amount,deliveryDate,line,combination) values ";
                     }
                     else
                     {
@@ -365,24 +429,26 @@ namespace goods.Controller
                     }
                     sqlnew += "('" + list_change[i].materiel + "', '" + list_change[i].purchaseorder + "',  '" + list_change[i].conversion + "', '" + 
                         list_change[i].conversion* list_change[i].quantity + "', '" + list_change[i].tax + "', '" + list_change[i].price + "', '" + 
-                        list_change[i].quantity + "', '" + list_change[i].summary + "', '" + list_change[i].price * list_change[i].quantity + "')";
+                        list_change[i].quantity + "', '" + list_change[i].summary + "', '" + list_change[i].price * list_change[i].quantity + "','"+ list_change[i].deliveryDate + "','" + list_change[i].line + "'";
+                    if(list_change[i].combination != null && list_change[i].combination >0) sqlnew += ",'" + list_change[i].combination + "')";
+                    else sqlnew += ",null)";
 
                 }
                 else if(list_change[i].type == "update")
                 {
-                    sqlupdate = "";
-                    if (list_change[i].quantity != -1) sqlupdate += " update ordermateriel set quantity = '" + list_change[i].quantity + "'";
+                    sqlupdate = "update ordermateriel set tax = '" + list_change[i].tax + "',summary = '" + list_change[i].summary + "', deliveryDate = '" + list_change[i].deliveryDate + "', line ='" + list_change[i].line + "'";
+                    if (list_change[i].combination != null && list_change[i].combination > 0) sqlupdate += ",combination = '" + list_change[i].combination + "'"; 
+                    if (list_change[i].quantity != -1) sqlupdate += ", quantity = '" + list_change[i].quantity + "'";
                     if (list_change[i].price != -1)
                     {
-                        if (sqlupdate == "") sqlupdate += "update ordermateriel set price = '" + list_change[i].price + "'";
-                        else sqlupdate += ",price = '" + list_change[i].price + "'";
+                        sqlupdate += ",price = '" + list_change[i].price + "'";
                     }
-                    sqlupdate += " where materiel = '" + list_change[i].materiel + "' AND purchaseorder = '" + orderid + "'";
+                    sqlupdate += " where materiel = '" + list_change[i].materiel + "' AND purchaseorder = '" + order.Id + "'";
                     sqlList.Add(sqlupdate);
                 }
                 else
                 {
-                    if(sqldel == "") sqldel = "delete from ordermateriel where purchaseorder = '" + orderid + "' AND materiel in (";
+                    if(sqldel == "") sqldel = "delete from ordermateriel where purchaseorder = '" + order.Id + "' AND materiel in (";
                     else sqldel += ",";
                     sqldel += " '" + list_change[i].materiel + "' ";
                 }
@@ -392,14 +458,14 @@ namespace goods.Controller
                 sqldel += ")";
                 sqlList.Add(sqldel);
             }
-            sqlList.Add(sqlchange);
+            if (sqlchange != "")  sqlList.Add(sqlchange);
             if(sqlnew != "") sqlList.Add(sqlnew);
             bool result = h.ExcuteTransaction(sqlList);
             
             if (result == true)
             {
                 msg = new MessageModel(0, "保存成功");
-                msgHandle(list_changeMsg,"order");
+                if(list_changeMsg.Count > 0) msgHandle(list_changeMsg,"order");
             }
             else msg = new MessageModel(10005, "保存失败");
             return msg;
@@ -480,12 +546,43 @@ namespace goods.Controller
             return count;
         }
 
-        public DataTable getbyOMId(int id)
+        public DataTable getbyOMId(int omid)
         {
-            string sql = "SELECT bm.num,bm.date,m.name,m.specifications spe, me.name meter,s.name supplier FROM batchmateriel bm inner join ordermateriel om on bm.ordermateriel = om.id inner join materiel m on bm.materiel = m.id inner join metering me on m.metering = me.id inner join purchaseorder po on om.purchaseorder = po.id inner join supplier s on po.supplier = s.id " +
-                "where  bm.ordermateriel = '" + id+"'";
+            string sql = "SELECT bm.num,bm.date,m.num mnum,m.name,m.specifications spe,s.name supplier,av.name avname FROM batchmateriel bm inner join ordermateriel om on bm.ordermateriel = om.id inner join materiel m on bm.materiel = m.id  inner join supplier s on bm.supplier = s.id left join attrcombination c on bm.combination = c.id left join combinationitem ci on c.id = ci.combination left join attrvalue av on ci.attrvalue = av.id where  bm.ordermateriel = '" + omid + "'";
             DataTable dt = h.ExecuteQuery(sql, CommandType.Text);
-            return dt;
+            DataTable dtNew = new DataTable();
+            dtNew.Columns.Add("num");
+            dtNew.Columns.Add("date");
+            dtNew.Columns.Add("mnum");
+            dtNew.Columns.Add("name");
+            dtNew.Columns.Add("spe");
+            dtNew.Columns.Add("supplier");
+            dtNew.Columns.Add("attribute");
+
+            Dictionary<string, DataRow> map = new Dictionary<string, DataRow>();
+            for (int i = 0; i < dt.Rows.Count; i++)
+            {
+                var id = dt.Rows[i]["num"].ToString();
+                if (!map.Keys.Contains(id))
+                {
+                    DataRow dr = dtNew.NewRow();
+                    dr["num"] = dt.Rows[i]["num"];
+                    dr["date"] = dt.Rows[i]["date"];
+                    dr["mnum"] = dt.Rows[i]["mnum"];
+                    dr["name"] = dt.Rows[i]["name"];
+                    dr["spe"] = dt.Rows[i]["spe"];
+                    dr["supplier"] = dt.Rows[i]["supplier"];
+                    dr["attribute"] = "";
+                    map.Add(id, dr);
+                }
+                if (map[id]["attribute"].ToString() != "") map[id]["attribute"] += ",";
+                map[id]["attribute"] += dt.Rows[i]["avname"].ToString();
+            }
+            foreach (var item in map.Values)
+            {
+                dtNew.Rows.Add(item);
+            }
+            return dtNew;
         }
 
 

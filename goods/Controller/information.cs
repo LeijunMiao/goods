@@ -44,14 +44,14 @@ namespace goods.Controller
         }
         #endregion
         #region 新建一堆
-        public MessageModel addbyids(List<object> list,string key)
+        public MessageModel addbyids(List<User> list,string key)
         {
             List<User> list_u = new List<User>();
             string sqlSelect = "SELECT * FROM messageuser where type = '"+ key + "' and user in (";
             User u;
             for (int i = 0; i < list.Count; i++)
             {
-                u = (User)list[i];
+                u = list[i];
                 list_u.Add(u);
                 if (i != 0) sqlSelect += ",";
                 sqlSelect += "'" + u.Id + "'";

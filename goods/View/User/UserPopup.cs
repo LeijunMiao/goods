@@ -38,6 +38,16 @@ namespace goods
         #endregion
         private void button1_Click(object sender, EventArgs e)
         {
+            if (textBox1.Text.Trim() == "" || textBox2.Text.Trim() == "" || textBox4.Text.Trim() == "")
+            {
+                MessageBox.Show("用户名密码不得为空！");
+                return;
+            }
+            if(this.comboBox1.SelectedValue == null || this.comboBox2.SelectedValue == null)
+            {
+                MessageBox.Show("部门和角色必选！");
+                return;
+            }
             int departant = Convert.ToInt32(this.comboBox1.SelectedValue.ToString());
             int role = Convert.ToInt32(this.comboBox2.SelectedValue.ToString());
             User u = new User(textBox1.Text, textBox2.Text, role, textBox4.Text);
@@ -63,10 +73,11 @@ namespace goods
             string role = this.comboBox1.SelectedValue.ToString();
             if (this.comboBox1.SelectedIndex == 0) role = depdt.Rows[0]["id"].ToString();
             DataTable dt = rctrl.getbyDepId(Convert.ToInt32(role));
+            this.comboBox2.Text = "";
             this.comboBox2.DataSource = dt;
             this.comboBox2.DisplayMember = "name";
             this.comboBox2.ValueMember = "id";
-            this.comboBox2.SelectedIndex = 0;
+            if(dt.Rows.Count >0 ) this.comboBox2.SelectedIndex = 0;
         }
     }
 }

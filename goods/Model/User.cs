@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace goods.Model
 {
-    class User
+    public class User
     {
         /// <summary>
         /// 用户属性
